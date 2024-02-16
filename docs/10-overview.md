@@ -30,5 +30,5 @@ Join the Krateo Community [Discord server](https://discord.gg/sjca4QvVTa)!
 
 ## Next Steps
 
-To learn more about Krateo PlatformOps, consider checking out our [concepts doc](./concepts) or get hands-on right away with our
+To learn more about Krateo PlatformOps, consider checking out our key concepts or get hands-on right away with our
 [quickstart](./quickstart)!

@@ -1,0 +1,64 @@
+---
+description: Learn about Krateo PlatformOps by progressing a change through multiple stages in a Kubernetes cluster
+sidebar_label: Quickstart
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Krateo PlatformOps Quickstart
+
+This guide presents a basic introduction to Krateo PlatformOps. Together, we will:
+
+* Install Krateo PlatformOps into a local or managed Kubernetes cluster.
+
+### Starting a Local Cluster
+
+Any of the following approaches require [Helm](https://helm.sh/docs/) v3.13.1 or
+greater to be installed.
+
+<Tabs groupId="cluster-start">
+<TabItem value="kind" label="kind">
+
+If you have any Docker-compatible container runtime installed (including native
+Docker, Docker Desktop, or OrbStack), you can easily launch a disposable cluster
+just for this quickstart using
+[kind](https://kind.sigs.k8s.io/#installation-and-usage).
+
+```shell
+curl -L https://github.com/krateoplatformops/krateo/releases/latest/download/kind.sh | sh
+```
+
+:::info
+While this option is a bit more complex than using Docker Desktop or OrbStack
+directly, it offers the advantage of being fully-disposable. If your cluster
+reaches a state you are dissatisfied with, you can simply destroy it and
+launch a new one.
+:::
+
+At the end of this process:
+
+* The Krateo Composable Portal will be accessible at [localhost:30080](https://localhost:30080).
+
+</TabItem>
+</Tabs>
+
+The username is `cyberjoker` and password is `123456`.
+
+## Cleaning up
+
+Congratulations! You've just gotten hands on with Kargo for the first time!
+
+Now let's clean up!
+
+<Tabs groupId="cluster-delete">
+<TabItem value="kind" label="kind">
+
+Simply destroy the cluster:
+
+```shell
+kind delete cluster --name krateo-quickstart
+```
+
+</TabItem>
+</Tabs>

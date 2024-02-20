@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.1.1">
 <title data-rh="true">What is Krateo PlatformOps? | Krateo PlatformOps Docs</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://docs.krateo.io/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://docs.krateo.io/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://docs.krateo.io/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="What is Krateo PlatformOps? | Krateo PlatformOps Docs"><meta data-rh="true" name="description" content="Find out more about Krateo - a self-service platform for multi-cloud native resources based on Kubernetes"><meta data-rh="true" property="og:description" content="Find out more about Krateo - a self-service platform for multi-cloud native resources based on Kubernetes"><link data-rh="true" rel="icon" href="/img/favicon_io/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.krateo.io/"><link data-rh="true" rel="alternate" href="https://docs.krateo.io/" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.krateo.io/" hreflang="x-default"><script data-rh="true">function insertBanner(){var n=document.createElement("div");n.id="__docusaurus-base-url-issue-banner-container";n.innerHTML='\n<div id="__docusaurus-base-url-issue-banner" style="border: thick solid red; background-color: rgb(255, 230, 179); margin: 20px; padding: 20px; font-size: 20px;">\n   <p style="font-weight: bold; font-size: 30px;">Your Docusaurus site did not load properly.</p>\n   <p>A very common reason is a wrong site <a href="https://docusaurus.io/docs/docusaurus.config.js/#baseUrl" style="font-weight: bold;">baseUrl configuration</a>.</p>\n   <p>Current configured baseUrl = <span style="font-weight: bold; color: red;">/</span>  (default value)</p>\n   <p>We suggest trying baseUrl = <span id="__docusaurus-base-url-issue-banner-suggestion-container" style="font-weight: bold; color: green;"></span></p>\n</div>\n',document.body.prepend(n);var e=document.getElementById("__docusaurus-base-url-issue-banner-suggestion-container"),s=window.location.pathname,o="/"===s.substr(-1)?s:s+"/";e.innerHTML=o}document.addEventListener("DOMContentLoaded",(function(){void 0===window.docusaurus&&insertBanner()}))</script><link rel="stylesheet" href="/assets/css/styles.6738e5fb.css">
-<script src="/assets/js/runtime~main.db0eed18.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.82528c53.js" defer="defer"></script>
 <script src="/assets/js/main.71d10c35.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -19,9 +19,41 @@
 <div class="theme-admonition theme-admonition-caution admonition_xJq3 alert alert--warning"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"></path></svg></span>caution</div><div class="admonitionContent_BuS1"><p>Krateo PlatformOps v2 is undergoing active development and everyone is invited to <a href="https://github.com/krateoplatformops/krateo" target="_blank" rel="noopener noreferrer">join us</a> in the journey to a GA release (<code>v2.0.0</code>)! Please expect breaking changes between pre-GA releases (<code>v2.x.x-x</code>).</p></div></div>
 <div class="theme-admonition theme-admonition-info admonition_xJq3 alert alert--info"><div class="admonitionHeading_Gvgb"><span class="admonitionIcon_Rf37"><svg viewBox="0 0 14 16"><path fill-rule="evenodd" d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path></svg></span>info</div><div class="admonitionContent_BuS1"><p>Join the Krateo Community <a href="https://discord.gg/sjca4QvVTa" target="_blank" rel="noopener noreferrer">Discord server</a>!</p></div></div>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="architecture">Architecture<a href="#architecture" class="hash-link" aria-label="Direct link to Architecture" title="Direct link to Architecture">​</a></h2>
+<p>Architecture is based on these principles:</p>
+<ul>
+<li>Any component of Krateo must be configured declaratively</li>
+<li>The only APIs that implement business logic are those exposed by the Kubernetes api server</li>
+<li>Any operation carried out via the portal must also be possible from the Kubernetes CLI (<em>kubectl</em>)</li>
+<li>Authentication is completely delegated to the Kubernetes server API</li>
+<li>Authorization is completely delegated to the Kubernetes RBAC</li>
+<li>Krateo uses Kubernetes Custom Resources (and therefore the control plane etcd) as a database</li>
+<li>Krateo does not use volumes</li>
+</ul>
 <p><img decoding="async" loading="lazy" alt="Architecture" src="/assets/images/krateo-architecture-f88ccc767fb3ca3b079a7a69b126272e.png" width="1721" height="1121" class="img_ev3q"></p>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="requirements">Requirements<a href="#requirements" class="hash-link" aria-label="Direct link to Requirements" title="Direct link to Requirements">​</a></h2>
+<ul>
+<li>A certified Kubernetes distribution</li>
+<li>Kubernetes minimal requirements:<!-- -->
+<ul>
+<li>6vCPUs and 12GiB RAM – no storage required</li>
+<li>Ability to expose service of type LoadBalancer (<a href="https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/" target="_blank" rel="noopener noreferrer">https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/</a>)</li>
+<li>Networking requirements<!-- -->
+<ul>
+<li>Ability to reach <a href="https://github.com" target="_blank" rel="noopener noreferrer">https://github.com</a> , <a href="https://charts.krateo.io" target="_blank" rel="noopener noreferrer">https://charts.krateo.io</a> , ghcr.io, docker.io</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_LWe7" id="installation">Installation<a href="#installation" class="hash-link" aria-label="Direct link to Installation" title="Direct link to Installation">​</a></h2>
+<p>Krateo PlatformOps provides a Helm chart to install each of the three main components:</p>
+<ul>
+<li>Krateo Composable Portal (KCP): <a href="https://github.com/krateoplatformops/krateo-composable-portal" target="_blank" rel="noopener noreferrer">https://github.com/krateoplatformops/krateo-composable-portal</a></li>
+<li>Krateo Composable Operations (KCO): <a href="https://github.com/krateoplatformops/krateo-composable-operations" target="_blank" rel="noopener noreferrer">https://github.com/krateoplatformops/krateo-composable-operations</a></li>
+<li>Krateo Composable FinOps (KCF): <em>planned</em></li>
+</ul>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="next-steps">Next Steps<a href="#next-steps" class="hash-link" aria-label="Direct link to Next Steps" title="Direct link to Next Steps">​</a></h2>
 <p>To learn more about Krateo PlatformOps, consider checking out our key concepts or get hands-on right away with our
-<a href="/quickstart">quickstart</a>!</p></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--next" href="/key-concepts/kco"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Krateo Composable Operations</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#architecture" class="table-of-contents__link toc-highlight">Architecture</a></li><li><a href="#next-steps" class="table-of-contents__link toc-highlight">Next Steps</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 Krateo</div></div></div></footer></div>
+<a href="/quickstart">quickstart</a>!</p></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--next" href="/key-concepts/kco"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Krateo Composable Operations</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#architecture" class="table-of-contents__link toc-highlight">Architecture</a></li><li><a href="#requirements" class="table-of-contents__link toc-highlight">Requirements</a></li><li><a href="#installation" class="table-of-contents__link toc-highlight">Installation</a></li><li><a href="#next-steps" class="table-of-contents__link toc-highlight">Next Steps</a></li></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2024 Krateo</div></div></div></footer></div>
 </body>
 </html>

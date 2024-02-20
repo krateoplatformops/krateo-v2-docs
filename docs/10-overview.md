@@ -26,7 +26,32 @@ Join the Krateo Community [Discord server](https://discord.gg/sjca4QvVTa)!
 
 ## Architecture
 
+Architecture is based on these principles:
+* Any component of Krateo must be configured declaratively
+* The only APIs that implement business logic are those exposed by the Kubernetes api server
+* Any operation carried out via the portal must also be possible from the Kubernetes CLI (_kubectl_)
+* Authentication is completely delegated to the Kubernetes server API
+* Authorization is completely delegated to the Kubernetes RBAC
+* Krateo uses Kubernetes Custom Resources (and therefore the control plane etcd) as a database
+* Krateo does not use volumes
+
 ![Architecture](../static/img/krateo-architecture.png)
+
+## Requirements
+
+* A certified Kubernetes distribution
+* Kubernetes minimal requirements:
+  * 6vCPUs and 12GiB RAM – no storage required
+  * Ability to expose service of type LoadBalancer (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/)
+  * Networking requirements
+    * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io
+
+## Installation
+
+Krateo PlatformOps provides a Helm chart to install each of the three main components:
+* Krateo Composable Portal (KCP): https://github.com/krateoplatformops/krateo-composable-portal
+* Krateo Composable Operations (KCO): https://github.com/krateoplatformops/krateo-composable-operations
+* Krateo Composable FinOps (KCF): _planned_
 
 ## Next Steps
 

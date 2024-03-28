@@ -48,10 +48,12 @@ Architecture is based on these principles:
 
 ## Installation
 
-Krateo PlatformOps provides a Helm chart to install each of the three main components:
-* Krateo Composable Portal (KCP): https://github.com/krateoplatformops/krateo-composable-portal
-* Krateo Composable Operations (KCO): https://github.com/krateoplatformops/krateo-composable-operations
-* Krateo Composable FinOps (KCF): _planned_
+Krateo PlatformOps provides a Helm chart to install Krateo PlatformOps:
+* Krateo PlatformOps Operator: https://github.com/krateoplatformops/installer-chart
+
+:::caution
+Krateo PlatformOps Operator is undergoing active development, wait for GA release (`v2.x.x`)!
+:::
 
 ## Next Steps
 

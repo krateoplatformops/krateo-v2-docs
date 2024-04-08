@@ -81,7 +81,7 @@ The username is `cyberjoker` and password is `123456`.
 
 ## Cleaning up
 
-Congratulations! You've just gotten hands on with Kargo for the first time!
+Congratulations! You've just gotten hands on with Krateo PlatformOps for the first time!
 
 Now let's clean up!
 
@@ -97,10 +97,10 @@ kind delete cluster --name krateo-quickstart
 </TabItem>
 <TabItem value="install-mac-intel" label="install-mac-intel">
 
-Simply destroy the vCluster:
+Uninstall Krateo PlatformOps installer:
 
 ```shell
-vcluster delete vcluster-k8s
+helm uninstall installer -n krateo-system
 ```
 
 </TabItem>

@@ -17,7 +17,7 @@ This guide presents a basic introduction to Krateo PlatformOps. Together, we wil
 Any of the following approaches require [Helm](https://helm.sh/docs/) v3.13.1 or
 greater to be installed.
 
-<Tabs groupId="cluster-start">
+<Tabs groupId="local-cluster-start">
 <TabItem value="kind" label="kind">
 
 If you have any Docker-compatible container runtime installed (including native
@@ -26,8 +26,11 @@ just for this quickstart using
 [kind](https://kind.sigs.k8s.io/#installation-and-usage).
 
 ```shell
-curl -L https://github.com/krateoplatformops/krateo/releases/latest/download/kind.sh | sh
+curl -L https://github.com/krateoplatformops/krateo/releases/latest/download/kind-vcluster.sh | sh
 ```
+:::info
+We are using [vCluster](https://github.com/loft-sh/vcluster/) to install Krateo in an isolated environment.
+:::
 
 :::info
 While this option is a bit more complex than using Docker Desktop or OrbStack
@@ -41,6 +44,14 @@ At the end of this process:
 * The Krateo Composable Portal will be accessible at [localhost:30080](https://localhost:30080).
 
 </TabItem>
+</Tabs>
+
+### Leveraging an existing Kubernetes cluster (with LoadBalancer)
+
+Any of the following approaches require [Helm](https://helm.sh/docs/) v3.13.1 or
+greater to be installed.
+
+<Tabs groupId="existing-cluster-start">
 <TabItem value="install-mac-intel" label="install-mac-intel">
 
 This quickstart will expose each Krateo component via LoadBalancer - please use a Kubernetes setup that allows automatically creation of Kubernetes Service of type LoadBalancer.
@@ -60,10 +71,9 @@ At the end of this process:
 * The Krateo Composable Portal will be accessible at:
 
 ```shell
-export SERVICE_IP=$(kubectl get svc --namespace krateo-system krateo-frontend --template "{{"{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}"}}")
+export SERVICE_IP=$(kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system -o json | jq -r '.status.loadBalancer.ingress[0].ip')
 echo http://$SERVICE_IP:8080
 ```
-
 </TabItem>
 </Tabs>
 
@@ -90,7 +100,7 @@ kind delete cluster --name krateo-quickstart
 Simply destroy the vCluster:
 
 ```shell
-vcluster delete krateo-vcluster
+vcluster delete vcluster-k8s
 ```
 
 </TabItem>

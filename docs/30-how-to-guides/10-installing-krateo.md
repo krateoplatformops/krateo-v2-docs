@@ -63,7 +63,7 @@ helm install installer krateo/installer --create-namespace -n krateo-system --se
 ```
 
 </TabItem>
-<TabItem value="kind" label="Disable starter-pack">
+<TabItem value="disable" label="Disable starter-pack">
 
 If you're not interested in the Krateo PlatformOps starter-pack, you can disable this option and you'll get a deployment without examples.
 

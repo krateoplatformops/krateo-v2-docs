@@ -7,7 +7,7 @@ sidebar_label: Installing Krateo PlatformOps
 
 ## Basic Installation
 
-Installing Kargo with default configuration is quick and easy.
+Installing Krateo with default configuration is quick and easy.
 
 You will need:
 
@@ -18,8 +18,7 @@ You will need:
 Krateo PlatformOps installer is a flexible workflow engine that execute sequential steps. The installer-chart is a helper that provider already baked configurations for Krateo PlatformOps. It is however possible to implement a custom installer.
 :::
 
-The following command will install Kargo with default configuration and a
-user-specified admin password:
+The following command will install Krateo with default configuration and a user-specified admin password:
 
 ```shell
 helm install installer krateo/installer --create-namespace -n krateo-system --wait

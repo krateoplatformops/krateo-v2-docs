@@ -15,14 +15,9 @@ Krateo allows for:
 - **Focusing on the management of services**: Krateo frees the user from most of the burden of cluster management, giving them the ability to entirely focus on the services that must be run. This results a phenomenal user experience that drastically reduces wastes of time.
 - **Single-handedly monitoring and controlling resources**: Krateo also acts as a centralized control plane, letting users monitor anything ranging from CI/CD pipelines to pod statuses and open tickets on your JIRA. All the information you need is present on a single page -- you'll never have to guess the correct dashboard ever again.
 
-:::caution
-Krateo PlatformOps v2 is undergoing active development and everyone is invited to [join us](https://github.com/krateoplatformops/krateo) in the journey to a GA release (`v2.0.0`)! Please expect breaking changes between pre-GA releases (`v2.x.x-x`).
-:::
-
 :::info
 Join the Krateo Community [Discord server](https://discord.gg/sjca4QvVTa)!
 :::
-
 
 ## Architecture
 

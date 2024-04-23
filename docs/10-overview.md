@@ -41,15 +41,6 @@ Architecture is based on these principles:
   * Networking requirements
     * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io
 
-## Installation
-
-Krateo PlatformOps provides a Helm chart to install Krateo PlatformOps:
-* Krateo PlatformOps Operator: https://github.com/krateoplatformops/installer-chart
-
-:::caution
-Krateo PlatformOps Operator is undergoing active development, wait for GA release (`v2.x.x`)!
-:::
-
 ## Next Steps
 
 To learn more about Krateo PlatformOps, consider checking out our key concepts or get hands-on right away with our

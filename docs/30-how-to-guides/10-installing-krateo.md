@@ -15,15 +15,16 @@ You will need:
 * A Kubernetes cluster.
 
 :::note
-Krateo PlatformOps installer is a flexible workflow engine that execute sequential steps. The installer-chart is a helper that provider already baked configurations for Krateo PlatformOps. It is however possible to implement a custom installer.
+Krateo PlatformOps installer is a flexible workflow engine that executes sequential steps. The installer-chart is a helper that provider already baked configurations for Krateo PlatformOps. It is however possible to implement a custom installer.
 :::
 
 The following command will install Krateo with default configuration and a user-specified admin password:
 
 ```shell
+helm repo add krateo https://charts.krateo.io
 helm install installer krateo/installer --create-namespace -n krateo-system --wait
 ```
-:::caution
+:::info
 Default values deploy Krateo exposing services via NodePort:
 * 30080 - Krateo Frontend
 * 30081 - Krateo BFF
@@ -32,13 +33,13 @@ Default values deploy Krateo exposing services via NodePort:
 * 31443 - vCluster API Server Port
 :::
 
-:::caution
+:::info
 Krateo PlatformOps requires access to Kubernetes CertificateAuthority certificate and key in order to generate certificates for logged users.
-For this reason we provide with the installer the default installation of vCluster (https://github.com/loft-sh/vcluster) in order to provide a sanboxed installation of Krateo PlatformOps.
+For this reason we provide with the installer the default installation of vCluster (https://github.com/loft-sh/vcluster) in order to provide a sandboxed installation of Krateo PlatformOps.
 :::
 
-:::caution
-The installer by default deploys a starter-pack with example to immediatly start to play with Krateo PlatformOps. The starter-pack is available here: https://github.com/krateoplatformops/installer-starter-pack.
+:::info
+The installer by default deploys a starter-pack with example to immediately start to play with Krateo PlatformOps. The starter-pack is available here: https://github.com/krateoplatformops/installer-starter-pack.
 :::
 
 Wait until Krateo frontend is running:

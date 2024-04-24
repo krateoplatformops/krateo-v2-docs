@@ -238,11 +238,11 @@ Helm charts use values.schema.json files extensively. It plays a pivotal role in
 
 By incorporating Values.schema.json into your Helm chart development process, you're not just enhancing validation, documentation, and user experience. You're also significantly boosting the reliability and maintainability of your Kubernetes applications deployed via Helm.
 
-Krateo uses the values.schema.json to generate dynamically the Custom Resource Definition of the composition and the rendering of the WebUI form presented to the end user while instantiating the template. To consult every kind of check available through JSON Schema: `[https://json-schema.org/draft/2020-12/json-schema-validation](https://json-schema.org/draft/2020-12/json-schema-validation)`
+Krateo uses the values.schema.json to generate dynamically the Custom Resource Definition of the composition and the rendering of the WebUI form presented to the end user while instantiating the template. To consult every kind of check available through JSON Schema: [https://json-schema.org/draft/2020-12/json-schema-validation](https://json-schema.org/draft/2020-12/json-schema-validation)
 
 There is an example of Krateo template (krateo-template-fireworksapp) already converted to an Helm chart available here:
 
-* `[https://github.com/krateoplatformops/krateo-template-fireworksapp](https://github.com/krateoplatformops/krateo-template-fireworksapp)`
-* `[https://github.com/krateoplatformops/krateo-v2-template-fireworksapp](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp)`
+* [https://github.com/krateoplatformops/krateo-template-fireworksapp](https://github.com/krateoplatformops/krateo-template-fireworksapp)
+* [https://github.com/krateoplatformops/krateo-v2-template-fireworksapp](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp)
 
-Here you can verify a valid `values.schema.json` generated for this template: `[https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json)`
+Here you can verify a valid `values.schema.json` generated for this template: [https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json)

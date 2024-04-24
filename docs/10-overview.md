@@ -36,7 +36,8 @@ Architecture is based on these principles:
 
 * A certified Kubernetes distribution
 * Kubernetes minimal requirements:
-  * 6vCPUs and 12GiB RAM – no storage required
+  * 6vCPUs and 12GiB RAM
+  * StorageClass available
   * Ability to expose service of type LoadBalancer (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/)
   * Networking requirements
     * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io

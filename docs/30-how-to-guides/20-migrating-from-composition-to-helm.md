@@ -245,4 +245,4 @@ There is an example of Krateo template (krateo-template-fireworksapp) already co
 * `[https://github.com/krateoplatformops/krateo-template-fireworksapp](https://github.com/krateoplatformops/krateo-template-fireworksapp)`
 * `[https://github.com/krateoplatformops/krateo-v2-template-fireworksapp](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp)`
 
-Here you can verify a valid `values.schema.json` generated for this template: <https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json>
+Here you can verify a valid `values.schema.json` generated for this template: `[https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/chart/values.schema.json)`

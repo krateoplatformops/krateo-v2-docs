@@ -79,7 +79,7 @@ At the end of this process:
 * The Krateo Composable Portal will be accessible at [localhost:30080](https://localhost:30080).
 
 </TabItem>
-<TabItem value="kind" label="LoadBalancer with external IP">
+<TabItem value="loadbalancer" label="LoadBalancer with external IP">
 
 Krateo PlatformOps can be exposed via LoadBalancer service type.
 
@@ -150,7 +150,7 @@ kubectl wait krateoplatformops krateo --for condition=Ready=True --timeout=300s 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-<Tabs groupId="local-cluster-start">
+<Tabs groupId="advanced-installation">
 <TabItem value="disable" label="Disable starter-pack">
 
 If you're not interested in the Krateo PlatformOps starter-pack, you can disable this option and you'll get a deployment without examples.

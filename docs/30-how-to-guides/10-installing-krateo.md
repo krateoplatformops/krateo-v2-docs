@@ -76,7 +76,7 @@ launch a new one.
 
 At the end of this process:
 
-* The Krateo Composable Portal will be accessible at [localhost:30080](https://localhost:30080).
+* The Krateo Composable Portal will be accessible at [localhost:30080](http://localhost:30080).
 
 </TabItem>
 <TabItem value="loadbalancer" label="LoadBalancer with external IP">

@@ -79,9 +79,9 @@ At the end of this process:
 * The Krateo Composable Portal will be accessible at [localhost:30080](http://localhost:30080).
 
 </TabItem>
-<TabItem value="loadbalancer" label="LoadBalancer with external IP">
+<TabItem value="loadbalancer-ip" label="LoadBalancer with external IP">
 
-Krateo PlatformOps can be exposed via LoadBalancer service type.
+Krateo PlatformOps can be exposed via LoadBalancer service type that exposes an IP.
 
 ```shell
 helm repo add krateo https://charts.krateo.io
@@ -114,6 +114,46 @@ At the end of this process:
 
 ```shell
 kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
+```
+
+* The Krateo Composable Portal will be accessible at previous IP at port 8080.
+
+</TabItem>
+<TabItem value="loadbalancer-hostname" label="LoadBalancer with external hostname">
+
+Krateo PlatformOps can be exposed via LoadBalancer service type that exposes a hostname.
+
+```shell
+helm repo add krateo https://charts.krateo.io
+helm repo update krateo
+
+helm upgrade installer installer \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --set krateoplatformops.service.type=LoadBalancer \
+  --set krateoplatformops.service.externalIpAvailable=false \
+  --install \
+  --wait
+```
+
+The following command will install Krateo with default configuration and a user-specified admin password:
+
+:::info
+Default values deploy Krateo exposing services via LoadBalancer:
+* 8080 - Krateo Frontend
+* 8081 - Krateo BFF
+* 8082 - Krateo AuthN Service
+* 8443 - Krateo Gateway
+* 443 - vCluster API Server Port
+:::
+
+At the end of this process:
+
+* Find the Krateo Composable Portal IP:
+
+```shell
+kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 
 * The Krateo Composable Portal will be accessible at previous IP at port 8080.

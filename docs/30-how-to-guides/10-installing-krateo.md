@@ -196,7 +196,13 @@ import TabItem from '@theme/TabItem';
 If you're not interested in the Krateo PlatformOps starter-pack, you can disable this option and you'll get a deployment without examples.
 
 ```shell
-helm install installer krateo/installer --create-namespace -n krateo-system --set krateoplatformops.init.service=LoadBalancer --wait
+helm upgrade installer installer \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --set krateoplatformops.init.enabled=false \
+  --install \
+  --wait
 ```
 
 </TabItem>
@@ -242,7 +248,13 @@ Krateo PlatformOps installer can be configured with a custom workflow. You can f
 1. Proceed with installation, using your modified values:
 
    ```shell
-   helm install installer krateo/installer --create-namespace -n krateo-system  --values krateo-values.yaml --wait
+   helm upgrade installer installer \
+     --repo https://charts.krateo.io \
+     --namespace krateo-system \
+     --create-namespace \
+     --values krateo-values.yaml \
+     --install \
+     --wait
    ```
 
 </TabItem>

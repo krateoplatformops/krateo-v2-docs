@@ -15,10 +15,6 @@ Krateo allows for:
 - **Focusing on the management of services**: Krateo frees the user from most of the burden of cluster management, giving them the ability to entirely focus on the services that must be run. This results a phenomenal user experience that drastically reduces wastes of time.
 - **Single-handedly monitoring and controlling resources**: Krateo also acts as a centralized control plane, letting users monitor anything ranging from CI/CD pipelines to pod statuses and open tickets on your JIRA. All the information you need is present on a single page -- you'll never have to guess the correct dashboard ever again.
 
-:::info
-Join the Krateo Community [Discord server](https://discord.gg/sjca4QvVTa)!
-:::
-
 ## Architecture
 
 Architecture is based on these principles:
@@ -27,8 +23,6 @@ Architecture is based on these principles:
 * Any operation carried out via the portal must also be possible from the Kubernetes CLI (_kubectl_)
 * Authentication is completely delegated to the Kubernetes server API
 * Authorization is completely delegated to the Kubernetes RBAC
-* Krateo uses Kubernetes Custom Resources (and therefore the control plane etcd) as a database
-* Krateo does not use volumes
 
 ![Architecture](../static/img/krateo-architecture.png)
 
@@ -38,7 +32,6 @@ Architecture is based on these principles:
 * Kubernetes minimal requirements:
   * 6vCPUs and 12GiB RAM
   * StorageClass available
-  * Ability to expose service of type LoadBalancer (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/)
   * Networking requirements
     * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io
 

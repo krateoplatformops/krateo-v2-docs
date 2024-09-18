@@ -11,8 +11,15 @@ import TabItem from '@theme/TabItem';
 This guide presents a basic introduction to Krateo PlatformOps. Together, we will:
 
 * Install Krateo PlatformOps into a local or managed Kubernetes cluster.
+* Deploy the FireworksApp Template
+* Deploy a Composition leveraging the FireworksApp Template
+* Destroy the cluster
 
-### Starting a Local Cluster
+## Requirements
+
+The FireworksApp Template will create a new public GitHub repository in your organization. Fill the form according to the organization name.
+
+## Deploy Krateo PlatformOps on a local cluster (kind)
 
 Any of the following approaches require [Helm](https://helm.sh/docs/) v3.13.1 or
 greater to be installed.
@@ -26,11 +33,8 @@ just for this quickstart using
 [kind](https://kind.sigs.k8s.io/#installation-and-usage).
 
 ```shell
-curl -L https://github.com/krateoplatformops/krateo/releases/latest/download/kind-vcluster.sh | sh
+curl -L https://github.com/krateoplatformops/krateo-v2-docs/releases/latest/download/kind.sh | sh
 ```
-:::info
-We are using [vCluster](https://github.com/loft-sh/vcluster/) to install Krateo in an isolated environment.
-:::
 
 :::info
 While this option is a bit more complex than using Docker Desktop or OrbStack
@@ -39,68 +43,85 @@ reaches a state you are dissatisfied with, you can simply destroy it and
 launch a new one.
 :::
 
-At the end of this process:
-
-* The Krateo Composable Portal will be accessible at [localhost:30080](https://localhost:30080).
-
-</TabItem>
-</Tabs>
-
-### Leveraging an existing Kubernetes cluster (with LoadBalancer)
-
-Any of the following approaches require [Helm](https://helm.sh/docs/) v3.13.1 or
-greater to be installed.
-
-<Tabs groupId="existing-cluster-start">
-<TabItem value="install-mac-intel" label="install-mac-intel">
-
-This quickstart will expose each Krateo component via LoadBalancer - please use a Kubernetes setup that allows automatically creation of Kubernetes Service of type LoadBalancer.
-
-If you have any a kubeconfig already setup, you can test Krateo with the following script:
-
+Wait for Krateo PlatformOps to be up&running:
 ```shell
-curl -L https://github.com/krateoplatformops/krateo/releases/latest/download/install-mac-intel.sh | sh
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
 ```
 
-:::info
-We are using [vCluster](https://github.com/loft-sh/vcluster/) to install Krateo in an isolated environment.
-:::
-
 At the end of this process:
 
-* The Krateo Composable Portal will be accessible at:
-
+* The *Krateo Composable Portal* will be accessible at [localhost:30080](http://localhost:30080).
+* The *admin* user password can be retrieved with the following command:
 ```shell
-export SERVICE_IP=$(kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system -o json | jq -r '.status.loadBalancer.ingress[0].ip')
-echo http://$SERVICE_IP:8080
+kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d
 ```
 </TabItem>
 </Tabs>
 
-The username is `cyberjoker` and password is `123456`.
+Login into the Krateo Composable Portal:
 
-## Cleaning up
+![Login](../static/img/01-Quickstart-Login.png)
 
-Congratulations! You've just gotten hands on with Krateo PlatformOps for the first time!
+## Deploy the FireworksApp Template
 
-Now let's clean up!
+We will leverage the [FireworksApp template](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp).
+Follow the [README](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md) instructions to deploy the template leveraging [Krateo Composable Portal](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md#with-krateo-composable-portal).
 
-<Tabs groupId="cluster-delete">
-<TabItem value="kind" label="kind">
+Wait for the *CompositionDefinition* to become Ready:
+```shell
+kubectl wait compositiondefinition fireworksapp --for condition=Ready=True --namespace fireworksapp-system --timeout=300s
+```
+
+Check the *Templates* section in the Portal:
+
+![Templates](../static/img/02-Quickstart-Template.png)
+
+## Deploy a Composition leveraging the FireworksApp Template
+
+Click on the *FireworksApp* card, a form will appear on the right:
+
+![Form](../static/img/03-Quickstart-Form.png)
+
+Fill the form fields in the following way:
+
+| Key  | Value |
+| ------------- | ------------- |
+| name  | krateo-demo  |
+| namespace  | fireworksapp-system  |
+| namespace  | fireworksapp-system  |
+| git.toRepo.org | *your github organization* |
+
+A new Composition is now available:
+
+![Composition](../static/img/04-Quickstart-Composition.png)
+
+Let's dig into the Composition tabs:
+
+### Overview
+
+![Composition-Overview](../static/img/05-Quickstart-Composition-Overview.png)
+
+### Composition Status
+
+![Composition-CompositionStatus](../static/img/06-Quickstart-Composition-CompositionStatus.png)
+
+### Application Status
+
+![Composition-ApplicationStatus](../static/img/07-Quickstart-Composition-ApplicationStatus.png)
+
+### Events
+
+![Composition-Events](../static/img/08-Quickstart-Composition-Events.png)
+
+## Destroy the cluster
 
 Simply destroy the cluster:
 
+<Tabs groupId="local-cluster-start">
+<TabItem value="kind" label="kind">
+
 ```shell
 kind delete cluster --name krateo-quickstart
-```
-
-</TabItem>
-<TabItem value="install-mac-intel" label="install-mac-intel">
-
-Uninstall Krateo PlatformOps installer:
-
-```shell
-helm uninstall installer -n krateo-system
 ```
 
 </TabItem>

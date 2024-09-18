@@ -18,10 +18,9 @@ It is important to note that Krateo does not have its own separate backend, but 
 
 KCP consists of the following features:
 * krateo-frontend
-* krateo-bff
-* krateo-gateway
-* frontend-provider
-* authn-service
+* authn
+* bff
+* backend
 
 ## krateo-frontend
 
@@ -33,13 +32,17 @@ Another important requirement is that the portal must be easily extendable witho
 
 In summary, the Krateo frontend queries the backend (Kubernetes) via the backend for the frontend to know which layouts and graphic elements it must process with client-side runtime rendering.
 
-## krateo-bff
+## bff
 
 A critical architectural choice behind Krateo is that there must be no channel-specific logic querying the backend. In other words, what is displayed and implemented via the portal must be exactly reproducible via the Kubernetes CLI (aka kubectl).
 
 This ensures that all business logic is centralized.
 
-The task of krateo-bff (krateo backend for frontend) is to declaratively provide how the graphic elements of krateo-frontend must be enhanced.
+The BFF (Backend for Frontend) repository is designed to serve as an intermediary layer between the Portal and Kubernetes APIs.
+
+## backend
+
+The task of bff (backend for frontend) is to declaratively provide how the graphic elements of krateo-frontend must be enhanced.
 
 👇 Below is an example snippet:
 
@@ -53,21 +56,31 @@ metadata:
 stringData:
   server-url: https://jsonplaceholder.typicode.com
 ---
-apiVersion: widgets.ui.krateo.io/v1alpha1
-kind: CardTemplate
+apiVersion: templates.krateo.io/v1alpha1
+kind: Widget
 metadata:
-  name: one
+  name: external-api
   namespace: demo-system
 spec:
+  type: card
+  propsRef:
+    name: card-props
+    namespace: demo-system
+  actions:
+  - template:
+      apiVersion: templates.krateo.io/v1alpha1
+      resource: forms
+      name: fireworksapp
+      namespace: demo-system
+  - template:
+      apiVersion: templates.krateo.io/v1alpha1
+      resource: widgets
+      name: external-api
+      namespace: demo-system
   app:
-    title: ${ .api2.items[0] | (.name  + " -> " + .email) }
-    content: ${ .api2.items[0].body }
-    actions:
-    - name: view
-      endpointRef:
-        name: typicode-endpoint
-        namespace: demo-system
-      path: ${ "/todos/1/comments/" + (.api2.items[0].id|tostring) }
+    template:
+      title: ${ .api2.items[0] | (.name  + " -> " + .email) }
+      content: ${ .api2.items[0].body }
   api:
   - name: api1
     path: "/todos/1"
@@ -88,57 +101,20 @@ spec:
     - 'Accept: application/json'
  ```
 
-A _cardTemplate_ is a Krateo graphic component composed of various properties (_spec.app_ section).
+A _Widget_ is a Krateo graphic component composed of various properties (_spec.app_ section).
 
-The widget includes call2actions such as deleting the cardTemplate itself (via the trash can button). Any action can be declared under the _spec.app.actions_ section.
+The widget includes call2actions such as deleting the cardTemplate itself (via the trash can button). Any action can be declared under the _spec.actions_ section.
 
 Properties can be filled in manually or obtained by querying an API.
 
-This API can represent a further call to the Kubernetes server API (and in this case the krateo-bff will make a call using the client certificate) or to an external API (and in this case it will use the explicit credentials).
+This API can represent a further call to the Kubernetes server API (and in this case the backend will make a call using the client certificate) or to an external API (and in this case it will use the explicit credentials).
 
-The krateo-bff can also make a sequence of API calls and can also iterate an array arrived in response to the call.
+The backend can also make a sequence of API calls and can also iterate an array arrived in response to the call.
 
-Ulteriori esempi possono essere trovati qui: https://github.com/krateoplatformops/krateo-bff/blob/main/testdata/.
+Further examples can be found here: https://github.com/krateoplatformops/backend/tree/main/testdata.
 
-## krateo-gateway
+## authn
 
-The introduction of the krateo-gateway (https://github.com/krateoplatformops/krateo-gateway) between the clients (kubectl or krateo-frontend) and the Kubernetes API was born from the need to analyze in detail the resources on which the user has specific permissions.
-
-For example, Kubernetes RBAC allows you to precisely define the fact that a user can only see certain resources with a specific name. In this case, the user cannot see all the resources of a particular type but only those with that name.
-
-Below is an example role that shows this case:
-
-```yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: dev-delete-cardtemplate-one-in-demosystem-namespace
-  namespace: demo-system
-rules:
-- apiGroups:
-  - widgets.ui.krateo.io
-  resources:
-  - cardtemplates
-  resourceNames:
-  - one
-  verbs:
-  - get
-  - delete
- ```
-
-The krateo-gateway acts for two purposes:
-* instead of returning a _deny_ to the user because he does not have the LIST verb, it returns those resources for which he has an associated GET
-* reports in the response an annotation "krateo.io/allowed-verbs" which lists all the verbs that that user has associated with the queried resource
-
-This second information is essential for the _krateo-frontend_, which therefore knows which of the various actions to enable or not.
-
-In fact, this allows you to precisely define what each user can see on the Krateo frontend because the associated RBAC is exactly that of Kubernetes
-
-## frontend-provider
-
-## authn-service
-
-Krateo does not have its backend or database but uses Kubernetes to meet these two needs.
 Kubernetes can provide different authentication modes (https://kubernetes.io/docs/reference/access-authn-authz/authentication/#authentication-strategies), but two are always present by default: authentication via token or certificate.
 
 The first is theoretically used for access by 'technical' users, while the second is used by 'physical' users. We decided to use the second because it is conceptually more correct.

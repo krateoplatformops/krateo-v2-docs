@@ -3,6 +3,9 @@ description: Learn how to install Krateo PlatformOps using this step-by-step gui
 sidebar_label: Installing Krateo PlatformOps
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Installing Krateo PlatformOps
 
 ## Basic Installation

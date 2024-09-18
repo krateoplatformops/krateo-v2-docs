@@ -96,6 +96,26 @@ At the end of this process:
 * The Krateo Composable Portal will be accessible at [localhost:30080](http://localhost:30080).
 
 </TabItem>
+<TabItem value="OpenShift" label="OpenShift">
+
+Krateo PlatformOps can be exposed via NodePort:
+
+```shell
+helm repo add krateo https://charts.krateo.io
+helm repo update krateo
+
+helm upgrade installer installer \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --set krateoplatformops.vcluster.enabled=true \
+  --set krateoplatformops.vcluster.openshift.enable=force \
+  --install \
+  --version 2.1.6 \
+  --wait
+```
+
+</TabItem>
 <TabItem value="loadbalancer-ip" label="LoadBalancer with external IP">
 
 <Tabs groupId="kubernetes-version">
@@ -184,6 +204,50 @@ kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system 
 <TabItem value="loadbalancer-hostname" label="LoadBalancer with external hostname">
 
 <Tabs groupId="kubernetes-version">
+<TabItem value="EKS" label="EKS">
+
+Krateo PlatformOps can be exposed via LoadBalancer service type that exposes a hostname.
+
+```shell
+helm repo add krateo https://charts.krateo.io
+helm repo update krateo
+
+helm upgrade installer installer \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --set krateoplatformops.service.type=LoadBalancer \
+  --set krateoplatformops.service.externalIpAvailable=false \
+  --set krateoplatformops.service.annotations."service.beta.kubernetes.io/aws-load-balancer-type"="nlb" \
+  --set krateoplatformops.service.annotations."service.beta.kubernetes.io/aws-load-balancer-internal"=false \
+  --install \
+  --version 2.1.6 \
+  --wait
+```
+
+:::info
+*service.beta.kubernetes.io/aws-load-balancer-type*: Use "nlb" for Network Load Balancer or "clb" for Classic Load Balancer
+*service.beta.kubernetes.io/aws-load-balancer-internal*: Set to "true" if you want an internal load balancer
+:::
+
+The following command will install Krateo with default configuration and a user-specified admin password:
+
+:::info
+Default values deploy Krateo exposing services via LoadBalancer:
+* 8080 - Krateo Frontend
+* 8081 - BFF
+* 8082 - AuthN
+:::
+
+At the end of this process:
+
+* Find the Krateo Composable Portal hostname:
+
+```shell
+kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+```
+
+</TabItem>
 <TabItem value=">1.28" label=">1.28">
 
 Krateo PlatformOps can be exposed via LoadBalancer service type that exposes a hostname.
@@ -199,6 +263,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
+  --version 2.1.6 \
   --wait
 ```
 
@@ -239,6 +304,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
+  --version 2.1.6 \
   --wait
 ```
 

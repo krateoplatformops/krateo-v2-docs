@@ -64,5 +64,5 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.1.6 \
+  --version 2.1.8 \
   --wait

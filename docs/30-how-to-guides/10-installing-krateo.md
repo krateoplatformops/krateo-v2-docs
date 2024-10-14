@@ -64,8 +64,10 @@ nodes:
     hostPort: 30083
   - containerPort: 30084 # Krateo Terminal Server
     hostPort: 30084
-  - containerPort: 30084 # Krateo FireworksApp Frontend
+  - containerPort: 30085 # Krateo Resource Tree Handler
     hostPort: 30085
+  - containerPort: 30086 # Krateo FireworksApp Frontend
+    hostPort: 30086
   - containerPort: 31443 # vCluster API Server Port
     hostPort: 31443
 networking:
@@ -80,7 +82,7 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 
@@ -111,7 +113,7 @@ helm upgrade installer installer \
   --set krateoplatformops.vcluster.enabled=true \
   --set krateoplatformops.vcluster.openshift.enable=force \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 
@@ -134,7 +136,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=true \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 
@@ -174,7 +176,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=true \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 The following command will install Krateo with default configuration and a user-specified admin password:
@@ -221,7 +223,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.annotations."service.beta.kubernetes.io/aws-load-balancer-type"="nlb" \
   --set krateoplatformops.service.annotations."service.beta.kubernetes.io/aws-load-balancer-internal"=false \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 
@@ -263,7 +265,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 
@@ -304,7 +306,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
-  --version 2.1.6 \
+  --version 2.2.0 \
   --wait
 ```
 

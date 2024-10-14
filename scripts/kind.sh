@@ -48,8 +48,10 @@ nodes:
     hostPort: 30083
   - containerPort: 30084 # Krateo Terminal Server
     hostPort: 30084
-  - containerPort: 30084 # Krateo FireworksApp Frontend
+  - containerPort: 30085 # Krateo Resource Tree Handler
     hostPort: 30085
+  - containerPort: 30086 # Krateo FireworksApp Frontend
+    hostPort: 30086
   - containerPort: 31443 # vCluster API Server Port
     hostPort: 31443
 networking:
@@ -64,5 +66,5 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.1.8 \
+  --version 2.2.0 \
   --wait

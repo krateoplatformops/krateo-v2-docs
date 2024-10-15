@@ -1,3 +1,10 @@
+---
+slug: /
+sidebar_label: Operator Generator from OpenAPI specification
+description: Find out more about Krateo - a self-service platform for multi-cloud native resources based on Kubernetes
+
+---
+
 # oasgen-provider
 A k8s controller that generates CRDs and controller to manage resources from OpenAPI Specification (OAS) 3.1 (also 3.0 is supported).
 

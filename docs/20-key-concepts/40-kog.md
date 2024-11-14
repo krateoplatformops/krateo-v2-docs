@@ -40,17 +40,13 @@ The second component of Krateo Operator Generator (KOG) is the 𝘳𝘦𝘴𝘵-
 
 🔧 Key Features:
 
-* 𝗖𝗥𝗗 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗶𝗼𝗻: Automatically creates Kubernetes Custom Resource Definitions that match your OpenAPI specifications
+- **Resource Management**: Automatically creates Kubernetes Custom Resource Definitions that match your OpenAPI specifications
 
-* 𝗖𝗼𝗻𝘁𝗿𝗼𝗹𝗹𝗲𝗿 𝗚𝗲𝗻𝗲𝗿𝗮𝘁𝗶𝗼𝗻: Produces controllers that handle the lifecycle of your custom resources
+- **Automated Workflow**: Reduces manual coding and accelerates operator development
 
-* 𝗥𝗲𝘀𝗼𝘂𝗿𝗰𝗲 𝗠𝗮𝗻𝗮𝗴𝗲𝗺𝗲𝗻𝘁: Enables full CRUD operations on your custom resources within Kubernetes
+- **Easy Maintenance**: Updates to your API automatically reflect in your Kubernetes operators
 
-💪 Benefits:
-
-* 𝘈𝘶𝘵𝘰𝘮𝘢𝘵𝘦𝘥 𝘞𝘰𝘳𝘬𝘧𝘭𝘰𝘸: Reduces manual coding and accelerates operator development
-* 𝘚𝘵𝘢𝘯𝘥𝘢𝘳𝘥𝘪𝘻𝘢𝘵𝘪𝘰𝘯: Ensures consistency between your API specification and Kubernetes resources
-* 𝘌𝘢𝘴𝘺 𝘔𝘢𝘪𝘯𝘵𝘦𝘯𝘢𝘯𝘤𝘦: Updates to your API automatically reflect in your Kubernetes operators
+- **Resource Management**: Enables full CRUD operations on your custom resources within Kubernetes
 
 Check the detailed [README](https://github.com/krateoplatformops/rest-dynamic-controller/blob/main/README.md).
 

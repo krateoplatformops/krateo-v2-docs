@@ -192,7 +192,6 @@ kubectl create secret generic docker-hub --from-literal=token=your_token -n krat
 ```
 
 Apply the Manifest:
-<details><summary>Check the Manifest</summary>
 
 ```yaml
 apiVersion: core.krateo.io/v1alpha1
@@ -213,8 +212,6 @@ spec:
         name: docker-hub
         namespace: krateo-system
 ```
-
-</details>
 
 #### Helm Repository
 

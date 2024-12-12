@@ -27,7 +27,7 @@ The [core-provider](https://github.com/krateoplatformops/core-provider) is the f
 
 ### Architecture
 
-![core-provider Architecture Image](,/_static/img/core-provider.png "core-provider Architecture")
+![core-provider Architecture Image](./static/img/core-provider.png "core-provider Architecture")
 
 Here's the updated Overview section with more details about authentication and RBAC generation:
 
@@ -102,8 +102,6 @@ Upon deleting the CR, the `composition-dynamic-controller` instance is undeploye
 
 ### Upgrade Chart Version
 
-<details><summary>CompositionDefinition fireworksapp source Manifest</summary>
-
 ```yaml
 apiVersion: core.krateo.io/v1alpha1
 kind: CompositionDefinition
@@ -118,8 +116,6 @@ spec:
     url: https://charts.krateo.io
     version: 1.1.5
 ```
-
-</details>
 
 #### Update the Fireworksapp Chart in the `CompositionDefinition`
 

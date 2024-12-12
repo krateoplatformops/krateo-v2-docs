@@ -28,12 +28,14 @@ Architecture is based on these principles:
 
 ## Requirements
 
-* A certified Kubernetes distribution
+* A certified Kubernetes distribution with version v1.28, v1.29 or v1.30
 * Kubernetes minimal requirements:
   * 6vCPUs and 12GiB RAM
   * StorageClass available
   * Networking requirements
     * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io
+
+If the Kubernetes version is minor than v1.28 or it the distribution is EKS, Krateo PlatformOps can be deployed via vCluster.
 
 ## Next Steps
 

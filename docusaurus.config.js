@@ -41,7 +41,7 @@ const config = {
       ({
         docs: {
           sidebarPath: './sidebars.js',
-          sidebarCollapsible: false,
+          sidebarCollapsible: true,
           routeBasePath: '/', // Serve the docs at the site's roo
         },
         blog: false,
@@ -58,6 +58,11 @@ const config = {
     ({
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       navbar: {
         title: 'Docs',
         logo: {

@@ -221,8 +221,6 @@ kubectl create secret generic helm-repo --from-literal=token=your_token -n krate
 
 Apply the Manifest:
 
-<details><summary>Check the Manifest</summary>
-
 ```yaml
 apiVersion: core.krateo.io/v1alpha1
 kind: CompositionDefinition
@@ -243,8 +241,6 @@ spec:
         name: helm-repo
         namespace: krateo-system
 ```
-
-</details>
 
 ### Configuration
 

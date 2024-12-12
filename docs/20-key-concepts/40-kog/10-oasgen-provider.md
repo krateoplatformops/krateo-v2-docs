@@ -34,7 +34,7 @@ A k8s controller that generates CRDs and controller to manage resources from Ope
 `oasgen-provider` analyzes OAS 3.1 definitions to discern the structure and requirements of the intended resources. Utilizing this information, it orchestrates the deployment of the [rest-dynamic-controller](https://github.com/krateoplatformops/rest-dynamic-controller), specifically tasked with managing resources that correspond to the type defined by the CRD.
 
 ### Architecture
-![Generator Architecture Image](./static/img/generator.png "Generator Architecture")
+![Generator Architecture Image](/img/generator.png "Generator Architecture")
 
 ## Getting Started
 

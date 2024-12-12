@@ -1,4 +1,4 @@
-# Event SSE
+# eventsse
 
 Streams events received from [Krateo EventRouter](https://github.com/krateoplatformops/eventrouter) using [Server-Sent Events (SSE)](https://en.wikipedia.org/wiki/Server-sent_events).
 

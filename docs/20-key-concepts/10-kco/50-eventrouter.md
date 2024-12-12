@@ -1,4 +1,4 @@
-# EventRouter
+# eventrouter
 
 This service serves as an active watcher of event resource in the kubernetes system, which:
 

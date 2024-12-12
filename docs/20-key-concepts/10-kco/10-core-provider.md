@@ -27,7 +27,7 @@ The [core-provider](https://github.com/krateoplatformops/core-provider) is the f
 
 ### Architecture
 
-![core-provider Architecture Image](./static/img/core-provider.png "core-provider Architecture")
+![core-provider Architecture Image](/img/core-provider.png "core-provider Architecture")
 
 Here's the updated Overview section with more details about authentication and RBAC generation:
 

@@ -24,7 +24,7 @@ Architecture is based on these principles:
 * Authentication is completely delegated to the Kubernetes server API
 * Authorization is completely delegated to the Kubernetes RBAC
 
-![Architecture](../static/img/krateo-architecture.png)
+![Architecture](/img/krateo-architecture.png)
 
 ## Requirements
 

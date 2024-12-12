@@ -86,7 +86,7 @@ This is an extension API server to work with the aggregation layer that allows t
 
 ## Architecture
 
-![Krateo Backend](./static/img/backend-architecture.png)
+![Krateo Backend](/img/backend-architecture.png)
 
 ## API
 

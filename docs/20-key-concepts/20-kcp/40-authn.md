@@ -1,4 +1,4 @@
-# Krateo AuthN Service
+# authn
 
 ## List available strategies
 

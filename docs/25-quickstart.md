@@ -58,7 +58,7 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 </TabItem>
 </Tabs>
 
-Login into the Krateo Composable Portal:
+Login into the Krateo Composable Portal: [http://localhost:30080/](http://localhost:30080/)
 
 ![Login](../static/img/01-Quickstart-Login.png)
 

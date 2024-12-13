@@ -1,4 +1,4 @@
-# Backend
+# backend
 
 The task of backend is to declaratively provide how the graphic elements of krateo-frontend must be enhanced.
 

@@ -40,7 +40,7 @@ nodes:
   extraPortMappings:
   - containerPort: 30080 # Krateo Portal
     hostPort: 30080
-  - containerPort: 30081 # Krateo BFF
+  - containerPort: 30081 # Krateo Snowplow
     hostPort: 30081
   - containerPort: 30082 # Krateo AuthN Service
     hostPort: 30082
@@ -66,5 +66,5 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.3.0 \
+  --version 2.3.1 \
   --wait

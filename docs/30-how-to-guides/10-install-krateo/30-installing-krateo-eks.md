@@ -40,7 +40,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.annotations."service.beta.kubernetes.io/aws-load-balancer-type"="nlb" \
   --set krateoplatformops.service.annotations."service.beta.kubernetes.io/aws-load-balancer-internal"=false \
   --install \
-  --version 2.3.0 \
+  --version 2.3.1 \
   --wait
 ```
 

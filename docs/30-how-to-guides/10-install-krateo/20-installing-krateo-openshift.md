@@ -36,7 +36,7 @@ helm upgrade installer installer \
   --create-namespace \
   --set krateoplatformops.backend.etcd.openshift.enable=force \
   --install \
-  --version 2.3.0 \
+  --version 2.3.1 \
   --wait
 ```
 
@@ -73,7 +73,7 @@ helm upgrade installer installer \
   --set krateoplatformops.vcluster.enabled=true \
   --set krateoplatformops.vcluster.openshift.enable=force \
   --install \
-  --version 2.3.0 \
+  --version 2.3.1 \
   --wait
 ```
 

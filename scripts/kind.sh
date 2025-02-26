@@ -13,6 +13,11 @@ if ! kind --version >/dev/null 2>&1 ; then
   exit 1
 fi
 
+if ! helm --version >/dev/null 2>&1 ; then
+  echo "Missing Helm binary, please install it from https://github.com/helm/helm#install"
+  exit 1
+fi
+
 helm repo add krateo https://charts.krateo.io
 
 helm repo update krateo

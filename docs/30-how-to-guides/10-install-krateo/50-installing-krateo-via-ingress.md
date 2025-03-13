@@ -29,7 +29,7 @@ Krateo PlatformOps can be exposed via Ingress in the following way:
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.3.1 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -52,20 +52,20 @@ krateoplatformops:
       # - secretName: frontend-krateo-certificate
       #   hosts:
       #     - app.krateoplatformops.io
-    bff:
+    snowplow:
       className: ""
       annotations: {}
         # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "bff.krateoplatformops.io"
+        # external-dns.alpha.kubernetes.io/hostname: "snowplow.krateoplatformops.io"
       hosts:
-        - host: bff.krateoplatformops.io
+        - host: snowplow.krateoplatformops.io
           paths:
             - path: /
               pathType: Prefix
       tls: []
-      # - secretName: bff-krateo-certificate
+      # - secretName: snowplow-krateo-certificate
       #   hosts:
-      #     - bff.krateoplatformops.io
+      #     - snowplow.krateoplatformops.io
     authn:
       className: ""
       annotations: {}
@@ -141,7 +141,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.3.1 \
+  --version 2.4.0 \
   --wait
 ```
 
@@ -166,7 +166,7 @@ Krateo PlatformOps can be isolated via vCluster:
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.3.1 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -291,7 +291,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.3.1 \
+  --version 2.4.0 \
   --wait
 ```
 

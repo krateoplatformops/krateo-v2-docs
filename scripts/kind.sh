@@ -22,7 +22,7 @@ helm repo add krateo https://charts.krateo.io
 
 helm repo update krateo
 
-kind create cluster --wait 120s --image kindest/node:v1.30.4 --config - <<EOF
+kind create cluster --wait 120s --image kindest/node:v1.31.6 --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: krateo-quickstart
@@ -71,5 +71,5 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.3.1 \
+  --version 2.4.0 \
   --wait

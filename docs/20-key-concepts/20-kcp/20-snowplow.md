@@ -66,7 +66,7 @@ The `status` field is an open-ended object that preserves unknown fields for sto
 
 ## Examples
 
-Some `RESTAction` examples can be found [here](testdata/restactions/). Lets check the one that query [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com) API:
+Some `RESTAction` examples can be found [here](https://github.com/krateoplatformops/snowplow/tree/main/testdata/restactions). Lets check the one that query [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com) API:
 
 ```yaml
 ---

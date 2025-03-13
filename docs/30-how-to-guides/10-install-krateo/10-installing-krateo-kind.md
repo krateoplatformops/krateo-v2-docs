@@ -35,7 +35,7 @@ Krateo PlatformOps is exposed via NodePort by default:
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
 
-kind create cluster --wait 120s --image kindest/node:v1.30.4 --config - <<EOF
+kind create cluster --wait 120s --image kindest/node:v1.31.6 --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: krateo-quickstart
@@ -58,7 +58,7 @@ nodes:
   extraPortMappings:
   - containerPort: 30080 # Krateo Portal
     hostPort: 30080
-  - containerPort: 30081 # Krateo BFF
+  - containerPort: 30081 # Krateo Snowplow
     hostPort: 30081
   - containerPort: 30082 # Krateo AuthN Service
     hostPort: 30082
@@ -68,8 +68,10 @@ nodes:
     hostPort: 30084
   - containerPort: 30085 # Krateo Resource Tree Handler
     hostPort: 30085
-  - containerPort: 30086 # Krateo FireworksApp Frontend
+  - containerPort: 30086 # Krateo FinOps Database Handler
     hostPort: 30086
+  - containerPort: 30087 # Krateo FireworksApp Frontend
+    hostPort: 30087
   - containerPort: 31443 # vCluster API Server Port
     hostPort: 31443
 networking:
@@ -84,7 +86,7 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.3.1 \
+  --version 2.4.0 \
   --wait
 ```
 

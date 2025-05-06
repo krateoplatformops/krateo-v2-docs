@@ -3,9 +3,7 @@ The Krateo Composable FinOps module is a tool to collect costs and metrics from 
 
 ## Complete Architecture
 The complete architecture is summarized by the following graph:
-<p align="center">
-<img src="https://github.com/user-attachments/assets/8e6eeb71-2170-421e-9ea6-e6b9d55611b7" width="800">
-</p>
+![Krateo Composable FinOps Overview](/img/KCF-overview.png)
 
 The architecture relies on the concept of exporters and scrapers, a duo of applications that is tasked with collecting information from an API source, exporting it, and then scraping it for storage and later utilization. The exporter is basically a webservice that exposes an endpoint where data can be read from in a certain format, in this case, Prometheus'. The scraper, instead, is a service that connects to the exporter and collects all the data (i.e., by scraping it) and then querying the database to store it.
 

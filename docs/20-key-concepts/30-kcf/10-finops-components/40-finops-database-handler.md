@@ -21,7 +21,7 @@ The handler calls the database HTTP endpoint to perform queries (both input and 
 The result is returned by the endpoint.
 
 ## Architecture
-![Krateo Composable FinOps Database Handler](_diagrams/architecture.png)
+![Krateo Composable FinOps Database Handler](/img/finops-database-handler-architecture.png)
 
 ## API
 All endpoints must have the basic auth header field compiled with the username and password of the database. The password can also be a base64 encoded string. Note: if you pass a base64 string you will find a warning in the log that notifies a failed connection attempt: this is expected.

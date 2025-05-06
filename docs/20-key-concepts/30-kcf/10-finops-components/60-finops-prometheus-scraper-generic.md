@@ -12,7 +12,7 @@ For an in-depth look at the architecture and how to configure all the components
 This component is tasked with scraping a given Prometheus endpoint. The configuration is obtained from a file mounted inside the container in "/config/config.yaml". The scraper uploads all the data to a CrateDB instance, through the [finops-database-handler](https://github.com/krateoplatformops/finops-database-handler), as reported in the database-config field.
 
 ## Architecture
-![Krateo Composable FinOps Prometheus Scraper Generic](resources/images/KCF-scraper.png)
+![Krateo Composable FinOps Prometheus Scraper Generic](/img/KCF-scraper.png)
 
 ## Configuration
 This container is automatically started by the FinOps Operator Scraper and you do not need to install it manually.

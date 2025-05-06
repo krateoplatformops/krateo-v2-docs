@@ -1,8 +1,6 @@
 # finops-operator-scraper
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and manages the creation of the scrapers reading the FOCUS cost reports from the Prometheus Exporters.
 
-For an in-depth look at the architecture and how to configure all the components, download the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/blob/main/resources/Krateo_Composable_FinOps___Full.pdf).
-
 ## Summary
 1. [Overview](#overview)
 2. [Architecture](#architecture)
@@ -13,7 +11,7 @@ For an in-depth look at the architecture and how to configure all the components
 This component is tasked with the creation of a generic scraper, according to the description given in a Custom Resource (CR). After the creation of the CR, the operator reads the "scraper" configuration part and creates two resources: a deployment with a generic prometheus scraper inside and a configmap containing the configuration. The scraper parses the prometheus data and obtains the given database-config to upload all metrics to a database.
 
 ## Architecture
-![Krateo Composable FinOps Operator Scraper](/img/KCF-operator-scraper.png)
+![Krateo Composable FinOps Operator Scraper](resources/images/KCF-operator-scraper.png)
 
 ## Examples
 ```yaml
@@ -37,12 +35,20 @@ metadata:
 spec:
   scraperConfig:
     tableName: # tableName in the database to upload the data to
-    url: # path to the exporter
-    pollingIntervalHours: # int
+    api: # the API to call with the prometheus exporter
+      path: # the path inside the domain
+      verb: GET # the method to call the API with
+      endpointRef: # secret with the url in the format http(s)://host:port
+        name: 
+        namespace:
+    pollingInterval: # time duration, e.g., 12h30m
     scraperDatabaseConfigRef: # See above kind DatabaseConfig
       name: # name of the databaseConfigRef CR 
       namespace: # namespace of the databaseConfigRef CR
 ```
+
+### Example Use Case for Pricing Visualization
+The Composable FinOps can be used to display pricing in the Krateo Composable Portal cards through a dedicated composition. You can find out more here: [krateo-v2-template-finops-example-pricing-vm-azure](https://github.com/krateoplatformops/krateo-v2-template-finops-example-pricing-vm-azure).
 
 ## Configuration
 

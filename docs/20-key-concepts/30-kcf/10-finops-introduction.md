@@ -1,3 +1,7 @@
+---
+sidebar_label: Introduction
+---
+
 # Krateo Composable FinOps
 The Krateo Composable FinOps module is a tool to collect costs and metrics from service providers and on-premises systems, to allow for the showback and optimization of resource utilization. The metrics collected include the costs, but also utilization of resources such as CPU, memory, and also carbon intensity, but this list could include any type of metric that we want to optimize for that is exposed through an API.
 

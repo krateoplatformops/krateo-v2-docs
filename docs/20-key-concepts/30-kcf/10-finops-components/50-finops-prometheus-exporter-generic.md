@@ -1,7 +1,7 @@
 # finops-prometheus-exporter-generic
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and exports the API endpoints of FOCUS cost reports in the Prometheus format.
 
-For an in-depth look at the architecture and how to configure all the components, download the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/blob/main/resources/Krateo_Composable_FinOps___Full.pdf).
+For an in-depth look at the architecture and how to configure all the components, download the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/resources/Krateo_Composable_FinOps___Full.pdf).
 
 ## Summary
 1. [Overview](#overview)
@@ -26,3 +26,4 @@ To build and push the Docker images:
 ```
 make container REPO=<your-registry-here>
 ```
+

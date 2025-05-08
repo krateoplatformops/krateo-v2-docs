@@ -1,6 +1,5 @@
 # finops-operator-exporter
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and manages the exporting from API endpoints of FOCUS cost reports. 
-Additional information can be read in the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/blob/main/resources/Krateo_Composable_FinOps___Full.pdf).
 
 ## Summary
 
@@ -10,7 +9,7 @@ Additional information can be read in the summary document [here](https://github
 4. [Configuration](#configuration)
 
 ## Overview
-This finops-operator-exporter is tasked with the creation of a generic exporting pipeline, according to the description given in a Custom Resource (CR). After the creation of the CR, the operator reads the "exporting" configuration and creates three resources: a deployment with a generic prometheus exporter inside, a configmap containing the configuration and a service that exposes the deployment. The given endpoint is supposed to be a CSV file containing a FOCUS report. Then, it creates a new CR for the FinOps Operator Scraper, which starts a generic scraper to upload the data to a database.
+This finops-operator-exporter is tasked with the creation of a generic exporting pipeline, according to the description given in a Custom Resource (CR). After the creation of the CR, the operator reads the "exporting" configuration and creates three resources: a deployment with a generic prometheus exporter inside, a configmap containing the exporter configuration CR and a service that exposes the deployment. The given endpoint is supposed to be a CSV file containing a FOCUS report. Then, it creates a new CR for the FinOps Operator Scraper, which starts a generic scraper to upload the data to a database. The configmap is mounted as a volume inside the deployment and the service is used to expose the metrics collected by the exporter in the prometheus format.
 
 ## Architecture
 ![Krateo Composable FinOps Operator Exporter](/img/KCF-operator-exporter.png)
@@ -39,31 +38,30 @@ spec:
     provider: 
       name: # name of the provider config
       namespace: # namespace of the provider config
-    url: # url including http/https of the CSV-based API to export, parts with <varName> are taken from additionalVariables: http://<varName> -> http://sample 
-    requireAuthentication: # true/false
-    authenticationMethod: # one of: bearer-token, cert-file
-    # bearerToken: # optional, if "authenticationMethod: bearer-token", objectRef to a standard Kubernetes secret with specified key
-    #  name: # secret name
-    #  namespace: # secret namespace
-    #  key: # key of the secret
-    # metricType: # optional, one of: cost, resource; default value: resource
-    pollingIntervalHours: # int
+    api: # the API to call
+      path: # the path inside the domain
+      verb: GET # the method to call the API with
+      endpointRef: # secret with the url in the format http(s)://host:port, it can contain variables, such as http://<varName>.com:<envExample>, which will be compiled with the additionalVariables fields
+        name: 
+        namespace:
+    # metricType: # optional, one of: cost, resource; default value: cost
+    pollingInterval: # time duration, e.g., 12h30m
     additionalVariables:
       varName: sample
       # Variables whose value only contains uppercase letters are taken from environment variables
-      # FROM_THE_ENVIRONMENT must be the name of an environment variable inside the target exporter container
+      # FROM_THE_ENVIRONMENT must be the name of an environment variable inside the target exporter container (e.g., kubernetes services)
       envExample: FROM_THE_ENVIRONMENT
-  scraperConfig: # configuration for krateoplatformops/finops-operator-scraper
+  scraperConfig: # same fields as krateoplatformops/finops-prometheus-scraper-generic
     tableName: # tableName in the database to upload the data to
-    # url: # path to the exporter, optional (if missing, its taken from the exporter)
-    pollingIntervalHours: # int
+    # api: # api to the exporter, optional (if missing, it uses the exporter)
+    pollingInterval: # time duration, e.g., 12h30m
     scraperDatabaseConfigRef: # See above kind DatabaseConfig
       name: # name of the databaseConfigRef CR 
       namespace: # namespace of the databaseConfigRef CR
 ```
 If the field `metricType` is set to `cost`, then the API in `url` must expose a FOCUS report in a CSV file. Otherwise, if set to `resource`, it must expose usage metrics according to the JSON/OPENAPI schema in the folder resources and the field `additionalVariables` must contain a field `ResourceId` with the identifier of the resources to be used in the database as external key to reference the cost metric from the usage metric (i.e., the same as the field `resourceId` of the focusConfig CR).
 
-The field `spec.scraperConfig.url` can be left empty if the exporter and scraper are both configured. The operator will compile this field automatically.
+The field `spec.scraperConfig.api` can be left empty if the exporter and scraper are both configured. The operator will compile this field automatically.
 
 The CR can be configured to include a `provider`, which is an object reference to a set of CRs that identify, for a given provider, which resources and which additional metrics should be exported and scraped. For example, for the CPU usage of virtual machines on Azure:
 ```yaml
@@ -96,11 +94,20 @@ metadata:
 spec:
   metricName: Percentage CPU
   endpoint:
+    resourcePrefixAPI:
+      endpointRef:
+        name: azure-management-api
+        namespace: finops
+      verb: GET
     resourceSuffix: /providers/microsoft.insights/metrics?api-version=2023-10-01
   timespan: month
   interval: PT15M
 ```
 For these metrics, the exporting/scraping pipeline is automatically started and the field `metricType` is automatically populated.
+
+### Example Use Case for Pricing Visualization
+The Composable FinOps can be used to display pricing in the Krateo Composable Portal cards through a dedicated composition. You can find out more here: [krateo-v2-template-finops-example-pricing-vm-azure](https://github.com/krateoplatformops/krateo-v2-template-finops-example-pricing-vm-azure).
+
 
 ## Configuration
 To start the exporting process, see the examples section. The configuration sample includes the database-config CR.

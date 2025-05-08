@@ -1,7 +1,7 @@
 # finops-prometheus-scraper-generic
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and scrapes Prometheus exporters to then upload the data to CrateDB through the [finops-database-handler](https://github.com/krateoplatformops/finops-database-handler).
 
-For an in-depth look at the architecture and how to configure all the components, download the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/blob/main/resources/Krateo_Composable_FinOps___Full.pdf).
+For an in-depth look at the architecture and how to configure all the components, download the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/resources/Krateo_Composable_FinOps___Full.pdf).
 
 ## Summary
 1. [Overview](#overview)
@@ -36,10 +36,9 @@ metadata:
   name: # DatabaseConfig name
   namespace: # DatabaseConfig namespace
 spec:
-  host: # host name for the database
-  token: # object reference to secret with key bearer-token
+  username: # username string
+  passwordSecretRef: # object reference to secret with password
     name: # secret name
     namespace: # secret namespace
-  clusterName: # generic compute cluster name
-  notebookPath: # path to the notebook 
+    key: # secret key
 ```

@@ -26,24 +26,42 @@ $ curl https://api.krateoplatformops.io/authn/strategies
   {
     "kind": "ldap",
     "name": "openldap",
+    "graphics": {
+      "icon": "key",
+      "displayName": "Login with LDAP",
+      "backgroundColor": "#ffffff",
+      "textColor": "#000000"
+    },
     "path": "/ldap/login"
   },
   {
-    "kind": "github",
+    "kind": "oauth",
     "name": "github-example",
-    "path": "/github/login",
+    "graphics": {
+      "icon": "fa-brands fa-github",
+      "displayName": "Login with Github",
+      "backgroundColor": "#ffffff",
+      "textColor": "#000000"
+    },
+    "path": "/oauth/login",
     "extensions": {
       "authCodeURL": "https://github.com/login/oauth/authorize?client_id=XXXX&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2Fgithub%2Fgrant&response_type=code&scope=read%3Auser+read%3Aorg&state=YYYY",
-      "redirectURL": "http://localhost:8888/github/grant"
+      "redirectURL": "http://localhost:30080/auth?kind=oauth"
     }
   },
   {
     "kind": "oidc",
     "name": "oidc-example",
+    "graphics": {
+      "icon": "fa-brands fa-windows",
+      "displayName": "Login with Azure",
+      "backgroundColor": "#4444ff",
+      "textColor": "#ffffff"
+    },
     "path": "/oidc/login",
     "extensions": {
       "authCodeURL": "https://login.microsoftonline.com/XXXX/oauth2/v2.0/authorize?client_id=XXXX\u0026redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Foidc%2Fcallbacl\u0026response_mode=query\u0026response_type=code\u0026scope=openid+email+profile+User.Read",
-      "redirectURL": "http://localhost:8080/oidc/callback"
+      "redirectURL": "http://localhost:8080/auth?kind=oidc"
     }
   }
 ]
@@ -121,7 +139,7 @@ curl https://reqbin.com/echo
    -H "Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
 ```
 
-### Login with OAuth Authorization Code Flow (Github)
+### Login with OAuth Authorization Code Flow
 
 > Let's take _Github_ as example, the same concept applies to all authentication systems of this type (authorization code flow).
 
@@ -131,8 +149,10 @@ Example:
 
 ```sh
 $ curl -H "X-Auth-Code: $(AUTH_CODE)" \
-    https://api.krateoplatformops.io/authn/github/login?name=github-example
+    https://api.krateoplatformops.io/authn/oauth/login?name=github-example
 ```
+
+The `RestActionRef` is mandatory because, unlike OIDC, OAuth2 returns only the bearer token and no information regarding the user, therefore, the RESTAction is required to compile all fields. See the [RESTAction Configuration](#restaction-configuration) section for more information.
 
 ### Login with LDAP
 
@@ -155,7 +175,7 @@ $ curl -H "X-Auth-Code: $(AUTH_CODE)" \
 
 The authn application supports the Discovery endpoint. If you provide a Discovery endpoint the values for `authorizationURL`, `tokenURL` and `userInfoURL` are ignored and overwritten. If you do not provide a Discovery endpoint, the values for `authorizationURL`, `tokenURL` and `userInfoURL` are used.
 
-To obtain proper groups mappings you need to configure the ID Token response on the application side. Likewise for the profile picture. Examples are listed below for Azure and KeyCloak.
+To obtain proper groups mappings you need to configure the ID Token response on the application side. Likewise for the profile picture. Examples are listed below for Azure and KeyCloak. Alternatively, you can use the RESTAction. See the [RESTAction Configuration](#restaction-configuration) section for more information.
 
 #### Azure
 Azure can be configured to authenticate users through OIDC ([Official Azure Documentation for OIDC](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)). To achieve this, you need to create a new app registration as follows:
@@ -163,10 +183,32 @@ Azure can be configured to authenticate users through OIDC ([Official Azure Docu
 On Azure:
  - Go to "App registrations" and then hit "New registration";
  - Configure the display name, account types and Redirect URI. The redirect URI must point to Krateo's frontend with an HTTPS endpoint and the path `/auth/oidc`;
- - Create a client secret in "Certificates & secrets", save the value of the secret now as it cannot by visualized afterwards;
+ - Create a client secret in "Certificates & secrets", save the value of the secret now as it cannot be visualized afterwards;
  - In the "Authentication" menu, find and activate `Access tokens` and `ID tokens`;
  - In the "API permissions" menu, add the following: `openid`, `email`, `profile`, `User.Read` and `User.ReadBasic.All`;
- - To obtain groups in the OIDC ID Token response, in the "Manifest" menu, modify the value `groupMembershipClaims` to `All` ([Official Azure documentation for the groupMembershipClaims](https://learn.microsoft.com/en-us/entra/identity-platform/reference-app-manifest#groupmembershipclaims-attribute));
+
+To obtain groups you can do one of the following:
+- Include them in the OIDC ID Token response: in the "Manifest" menu in the Azure portal, modify the value `groupMembershipClaims` to `All` ([Official Azure documentation for the groupMembershipClaims](https://learn.microsoft.com/en-us/entra/identity-platform/reference-app-manifest#groupmembershipclaims-attribute));
+- Use the following RESTAction and place it in the `RestActionRef` of the OIDC custom resource:
+```yaml
+apiVersion: templates.krateo.io/v1
+kind: RESTAction
+metadata:
+  name: test-rest-action
+  namespace: krateo-system
+spec:
+  api:
+  - name: groups
+    verb: GET
+    headers:
+    - 'Accept: application/json'
+    path: "v1.0/me/memberOf?$select=displayName"
+    endpointRef:
+      name: azure-entra
+      namespace: krateo-system
+    filter: .value | map(.displayName)
+```
+To obtain groups through the rest action, add `Directory.Read.All` in the `additionalScopes`.
 
 On AuthN:
  - To obtain the user avatar/profile image include `User.Read` in the `additionalScopes` field of the OIDCConfiguration custom resource;
@@ -174,6 +216,11 @@ On AuthN:
  ```
 https://login.microsoftonline.com/<your-tenant-id>/v2.0/.well-known/openid-configuration
  ```
+
+Scopes in the `additionalScopes` field can be simply separated with a space. Example for Azure groups with the RESTAction:
+```yaml
+  additionalScopes: User.Read Directory.Read.All
+```
 
 ##### Troubleshooting
 If you do not get the correct groups in the AuthN response, please verify your Azure OIDC configuration: the manifest value "groupMembershipClaims:All" adds in the JWT ID Token the value "groups", which contains an array of UIDs of the groups the user belongs. You can check the JWT ID Token returned by Azure by simulating the calls to the Authorization and Token endpoints through Postman or curl. The exact endpoints are contained in the "well-known" endpoint (Authorization and Token).
@@ -199,3 +246,26 @@ You can then decode the JWT and verify that "groups" is present with the [Micros
 #### KeyCloak
 To obtain groups, add a custom mapper of type "Group Membership" and give it the Token Claim Name "groups", uncheck `Full group path`. Add `groups` into the `additionalScopes` field of the OIDCConfiguration custom resource.
 To obtain the user avatar/profile image, go to the realm settings, then "User profiles" tab, "Create Attribute", and add one with the name `picture`. Set the profile picture for the user to a URL pointing to a picture. Keycloak will now return the avatar during authentication.
+
+
+## RESTAction Configuration
+The `RESTActionRef` field in the OAuth2 and OIDC configs is mandatory and optional, respectively. It is used to compile the following fields, used to build the Kubernetes certificate required for authentication:
+- `name`: string
+- `email`: string
+- `preferredUsername`: string - mandatory
+- `avatarURL`: string
+- `groups`: []string - mandatory
+
+In the case of OAuth2, these fields are needed to compile the certificate and the ones marked as such are mandatory. They have to be included as top level fields in the RESTAction response. See the testdata folder for a Github example. In the OIDC case, these fields are all optional, and if included will overwrite the information obtained from the id token and the userinfo endpoint.
+
+The authentication for the endpoints of the RESTAction is automatically set to bearer token, using the token obtained from the OAuth2/OIDC authentication. If the endpoint already specifies an authentication method, then it is not overwritten and it will be used for the API calls instead of the bearer token.
+
+## Graphics Configuration
+The OAuth2 and OIDC authentication methods also support a `graphics` object that allows to configure how the button for the redirect to the authentication provider portal is visualized in the frontend login screen.
+```yaml
+  graphics:
+    icon: # icon name from the fontawesome library, for icons like github and windows, use "fa-brands fa-github" or "fa-brands fa-windows"
+    displayName: # text to be visualized on the button
+    backgroundColor: # color of the button in hexadecimal, e.g., #0022ff
+    textColor: # color of the text in the button, also in hexadecimal, e.g., #0022ff
+```

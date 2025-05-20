@@ -22,7 +22,7 @@ helm repo add krateo https://charts.krateo.io
 
 helm repo update krateo
 
-kind create cluster --wait 120s --image kindest/node:v1.31.6 --config - <<EOF
+kind create cluster --wait 120s --image kindest/node:v1.31.9 --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: krateo-quickstart
@@ -51,14 +51,10 @@ nodes:
     hostPort: 30082
   - containerPort: 30083 # Krateo EventSSE
     hostPort: 30083
-  - containerPort: 30084 # Krateo Terminal Server
-    hostPort: 30084
   - containerPort: 30085 # Krateo Resource Tree Handler
     hostPort: 30085
   - containerPort: 30086 # Krateo FireworksApp Frontend
     hostPort: 30086
-  - containerPort: 31443 # vCluster API Server Port
-    hostPort: 31443
 networking:
   # By default the API server listens on a random open port.
   # You may choose a specific port but probably don't need to in most cases.
@@ -71,5 +67,5 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait

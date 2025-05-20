@@ -21,11 +21,8 @@ You will need:
 Krateo PlatformOps [installer](https://github.com/krateoplatformops/installer-chart) is a flexible workflow engine that executes sequential steps. The installer-chart is a helper that provider already baked configurations for Krateo PlatformOps. It is however possible to implement a custom installer. Please check all the possible values supported by the chart.
 :::
 
-<Tabs groupId="cluster-start">
-<TabItem value="loadbalancer-ip" label="LoadBalancer with external IP">
-
 <Tabs groupId="kubernetes-version">
-<TabItem value=">1.27" label=">1.27">
+<TabItem value="loadbalancer-ip" label="LoadBalancer with external IP">
 
 Krateo PlatformOps can be exposed via LoadBalancer service type that exposes an IP.
 
@@ -40,7 +37,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=true \
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait
 ```
 
@@ -64,53 +61,7 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 ```
 
 </TabItem>
-<TabItem value="<=1.27" label="<=1.27">
-
-Krateo PlatformOps can be exposed via LoadBalancer service type that exposes an IP.
-
-```shell
-helm repo add krateo https://charts.krateo.io
-helm repo update krateo
-
-helm upgrade installer installer \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  --set krateoplatformops.vcluster.enabled=true \
-  --set krateoplatformops.service.type=LoadBalancer \
-  --set krateoplatformops.service.externalIpAvailable=true \
-  --install \
-  --version 2.4.0 \
-  --wait
-```
-
-Wait for Krateo PlatformOps to be up&running:
-```shell
-kubectl wait krateoplatformops vcluster --for condition=Ready=True --namespace krateo-system --timeout=300s
-```
-
-At the end of this process:
-
-* Find the Krateo Composable Portal IP:
-
-```shell
-kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
-```
-
-* The Krateo Composable Portal will be accessible at previous IP at port 8080.
-* The *admin* user password can be retrieved with the following command:
-```shell
-vcluster connect vcluster-k8s -- kubectl get secret admin-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
-```
-
-</TabItem>
-</Tabs>
-</TabItem>
 <TabItem value="loadbalancer-hostname" label="LoadBalancer with external hostname">
-
-<Tabs groupId="kubernetes-version">
-
-<TabItem value=">1.27" label=">1.27">
 
 Krateo PlatformOps can be exposed via LoadBalancer service type that exposes a hostname.
 
@@ -125,13 +76,13 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait
 ```
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops vcluster --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
 ```
 
 At the end of this process:
@@ -148,48 +99,6 @@ kubectl get svc krateo-frontend -n krateo-system  -o=jsonpath='{.status.loadBala
 kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d
 ```
 
-</TabItem>
-<TabItem value="<=1.27" label="<=1.27">
-
-Krateo PlatformOps can be exposed via LoadBalancer service type that exposes a hostname.
-
-```shell
-helm repo add krateo https://charts.krateo.io
-helm repo update krateo
-
-helm upgrade installer installer \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  --set krateoplatformops.vcluster.enabled=true \
-  --set krateoplatformops.service.type=LoadBalancer \
-  --set krateoplatformops.service.externalIpAvailable=false \
-  --install \
-  --version 2.4.0 \
-  --wait
-```
-
-Wait for Krateo PlatformOps to be up&running:
-```shell
-kubectl wait krateoplatformops vcluster --for condition=Ready=True --namespace krateo-system --timeout=300s
-```
-
-At the end of this process:
-
-* Find the Krateo Composable Portal hostname:
-
-```shell
-kubectl get svc krateo-frontend-x-krateo-system-x-vcluster-k8s -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
-```
-
-* The Krateo Composable Portal will be accessible at previous IP at port 8080.
-* The *admin* user password can be retrieved with the following command:
-```shell
-vcluster connect vcluster-k8s -- kubectl get secret admin-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
-```
-
-</TabItem>
-</Tabs>
 </TabItem>
 </Tabs>
 

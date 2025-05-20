@@ -21,7 +21,7 @@ You will need:
 Krateo PlatformOps [installer](https://github.com/krateoplatformops/installer-chart) is a flexible workflow engine that executes sequential steps. The installer-chart is a helper that provider already baked configurations for Krateo PlatformOps. It is however possible to implement a custom installer. Please check all the possible values supported by the chart.
 :::
 
-<Tabs groupId="cluster-start">
+<Tabs groupId="kubernetes-version">
 <TabItem value="kind" label="kind">
 
 If you have any Docker-compatible container runtime installed (including native
@@ -64,16 +64,10 @@ nodes:
     hostPort: 30082
   - containerPort: 30083 # Krateo EventSSE
     hostPort: 30083
-  - containerPort: 30084 # Krateo Terminal Server
-    hostPort: 30084
   - containerPort: 30085 # Krateo Resource Tree Handler
     hostPort: 30085
-  - containerPort: 30086 # Krateo FinOps Database Handler
-    hostPort: 30086
   - containerPort: 30087 # Krateo FireworksApp Frontend
     hostPort: 30087
-  - containerPort: 31443 # vCluster API Server Port
-    hostPort: 31443
 networking:
   # By default the API server listens on a random open port.
   # You may choose a specific port but probably don't need to in most cases.
@@ -86,7 +80,7 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait
 ```
 

@@ -22,7 +22,7 @@ Krateo PlatformOps [installer](https://github.com/krateoplatformops/installer-ch
 :::
 
 <Tabs groupId="kubernetes-version">
-<TabItem value=">1.27" label=">1.27">
+<TabItem value="envvars" label="envvars">
 
 Krateo PlatformOps is exposed via NodePort by default. In order to customize enviroment variables, you can proceed in the following way:
 
@@ -39,7 +39,7 @@ krateoplatformops:
   frontend:
     env:
       http_proxy: http://127.0.0.1:3128
-  bff:
+  snowplow:
     env:
       http_proxy: http://127.0.0.1:3128
   authn:
@@ -54,7 +54,7 @@ krateoplatformops:
   coreprovider:
     env:
       http_proxy: http://127.0.0.1:3128
-  patchprovider:
+  oasgenprovider:
     env:
       http_proxy: http://127.0.0.1:3128
   eventrouter:
@@ -66,7 +66,7 @@ krateoplatformops:
     etcd:
       env:
         http_proxy: http://127.0.0.1:3128
-resourcetreehandler:
+  resourcetreehandler:
     env:
       http_proxy: http://127.0.0.1:3128
 ```
@@ -80,7 +80,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait
 ```
 
@@ -95,85 +95,6 @@ At the end of this process:
 * The *admin* user password can be retrieved with the following command:
 ```shell
 kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d
-```
-
-</TabItem>
-<TabItem value="<=1.27" label="<=1.27">
-
-Krateo PlatformOps can be isolated via vCluster:
-
-```shell
-helm repo add krateo https://charts.krateo.io
-helm repo update krateo
-helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
-```
-
-Modify the *krateo-values.yaml* file as the following example:
-
-```yaml
-krateoplatformops:
-  vcluster:
-    enabled: true
-    env:
-    - name: http_proxy
-      value: http://127.0.0.1:3128
-  frontend:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  bff:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  authn:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  backend:
-    env:
-      http_proxy: http://127.0.0.1:3128
-    etcd:
-      env:
-        http_proxy: http://127.0.0.1:3128
-  coreprovider:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  patchprovider:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  eventrouter:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  eventsse:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  resourcetreehandler:
-    env:
-      http_proxy: http://127.0.0.1:3128
-```
-
-
-Install Krateo PlatformOps:
-
-```shell
-helm upgrade installer installer \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  -f ~/krateo-values.yaml
-  --install \
-  --version 2.4.0 \
-  --wait
-```
-
-Wait for Krateo PlatformOps to be up&running:
-```shell
-kubectl wait krateoplatformops vcluster --for condition=Ready=True --namespace krateo-system --timeout=300s
-```
-
-At the end of this process:
-
-* The *Krateo Composable Portal* will be accessible at port 30080.
-* The *admin* user password can be retrieved with the following command:
-```shell
-vcluster connect vcluster-k8s -- kubectl get secret admin-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
 ```
 
 </TabItem>

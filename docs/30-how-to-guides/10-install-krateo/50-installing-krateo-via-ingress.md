@@ -22,7 +22,7 @@ Krateo PlatformOps [installer](https://github.com/krateoplatformops/installer-ch
 :::
 
 <Tabs groupId="kubernetes-version">
-<TabItem value=">1.27" label=">1.27">
+<TabItem value="ingress" label="ingress">
 
 Krateo PlatformOps can be exposed via Ingress in the following way:
 
@@ -52,20 +52,20 @@ krateoplatformops:
       # - secretName: frontend-krateo-certificate
       #   hosts:
       #     - app.krateoplatformops.io
-    snowplow:
+    backend:
       className: ""
       annotations: {}
         # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "snowplow.krateoplatformops.io"
+        # external-dns.alpha.kubernetes.io/hostname: "backend.krateoplatformops.io"
       hosts:
-        - host: snowplow.krateoplatformops.io
+        - host: backend.krateoplatformops.io
           paths:
             - path: /
               pathType: Prefix
       tls: []
-      # - secretName: snowplow-krateo-certificate
+      # - secretName: backend-krateo-certificate
       #   hosts:
-      #     - snowplow.krateoplatformops.io
+      #     - backend.krateoplatformops.io
     authn:
       className: ""
       annotations: {}
@@ -94,20 +94,6 @@ krateoplatformops:
       # - secretName: eventsse-krateo-certificate
       #   hosts:
       #     - eventsse.krateoplatformops.io
-    terminal:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "terminal.krateoplatformops.io"
-      hosts:
-        - host: terminal.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: terminal-krateo-certificate
-      #   hosts:
-      #     - terminal.krateoplatformops.io
     resourcetreehandler:
       className: ""
       annotations: {}
@@ -126,10 +112,9 @@ krateoplatformops:
     overrideconf: true
     config:
       AUTHN_API_BASE_URL: http://authn.krateoplatformops.io
-      BFF_API_BASE_URL: http://bff.krateoplatformops.io
+      BACKEND_API_BASE_URL: http://backend.krateoplatformops.io
       EVENTS_PUSH_API_BASE_URL: http://eventsse.krateoplatformops.io
       EVENTS_API_BASE_URL: http://eventsse.krateoplatformops.io
-      TERMINAL_SOCKET_URL: http://terminal.krateoplatformops.io
 ```
 
 Install Krateo PlatformOps:
@@ -141,7 +126,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait
 ```
 
@@ -152,160 +137,10 @@ kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace kra
 
 At the end of this process:
 
-* The *Krateo Composable Portal* will be accessible at the host specified in *krateplatformops.ingress.frontend.hosts[0].host*.
+* The *Krateo Composable Portal* will be accessible at the host specified in *krateoplatformops.ingress.frontend.hosts[0].host*.
 * The *admin* user password can be retrieved with the following command:
 ```shell
 kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d
-```
-
-</TabItem>
-<TabItem value="<=1.27" label="<=1.27">
-
-Krateo PlatformOps can be isolated via vCluster:
-
-```shell
-helm repo add krateo https://charts.krateo.io
-helm repo update krateo
-helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
-```
-
-Modify the *krateo-values.yaml* file as the following example:
-
-```yaml
-krateoplatformops:
-  vcluster:
-    enabled: true
-  ingress:
-    enabled: true
-    vcluster:
-      # Ingress path type
-      pathType: Prefix
-      ingressClassName: ""
-      host: vcluster.krateoplatformops.io
-      annotations: {}
-      # Ingress TLS configuration
-      tls: []
-        # - secretName: tls-vcluster.local
-        #   hosts:
-        #     - vcluster.local
-    frontend:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: app.krateoplatformops.io
-      hosts:
-        - host: app.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: frontend-krateo-certificate
-      #   hosts:
-      #     - app.krateoplatformops.io
-    bff:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "bff.krateoplatformops.io"
-      hosts:
-        - host: bff.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: bff-krateo-certificate
-      #   hosts:
-      #     - bff.krateoplatformops.io
-    authn:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "authn.krateoplatformops.io"
-      hosts:
-        - host: authn.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: authn-krateo-certificate
-      #   hosts:
-      #     - authn.krateoplatformops.io
-    eventsse:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "eventsse.krateoplatformops.io"
-      hosts:
-        - host: eventsse.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: eventsse-krateo-certificate
-      #   hosts:
-      #     - eventsse.krateoplatformops.io
-    terminal:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "terminal.krateoplatformops.io"
-      hosts:
-        - host: terminal.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: terminal-krateo-certificate
-      #   hosts:
-      #     - terminal.krateoplatformops.io
-    resourcetreehandler:
-      className: ""
-      annotations: {}
-        # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "resoucetreehandler.krateoplatformops.io"
-      hosts:
-        - host: resoucetreehandler.krateoplatformops.io
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      # - secretName: resoucetreehandler-krateo-certificate
-      #   hosts:
-      #     - resoucetreehandler.krateoplatformops.io
-  frontend:
-    overrideconf: true
-    config:
-      AUTHN_API_BASE_URL: http://authn.krateoplatformops.io
-      BFF_API_BASE_URL: http://bff.krateoplatformops.io
-      EVENTS_PUSH_API_BASE_URL: http://eventsse.krateoplatformops.io
-      EVENTS_API_BASE_URL: http://eventsse.krateoplatformops.io
-      TERMINAL_SOCKET_URL: http://terminal.krateoplatformops.io
-```
-
-Install Krateo PlatformOps:
-
-```shell
-helm upgrade installer installer \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  -f ~/krateo-values.yaml
-  --install \
-  --version 2.4.0 \
-  --wait
-```
-
-Wait for Krateo PlatformOps to be up&running:
-```shell
-kubectl wait krateoplatformops vcluster --for condition=Ready=True --namespace krateo-system --timeout=300s
-```
-
-At the end of this process:
-
-* The *Krateo Composable Portal* will be accessible at the host specified in *krateplatformops.ingress.frontend.hosts[0].host*.
-* The *admin* user password can be retrieved with the following command:
-```shell
-vcluster connect vcluster-k8s -- kubectl get secret admin-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
 ```
 
 </TabItem>

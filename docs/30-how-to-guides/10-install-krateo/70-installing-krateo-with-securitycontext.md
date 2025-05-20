@@ -22,14 +22,14 @@ Krateo PlatformOps [installer](https://github.com/krateoplatformops/installer-ch
 :::
 
 <Tabs groupId="kubernetes-version">
-<TabItem value=">1.27" label=">1.27">
+<TabItem value="securitycontext" label="securitycontext">
 
 Krateo PlatformOps is exposed via NodePort by default. In order to customize security contexts, you can proceed in the following way:
 
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.4.2 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -109,7 +109,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.4.0 \
+  --version 2.4.2 \
   --wait
 ```
 
@@ -124,175 +124,6 @@ At the end of this process:
 * The *admin* user password can be retrieved with the following command:
 ```shell
 kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d
-```
-
-</TabItem>
-<TabItem value="<=1.27" label="<=1.27">
-
-Krateo PlatformOps can be isolated via vCluster:
-
-```shell
-helm repo add krateo https://charts.krateo.io
-helm repo update krateo
-helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
-```
-
-Modify the *krateo-values.yaml* file as the following example:
-
-```yaml
-krateoplatformops:
-  vcluster:
-    enabled: true
-    podSecurityContext:
-      appArmorProfile:
-        localhostProfile: "example-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch" # Options: Always, OnRootMismatch
-      runAsGroup: 3000
-      runAsNonRoot: true
-      runAsUser: 1000
-      seLinuxOptions:
-        level: "s0:c123,c456"
-        role: "system_r"
-        type: "spc_t"
-        user: "system_u"
-      seccompProfile:
-        localhostProfile: "example-seccomp-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      supplementalGroups:
-        - 2000
-        - 3000
-      supplementalGroupsPolicy: Strict
-      sysctls:
-        - name: "net.ipv4.tcp_syncookies"
-          value: "1"
-        - name: "fs.file-max"
-          value: "50000"
-      windowsOptions:
-        gmsaCredentialSpec: '{"example-spec-json": "content"}'
-        gmsaCredentialSpecName: "example-gmsa-name"
-        hostProcess: false
-        runAsUserName: "Administrator"
-    securityContext:
-      allowPrivilegeEscalation: false
-      appArmorProfile:
-        localhostProfile: "custom-apparmor-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      capabilities:
-        add:
-          - "NET_ADMIN"
-          - "SYS_TIME"
-        drop:
-          - "ALL"
-      privileged: false
-      procMount: "Default" # Options: Default, Unmasked
-      readOnlyRootFilesystem: true
-      runAsGroup: 2000
-      runAsNonRoot: true
-      runAsUser: 1001
-      seLinuxOptions:
-        level: "s0:c123,c456"
-        role: "system_r"
-        type: "spc_t"
-        user: "system_u"
-      seccompProfile:
-        localhostProfile: "custom-seccomp-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      windowsOptions:
-        gmsaCredentialSpec: '{"example-spec-json": "content"}'
-        gmsaCredentialSpecName: "example-gmsa-name"
-        hostProcess: false
-        runAsUserName: "UserExample"
-  authn:
-    podSecurityContext:
-      appArmorProfile:
-        localhostProfile: "example-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch" # Options: Always, OnRootMismatch
-      runAsGroup: 3000
-      runAsNonRoot: true
-      runAsUser: 1000
-      seLinuxOptions:
-        level: "s0:c123,c456"
-        role: "system_r"
-        type: "spc_t"
-        user: "system_u"
-      seccompProfile:
-        localhostProfile: "example-seccomp-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      supplementalGroups:
-        - 2000
-        - 3000
-      supplementalGroupsPolicy: Strict
-      sysctls:
-        - name: "net.ipv4.tcp_syncookies"
-          value: "1"
-        - name: "fs.file-max"
-          value: "50000"
-      windowsOptions:
-        gmsaCredentialSpec: '{"example-spec-json": "content"}'
-        gmsaCredentialSpecName: "example-gmsa-name"
-        hostProcess: false
-        runAsUserName: "Administrator"
-    securityContext:
-      allowPrivilegeEscalation: false
-      appArmorProfile:
-        localhostProfile: "custom-apparmor-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      capabilities:
-        add:
-          - "NET_ADMIN"
-          - "SYS_TIME"
-        drop:
-          - "ALL"
-      privileged: false
-      procMount: "Default" # Options: Default, Unmasked
-      readOnlyRootFilesystem: true
-      runAsGroup: 2000
-      runAsNonRoot: true
-      runAsUser: 1001
-      seLinuxOptions:
-        level: "s0:c123,c456"
-        role: "system_r"
-        type: "spc_t"
-        user: "system_u"
-      seccompProfile:
-        localhostProfile: "custom-seccomp-profile"
-        type: "RuntimeDefault" # Options: Localhost, RuntimeDefault, Unconfined
-      windowsOptions:
-        gmsaCredentialSpec: '{"example-spec-json": "content"}'
-        gmsaCredentialSpecName: "example-gmsa-name"
-        hostProcess: false
-        runAsUserName: "UserExample"
-```
-
-
-Install Krateo PlatformOps:
-
-```shell
-helm upgrade installer installer \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  -f ~/krateo-values.yaml
-  --install \
-  --version 2.4.0 \
-  --wait
-```
-
-Wait for Krateo PlatformOps to be up&running:
-```shell
-kubectl wait krateoplatformops vcluster --for condition=Ready=True --namespace krateo-system --timeout=300s
-```
-
-At the end of this process:
-
-* The *Krateo Composable Portal* will be accessible at port 30080.
-* The *admin* user password can be retrieved with the following command:
-```shell
-vcluster connect vcluster-k8s -- kubectl get secret admin-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
 ```
 
 </TabItem>

@@ -181,7 +181,7 @@ helm install krateo-core-provider krateo/core-provider --namespace krateo-system
 
 ## Examples and Troubleshooting
 
-You can see a more practical guide on `core-provider` usage at [this link](cheatsheet.md).
+You can see a more practical guide on `core-provider` usage at [this link](./11-cheatsheet.md).
 
 ## Environment Variables and Flags
 

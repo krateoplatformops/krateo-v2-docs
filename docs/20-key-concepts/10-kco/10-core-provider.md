@@ -48,7 +48,7 @@ The Core Provider generates CRDs, creates RBAC policies, and deploys the CDC. Th
 
 ## Workflow
 
-![core-provider State Diagram](_diagrams/core-provider-flow.png "core-provider State Diagram")
+![core-provider State Diagram]((/img/core-provider-flow.png "core-provider State Diagram")
 
 This diagram illustrates the Core Provider's workflow for managing CompositionDefinitions, which define how resources are composed and managed in a Kubernetes environment. It encompasses the lifecycle of Helm releases and associated resources, involving the creation and updating of CRDs (Custom Resource Definitions), RBAC (Role-Based Access Control), and CDC (Composition Dynamic Controller) deployments. These actions are conditional, based on chart versions and the current state of the cluster.
 

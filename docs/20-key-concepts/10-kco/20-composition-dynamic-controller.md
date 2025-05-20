@@ -12,11 +12,11 @@ The composition-dynamic-controller is an operator that is instantiated by the [c
 
 ## Architecture
 
-![composition-dynamic-controller architecture](_diagrams/architecture.png "composition-dynamic-controller Architecture")
+![composition-dynamic-controller architecture](/img/cdc-architecture.png "composition-dynamic-controller Architecture")
 
 ## Workflow
 
-![composition-dynamic-controller State Diagram](_diagrams/composition-dynamic-controller-flow.png "composition-dynamic-controller  State Diagram")
+![composition-dynamic-controller State Diagram](/img/composition-dynamic-controller-flow.png "composition-dynamic-controller  State Diagram")
 
 ### **Composition Dynamic Controller (CDC) & Chart Inspector: Secure Helm Lifecycle Management**
 

@@ -40,7 +40,7 @@ The Krateo Core Provider is the foundational component of Krateo Composable Oper
 
 ## Architecture
 
-![core-provider Architecture Image](_diagrams/core-provider.png "core-provider Architecture")
+![core-provider Architecture Image](/img/core-provider.png "core-provider Architecture")
 
 This diagram outlines the high-level architecture and interactions within the Core Provider, responsible for managing CompositionDefinitions and related resources. It illustrates the relationships between key components such as the Core Provider itself, the Composition Dynamic Controller (CDC), the Chart Inspector, and various Kubernetes resources.
 

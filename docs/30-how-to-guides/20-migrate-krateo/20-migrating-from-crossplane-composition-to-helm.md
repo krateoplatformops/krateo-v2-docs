@@ -1,9 +1,9 @@
 ---
-description: Migrating Krateo PlatformOps Composition from v1 to v2
-sidebar_label: Migrating Krateo PlatformOps Composition from v1 to v2
+description: Migrating from Crossplane Composition to Helm
+sidebar_label: Migrating from Crossplane Composition to Helm
 ---
 
-# Krateo PlatformOps v2
+# Migrating from Crossplane Composition to Helm
 
 The release of Krateo PlatformOps v2 implies a change considering the templating engine used to implement the compositions. Until version 1, Crossplane has been used as a templating engine, using Composition to represent a higher-level abstraction of a stack of infrastructure and services. Since the release of Krateo PlatformOps v2, Helm has substituted Crossplane as the templating engine. This change allows you to overcome certain limits of Crossplane composition:
 

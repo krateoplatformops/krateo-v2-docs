@@ -1,12 +1,12 @@
 ---
 description: Learn how to install Krateo PlatformOps using this step-by-step guide
-sidebar_label: Installing Krateo PlatformOps and expose it via LoadBalancer
+sidebar_label: Installing Krateo PlatformOps on OpenShift and expose it via LoadBalancer
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Installing Krateo PlatformOps and expose it via LoadBalancer
+# Installing Krateo PlatformOps on OpenShift and expose it via LoadBalancer
 
 ## Basic Installation
 
@@ -36,6 +36,7 @@ helm upgrade installer installer \
   --create-namespace \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=true \
+  --set krateoplatformops.finopscratedb.openshift.enabled=true \
   --install \
   --version 2.5.0 \
   --wait
@@ -75,6 +76,7 @@ helm upgrade installer installer \
   --create-namespace \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
+  --set krateoplatformops.finopscratedb.openshift.enabled=true \
   --install \
   --version 2.5.0 \
   --wait
@@ -103,5 +105,5 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 </Tabs>
 
 :::info
-The installer by default deploys a composable-portal-basic with examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-basic.
+The installer by default deploys a composable-portal-starter collection of potyal examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-starter.
 :::

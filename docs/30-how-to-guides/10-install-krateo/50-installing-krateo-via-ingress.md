@@ -29,7 +29,7 @@ Krateo PlatformOps can be exposed via Ingress in the following way:
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.5.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -52,20 +52,20 @@ krateoplatformops:
       # - secretName: frontend-krateo-certificate
       #   hosts:
       #     - app.krateoplatformops.io
-    backend:
+    snowplow:
       className: ""
       annotations: {}
         # cert-manager.io/cluster-issuer: letsencrypt-krateo
-        # external-dns.alpha.kubernetes.io/hostname: "backend.krateoplatformops.io"
+        # external-dns.alpha.kubernetes.io/hostname: "snowplow.krateoplatformops.io"
       hosts:
-        - host: backend.krateoplatformops.io
+        - host: snowplow.krateoplatformops.io
           paths:
             - path: /
               pathType: Prefix
       tls: []
-      # - secretName: backend-krateo-certificate
+      # - secretName: snowplow-krateo-certificate
       #   hosts:
-      #     - backend.krateoplatformops.io
+      #     - snowplow.krateoplatformops.io
     authn:
       className: ""
       annotations: {}
@@ -108,13 +108,28 @@ krateoplatformops:
       # - secretName: resoucetreehandler-krateo-certificate
       #   hosts:
       #     - resoucetreehandler.krateoplatformops.io
+    smithery:
+      className: ""
+      annotations: {}
+        # cert-manager.io/cluster-issuer: letsencrypt-krateo
+        # external-dns.alpha.kubernetes.io/hostname: "smithery.krateoplatformops.io"
+      hosts:
+        - host: smithery.krateoplatformops.io
+          paths:
+            - path: /
+              pathType: Prefix
+      tls: []
+      # - secretName: smithery-krateo-certificate
+      #   hosts:
+      #     - smithery.krateoplatformops.io
   frontend:
     overrideconf: true
     config:
       AUTHN_API_BASE_URL: http://authn.krateoplatformops.io
-      BACKEND_API_BASE_URL: http://backend.krateoplatformops.io
+      SNOWPLOW_API_BASE_URL: http://snowplow.krateoplatformops.io
       EVENTS_PUSH_API_BASE_URL: http://eventsse.krateoplatformops.io
       EVENTS_API_BASE_URL: http://eventsse.krateoplatformops.io
+      SMITHERY_API_BASE_URL: http://smithery.krateoplatformops.io
 ```
 
 Install Krateo PlatformOps:
@@ -126,13 +141,13 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.4.2 \
+  --version 2.5.0 \
   --wait
 ```
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
 ```
 
 At the end of this process:
@@ -147,5 +162,5 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 </Tabs>
 
 :::info
-The installer by default deploys a composable-portal-basic with examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-basic.
+The installer by default deploys a composable-portal-starter collection of potyal examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-starter.
 :::

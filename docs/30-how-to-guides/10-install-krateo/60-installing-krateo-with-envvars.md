@@ -29,32 +29,20 @@ Krateo PlatformOps is exposed via NodePort by default. In order to customize env
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.4.0 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.5.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
 
 ```yaml
 krateoplatformops:
-  frontend:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  snowplow:
-    env:
-      http_proxy: http://127.0.0.1:3128
   authn:
     env:
       http_proxy: http://127.0.0.1:3128
-  backend:
+  smithery:
     env:
       http_proxy: http://127.0.0.1:3128
-    etcd:
-      env:
-        http_proxy: http://127.0.0.1:3128
-  coreprovider:
-    env:
-      http_proxy: http://127.0.0.1:3128
-  oasgenprovider:
+  snowplow:
     env:
       http_proxy: http://127.0.0.1:3128
   eventrouter:
@@ -66,7 +54,46 @@ krateoplatformops:
     etcd:
       env:
         http_proxy: http://127.0.0.1:3128
+  frontend:
+    env:
+      http_proxy: http://127.0.0.1:3128
   resourcetreehandler:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  coreprovider:
+    env:
+      http_proxy: http://127.0.0.1:3128
+    cdc:
+      env:
+        http_proxy: http://127.0.0.1:3128
+    chart-inspector:
+      env:
+        http_proxy: http://127.0.0.1:3128
+  oasgenprovider:
+    env:
+      http_proxy: http://127.0.0.1:3128
+    rdc:
+      env:
+        http_proxy: http://127.0.0.1:3128
+  finopscratedb:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  finopsoperatorexporter:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  finopsoperatorfocus:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  finopsdatabasehandler:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  finopscompositiondefinitionparser:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  finopsoperatorscraper:
+    env:
+      http_proxy: http://127.0.0.1:3128
+  opa:
     env:
       http_proxy: http://127.0.0.1:3128
 ```
@@ -80,13 +107,13 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.4.2 \
+  --version 2.5.0 \
   --wait
 ```
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
 ```
 
 At the end of this process:
@@ -101,5 +128,5 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 </Tabs>
 
 :::info
-The installer by default deploys a composable-portal-basic with examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-basic.
+The installer by default deploys a composable-portal-starter collection of potyal examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-starter.
 :::

@@ -11,7 +11,7 @@ This repository is part of the wider exporting architecture for the Krateo Compo
 This component is tasked with the creation of a generic exporting pipeline, according to the description given in a Custom Resource (CR). After the creation of the CR, the operator reads the FOCUS fields and creates a new resource for the FinOps Operator Exporter, pointing the `api` field at the Kubernetes API server and the FOCUS custom resource. This allow to create an exporter that reads directly the custom resource. The FinOps Operator Exporter then continues with the creation of the all the required resources, such as deployments, configMaps, services, and the CR for the FinOps Operator Scraper that manages scraping.
 
 ## Architecture
-![Krateo Composable FinOps Operator FOCUS](/img/KCF-operator-focus.png)
+![Krateo Composable FinOps Operator FOCUS](/img/kcf/KCF-operator-focus.png)
 
 ## Examples
 ```yaml

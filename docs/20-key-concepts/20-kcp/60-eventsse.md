@@ -20,7 +20,7 @@ Subscribed to the eventrouter service as event receiver.
 
 ## Architecture
 
-![EventSSE Architcture](https://www.plantuml.com/plantuml/png/TP2nJiCm48RtUufJTuFOKLK61ZPsnE3ObzOYEGUVNGRKTyVOcCIWJea-_Vxklpj8r26cUG8w4qSHGlLoSjOIlrh_mGeB3pv52W2mQFEcZxIb-0c8ni-BvyommWuv7dsO_y3T-UxcyTkoGotL9t01x4QKGhrVqY0ckA7e7ETPepOv7Otjm7kYH91HypqyFnLLL-AMVNIZCpewprAgB6cOd9me_CkMHZLqf5Ytl9GHxSdlxIRL4ZzHL5RjMyjr1rJfEYuhRFLudosLGXwypU_RuUid9zUpjv-SQeU60x5Dy_G5)
+![EventSSE Architecture](/img/kcp/eventsse-architecture.png)
 
 ## API
 

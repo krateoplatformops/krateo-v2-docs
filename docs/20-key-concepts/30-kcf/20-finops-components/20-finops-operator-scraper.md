@@ -11,7 +11,7 @@ This repository is part of the wider exporting architecture for the Krateo Compo
 This component is tasked with the creation of a generic scraper, according to the description given in a Custom Resource (CR). After the creation of the CR, the operator reads the "scraper" configuration part and creates two resources: a deployment with a generic prometheus scraper inside and a configmap containing the configuration. The scraper parses the prometheus data and obtains the given database-config to upload all metrics to a database.
 
 ## Architecture
-![Krateo Composable FinOps Operator Scraper](/img/KCF-operator-scraper.png)
+![Krateo Composable FinOps Operator Scraper](/img/kcf/KCF-operator-scraper.png)
 
 ## Examples
 ```yaml

@@ -29,7 +29,7 @@ Krateo PlatformOps is exposed via NodePort by default. In order to customize sec
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.4.2 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.5.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -109,13 +109,13 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.4.2 \
+  --version 2.5.0 \
   --wait
 ```
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
 ```
 
 At the end of this process:
@@ -130,5 +130,5 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 </Tabs>
 
 :::info
-The installer by default deploys a composable-portal-basic with examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-basic.
+The installer by default deploys a composable-portal-starter collection of potyal examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-starter.
 :::

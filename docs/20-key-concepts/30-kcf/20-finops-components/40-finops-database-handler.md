@@ -3,8 +3,6 @@ This service offers a set of endpoints to connect to the Krateo's CrateDB instan
 
 This service requires [CrateDB](https://github.com/crate/) to be installed in the Kubernetes cluster. The CrateDB Kubernetes operator is recommended.
 
-For an in-depth look at the architecture and how to configure all the components, download the summary document [here](https://github.com/krateoplatformops/finops-operator-exporter/resources/Krateo_Composable_FinOps___Full.pdf).
-
 ## Summary
 
 1. [Overview](#overview)
@@ -21,14 +19,14 @@ The handler calls the database HTTP endpoint to perform queries (both input and 
 The result is returned by the endpoint.
 
 ## Architecture
-![Krateo Composable FinOps Database Handler](/img/finops-database-handler-architecture.png)
+![Krateo Composable FinOps Database Handler](/img/kcf/finops-database-handler-architecture.png)
 
 ## API
 All endpoints must have the basic auth header field compiled with the username and password of the database. The password can also be a base64 encoded string. Note: if you pass a base64 string you will find a warning in the log that notifies a failed connection attempt: this is expected.
 
 - POST    `/upload`: the webservice receives the data (divided into chunks) and directly uploads it into the specified table in the database
 - POST    `/compute/<compute_name>`: calls the specified compute notebook with the POST body data being the parameters required by the given algorithm, encoded in JSON as parameter_name=parameter_value
-- POST    `/compute/<compute_name>/upload?overwrite=[true|false]`: uploads the specified notebook into the database with the name *compute_name*, with overwriting if configured (if not, defaults to no overwrite)
+- POST    `/compute/<compute_name>/upload?overwrite=[true|false]`: uploads the specified notebook into the database with the name `<compute_name>`, with overwriting if configured (if not, defaults to no overwrite)
 - DELETE  `/compute/<compute_name>`: deletes the specified notebook from the database
 - GET     `/compute/list`: lists all available compute notebooks
 

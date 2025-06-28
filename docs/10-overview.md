@@ -24,7 +24,7 @@ Architecture is based on these principles:
 * Authentication is completely delegated to the Kubernetes server API
 * Authorization is completely delegated to the Kubernetes RBAC
 
-![Architecture](/img/krateo-v2-4.png)
+![Architecture](/img/krateo-v2-5-0-architecture.png)
 
 ## Requirements
 
@@ -35,7 +35,7 @@ Architecture is based on these principles:
   * Networking requirements
     * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io
 
-If the Kubernetes version is minor than v1.31.x or it the distribution is EKS, Krateo PlatformOps can be deployed via vCluster.
+If the Kubernetes version is minor than v1.31.x or it the distribution is EKS, Krateo PlatformOps can be deployed via ephemeral clusters like vCluster.
 
 ## Next Steps
 

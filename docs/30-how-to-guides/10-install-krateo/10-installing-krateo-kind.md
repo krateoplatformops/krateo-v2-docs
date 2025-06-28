@@ -35,7 +35,7 @@ Krateo PlatformOps is exposed via NodePort by default:
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
 
-kind create cluster --wait 120s --image kindest/node:v1.31.6 --config - <<EOF
+kind create cluster --wait 120s --image kindest/node:v1.31.9 --config - <<EOF
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: krateo-quickstart
@@ -66,8 +66,10 @@ nodes:
     hostPort: 30083
   - containerPort: 30085 # Krateo Resource Tree Handler
     hostPort: 30085
-  - containerPort: 30087 # Krateo FireworksApp Frontend
-    hostPort: 30087
+  - containerPort: 30086 # Krateo FireworksApp Frontend
+    hostPort: 30086
+  - containerPort: 30088 # Krateo Smithery
+    hostPort: 30088
 networking:
   # By default the API server listens on a random open port.
   # You may choose a specific port but probably don't need to in most cases.
@@ -80,7 +82,7 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.4.2 \
+  --version 2.5.0 \
   --wait
 ```
 
@@ -96,7 +98,7 @@ launch a new one.
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
 ```
 
 At the end of this process:
@@ -108,5 +110,5 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 ```
 
 :::info
-The installer by default deploys a composable-portal-basic with examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-basic.
+The installer by default deploys a composable-portal-starter collection of potyal examples to immediately start to play with Krateo PlatformOps. The chart is available here: https://github.com/krateoplatformops/composable-portal-starter.
 :::

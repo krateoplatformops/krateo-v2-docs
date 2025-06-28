@@ -13,11 +13,17 @@ This service manages the resource trees for all the compositions installed.
 
 This service monitors all Kubernetes events that it receives on the `/events` endpoint to find create/deleted compositions (the events are obtained through an [eventrouter](http://github.com/krateoplatformops/eventrouter/) registration). When a composition is created, it creates a resource tree by fetching all managed resources' statuses. The resource tree is then published on `/compositions/<composition_id>`. If a delete event happens, then the resource tree is deleted from the cache and will not be served on the `/compositions/<composition_id>` endpoint anymore. The `/refresh/<composition_id>` endpoint can refreshes a resource tree for a given composition_id and the `/list` endpoint returns the list of all composition_ids that have a resource tree available. Additionally, the resource-tree-handler awaits sse events from the [eventsse](http://github.com/krateoplatformops/eventsse/) service, updating each object in the resource tree individually, when it has an event that notifies an update. Finally, it updates the status of the CR CompositionReference (i.e., the one that contains the filters) with the overall status of the composition, also setting the CompositionReference as the root of the resource tree.
 
+> [!NOTE]  
+> The `CompositionReference` is mandatory, if it is not present, the resource-tree-handler will not build the resource tree. Filters are optional.
+
+> [!NOTE]  
+> Every resource tree is refreshed completely every 8 hours.
+
 ## Architecture
 
-![Resource Tree Handler](/img/resource-tree-handler-architecture.png)
+![Resource Tree Handler](/img/kcp/resource-tree-handler-architecture.png)
 
-![Resource Tree Handler sequence diagram](/img/resource-tree-handler-sequence_diagram.png)
+![Resource Tree Handler sequence diagram](/img/kcp/resource-tree-handler-sequence_diagram.png)
 
 ## API
 
@@ -49,16 +55,16 @@ spec:
 ```
 This CR is automatically installed by the [HELM chart](http://github.com/krateoplatformops/resource-tree-handler-chart).
 
-To filter objects from the resource tree, you should use the CompositionReferece Custom Resource Definition. To map the custom resource to the composition, four labels need to be added with the information of the composition:
- - `krateo.io/composition-group`
+To filter objects from the resource tree, you should use the CompositionReferece Custom Resource Definition. To map the custom resource to the composition, two labels need to be added with the information of the composition:
+ - `krateo.io/composition-id`
  - `krateo.io/composition-installed-version`
- - `krateo.io/composition-namespace`
- - `krateo.io/composition-name`
+
+If you place the CompositionReference in the Helm template of the Composition, the `composition-dynamic-controller` will add [these labels automatically](https://github.com/krateoplatformops/composition-dynamic-controller?tab=readme-ov-file#composition-dynamic-controller-values-injection) when installing a new Composition.
 
 You can put a set of filters to exclude some resources from the resource tree. Each of `apiVersion`, `resource`, and `name` is evaluated independetly, and all must be true to filter a given resource. A field of the filter is true if the following criterias are met:
  - the field is missing or empty;
  - the field perfectly matches the resource;
- - the field is a regex and there is a match in the resource.
+ - the field is a regex and there is a **full** match in the resource.
 
 ```yaml
 apiVersion: resourcetrees.krateo.io/v1
@@ -88,5 +94,3 @@ status:
 The filters are evaluated at runtime, so changes made to the custom resource while the resource-tree-handler is running will be applied at the next event that triggers an update of the resource tree. The changed filter will trigger an update of the whole resource tree, equivalent to calling the `/refresh/<composition_id>` endpoint.
 
 Further configuration will be needed in the HELM chart to include the url for the [eventsse](http://github.com/krateoplatformops/eventsse/), to receive the sse notifications for available events (default value is already set, but if you modify the [eventsse](http://github.com/krateoplatformops/eventsse/) service, the HELM chart needs to be updated).
-
-Additionally, you will need to have a running instance of the [bff](http://github.com/krateoplatformops/bff) and compile the `URL_PLURALS` variable in the HELM chart values.

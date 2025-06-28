@@ -45,7 +45,7 @@ launch a new one.
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=300s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
 ```
 
 At the end of this process:
@@ -60,57 +60,82 @@ kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password
 
 Login into the Krateo Composable Portal: [http://localhost:30080/](http://localhost:30080/)
 
-![Login](../static/img/01-Quickstart-Login.png)
+![Login](/img/quickstart/01_login.png)
+
+Navigate the dashboard:
+
+![Dashboard_NoTemplates](/img/quickstart/02_dashboard_notemplates.png)
 
 ## Deploy the FireworksApp Template
 
 We will leverage the [FireworksApp template](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp).
-Follow the [README](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md) instructions to deploy the template leveraging [Krateo Composable Portal](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md#with-krateo-composable-portal).
+Follow the [README](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md#setup-toolchain-on-krateo-system-namespace-1) instructions to deploy the template leveraging [Krateo Composable Portal](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md#form-not-ordered-in-alphabetical-order).
 
-Wait for the *CompositionDefinition* to become Ready:
+Navigate again the dashboard and observe how the state changes while *CompositionDefinition* becomes *Ready:True*.
+
+![Dashboard_1Template_Unknown](/img/quickstart/03_dashboard_1template_unknown.png)
+
+Wait for the *CompositionDefinition* to become *Ready:False*:
+
+```shell
+kubectl wait compositiondefinition fireworksapp --for condition=Ready=False --namespace fireworksapp-system --timeout=300s
+```
+
+![Dashboard_1Template_ReadyFalse](/img/quickstart/04_dashboard_1template_readyfalse.png)
+
+Wait for the *CompositionDefinition* to become *Ready:True*:
 ```shell
 kubectl wait compositiondefinition fireworksapp --for condition=Ready=True --namespace fireworksapp-system --timeout=300s
 ```
 
+![Dashboard_1Template_ReadyTrue](/img/quickstart/07_dashboard_1template_readytrue.png)
+
 Check the *Templates* section in the Portal:
 
-![Templates](../static/img/02-Quickstart-Template.png)
+![Templates](/img/quickstart/06_templates_1template_readytrue.png)
 
 ## Deploy a Composition leveraging the FireworksApp Template
 
 Click on the *FireworksApp* card, a form will appear on the right:
 
-![Form](../static/img/03-Quickstart-Form.png)
+![Form](/img/quickstart/08_templates_1template_form.png)
 
 Fill the form fields in the following way:
 
 | Key  | Value |
 | ------------- | ------------- |
-| name  | krateo-demo  |
-| namespace  | fireworksapp-system  |
+| git.toRepo.name  | krateo-demo  |
 | git.toRepo.org | *your github organization* |
 
-A new Composition is now available:
+A new Composition is now available and an automatic redirect is done:
 
-![Composition](../static/img/04-Quickstart-Composition.png)
+![Composition_Overview_NotFilled](/img/quickstart/09_composition_overview_notfilled.png)
 
-Let's dig into the Composition tabs:
+Let's move back to the Composition menu:
+
+![Compositions](/img/quickstart/12_compositions.png)
+
+Let's click on the *krateo-demo* composition panel.
 
 ### Overview
 
-![Composition-Overview](../static/img/05-Quickstart-Composition-Overview.png)
+![Composition-Overview](/img/quickstart/13_composition_overview_filled.png)
 
 ### Composition Status
 
-![Composition-CompositionStatus](../static/img/06-Quickstart-Composition-CompositionStatus.png)
+![Composition-CompositionStatus](/img/quickstart/14_composition_status.png)
 
 ### Application Status
 
-![Composition-ApplicationStatus](../static/img/07-Quickstart-Composition-ApplicationStatus.png)
+![Composition-ApplicationStatus](/img/quickstart/15_composition_application.png)
 
 ### Events
 
-![Composition-Events](../static/img/08-Quickstart-Composition-Events.png)
+![Composition-Events](/img/quickstart/10_composition_events.png)
+
+### Values
+
+![Composition-Values](/img/quickstart/11_composition_values.png)
 
 ## Destroy the cluster
 

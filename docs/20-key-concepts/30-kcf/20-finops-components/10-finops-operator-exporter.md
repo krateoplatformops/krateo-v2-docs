@@ -12,7 +12,7 @@ This repository is part of the wider exporting architecture for the Krateo Compo
 This finops-operator-exporter is tasked with the creation of a generic exporting pipeline, according to the description given in a Custom Resource (CR). After the creation of the CR, the operator reads the "exporting" configuration and creates three resources: a deployment with a generic prometheus exporter inside, a configmap containing the exporter configuration CR and a service that exposes the deployment. The given endpoint is supposed to be a CSV file containing a FOCUS report. Then, it creates a new CR for the FinOps Operator Scraper, which starts a generic scraper to upload the data to a database. The configmap is mounted as a volume inside the deployment and the service is used to expose the metrics collected by the exporter in the prometheus format.
 
 ## Architecture
-![Krateo Composable FinOps Operator Exporter](/img/KCF-operator-exporter.png)
+![Krateo Composable FinOps Operator Exporter](/img/kcf/KCF-operator-exporter.png)
 
 ## Examples
 ```yaml
@@ -35,9 +35,6 @@ metadata:
   namespace: # ExporterScraperConfig namespace
 spec:
   exporterConfig: # same as krateoplatformops/finops-prometheus-exporter-generic
-    provider: 
-      name: # name of the provider config
-      namespace: # namespace of the provider config
     api: # the API to call
       path: # the path inside the domain
       verb: GET # the method to call the API with
@@ -62,48 +59,6 @@ spec:
 If the field `metricType` is set to `cost`, then the API in `url` must expose a FOCUS report in a CSV file. Otherwise, if set to `resource`, it must expose usage metrics according to the JSON/OPENAPI schema in the folder resources and the field `additionalVariables` must contain a field `ResourceId` with the identifier of the resources to be used in the database as external key to reference the cost metric from the usage metric (i.e., the same as the field `resourceId` of the focusConfig CR).
 
 The field `spec.scraperConfig.api` can be left empty if the exporter and scraper are both configured. The operator will compile this field automatically.
-
-The CR can be configured to include a `provider`, which is an object reference to a set of CRs that identify, for a given provider, which resources and which additional metrics should be exported and scraped. For example, for the CPU usage of virtual machines on Azure:
-```yaml
-apiVersion: finops.krateo.io/v1
-kind: ProviderConfig
-metadata:
-  name: azure
-  namespace: finops
-spec:
-  resourcesRef:
-  - name: azure-virtual-machines
-    namespace: finops
-- - -
-apiVersion: finops.krateo.io/v1
-kind: ResourceConfig
-metadata:
-  name: azure-virtual-machines
-  namespace: finops
-spec:
-  resourceFocusName: Virtual machine
-  metricsRef:
-  - name: azure-vm-cpu-usage
-    namespace: finops
-- - -
-apiVersion: finops.krateo.io/v1
-kind: MetricConfig
-metadata:
-  name: azure-vm-cpu-usage
-  namespace: finops
-spec:
-  metricName: Percentage CPU
-  endpoint:
-    resourcePrefixAPI:
-      endpointRef:
-        name: azure-management-api
-        namespace: finops
-      verb: GET
-    resourceSuffix: /providers/microsoft.insights/metrics?api-version=2023-10-01
-  timespan: month
-  interval: PT15M
-```
-For these metrics, the exporting/scraping pipeline is automatically started and the field `metricType` is automatically populated.
 
 ### Example Use Case for Pricing Visualization
 The Composable FinOps can be used to display pricing in the Krateo Composable Portal cards through a dedicated composition. You can find out more here: [krateo-v2-template-finops-example-pricing-vm-azure](https://github.com/krateoplatformops/krateo-v2-template-finops-example-pricing-vm-azure).

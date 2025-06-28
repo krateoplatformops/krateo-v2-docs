@@ -93,7 +93,7 @@ helm install krateo-oasgen-provider krateo/oasgen-provider --namespace krateo-sy
 
 ## Examples and Troubleshooting
 
-You can see a more practical guide on `oasgen-provider` usage at [this link](cheatsheet.md).
+You can see a more practical guide on `oasgen-provider` usage at [this link](./11-oasgen-provider-cheatsheet.md).
 
 ## Environment Variables and Flags
 

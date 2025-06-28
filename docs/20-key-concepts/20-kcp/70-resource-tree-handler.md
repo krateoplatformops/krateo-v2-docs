@@ -23,7 +23,7 @@ This service monitors all Kubernetes events that it receives on the `/events` en
 
 ![Resource Tree Handler](/img/kcp/resource-tree-handler-architecture.png)
 
-![Resource Tree Handler sequence diagram](/img/kcp/resouce-tree-handler-sequence_diagram.png)
+![Resource Tree Handler sequence diagram](/img/kcp/resource-tree-handler-sequence_diagram.png)
 
 ## API
 

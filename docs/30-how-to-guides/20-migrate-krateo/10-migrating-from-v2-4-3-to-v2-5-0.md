@@ -66,7 +66,7 @@ This is the `login` page of Krateo 2.4.3:
 This is the `dashboard` page of an empty Krateo 2.4.3 installation:
 ![image](https://github.com/user-attachments/assets/7b3b3a6f-d210-4a76-8bac-a67f98e91b70)
 
-Let's apply a Fireworksapp `compositiondefinition` version 1.1.15: https://github.com/krateoplatformops/krateo-v2-template-fireworksapp, follow instruction for Krateo <= 2.4.3
+Let's apply a Fireworksapp `compositiondefinition` version 1.1.15: https://github.com/krateoplatformops/krateo-v2-template-fireworksapp, follow instruction for Krateo version 2.4.3 or lower
 
 This is the `dashboard` page of Krateo 2.4.3 installation with the installed `compositiondefinition` with status `Ready:False`:
 ![image](https://github.com/user-attachments/assets/3b8f8aa7-4e2c-4b3e-b94c-8bd3b8fe347f)

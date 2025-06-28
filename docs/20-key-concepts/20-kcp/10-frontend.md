@@ -12,7 +12,7 @@ In summary, the Krateo frontend queries the backend (Kubernetes) via *snowplow* 
 
 In Krateo Composable Portal everything is based on the concept of widgets and their composition, a widget is a k8s CRD that maps to a UI element in the frontend (eg a Button) or to a configuration used by other widget (eg a Route)
 
-[see all widgets](./11-frontend-widgets-api-reference.md)
+[see all widgets](./11-frontend-widget-api-reference.md)
 
 ## Anatomy of a widget
 
@@ -21,7 +21,7 @@ example: [src/widgets/Button/Button.schema.json](https://github.com/krateoplatfo
 
 ## widgetData
 
-Every widget has a `widgetData` property that contains data used to control how the widget looks like or behave in the Frontend Composable Portal, in this example we are defining a `label`, an `icon` (using [fontawesome](https://fontawesome.com/search?ip=classic&s=solid&o=r) naming convention) and a `type` that control the the visual style of the button, in the button [API references](./11-frontend-widgets-api-reference.md) can be seen all possible values.
+Every widget has a `widgetData` property that contains data used to control how the widget looks like or behave in the Frontend Composable Portal, in this example we are defining a `label`, an `icon` (using [fontawesome](https://fontawesome.com/search?ip=classic&s=solid&o=r) naming convention) and a `type` that control the the visual style of the button, in the button [API references](./11-frontend-widget-api-reference.md) can be seen all possible values.
 
 Let's explore a basic Button widget
 
@@ -144,7 +144,7 @@ spec:
     filter: "[.items[] | {name: .metadata.name}]"
 ```
 
-As shown above, the endpoint called is `/api/v1/namespaces` which call the k8s api server, if this were an absolute URL it could reference external APIs, see the [RESTActions documentation](./12-frontend-restactions.md) for more details and learning how to authenticate to external APIs
+As shown above, the endpoint called is `/api/v1/namespaces` which call the k8s api server, if this were an absolute URL it could reference external APIs, see the [RESTActions documentation](https://docs.krateo.io/key-concepts/kcp/snowplow-restactions/) for more details and learning how to authenticate to external APIs.
 
 ## actions
 
@@ -343,4 +343,4 @@ As a quick recap of what is happing:
 
 ### Widgets API reference
 
-An api reference listing all widgets and their `widgetData` is available at [widgets-api-reference.md](./11-frontend-widgets-api-reference.md)
+An api reference listing all widgets and their `widgetData` is available at [widgets-api-reference.md](./11-frontend-widget-api-reference.md)

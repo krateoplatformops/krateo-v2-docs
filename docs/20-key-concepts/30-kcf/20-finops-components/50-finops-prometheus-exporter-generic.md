@@ -26,4 +26,3 @@ To build and push the Docker images:
 ```
 make container REPO=<your-registry-here>
 ```
-

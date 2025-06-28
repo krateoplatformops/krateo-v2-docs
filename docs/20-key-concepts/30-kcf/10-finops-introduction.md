@@ -46,7 +46,7 @@ The full example can be found here: [Krateo FinOps Example Composition](https://
 ### Optimization
 The third module is responsible for optimizations, and a usage example is available in the [Krateo FinOps Example Composition](https://github.com/krateoplatformops/krateo-v2-template-finops-example-pricing-vm-azure). 
 
-The optimizations rely on Open Policy Agent (OPA). The instances of this composition definition will install it automatically through the [finops-webhook-template-chart](<https://github.com/krateoplatformops/finops-webhook-template-chart>), which is imported as a dependency. The composition relies on the OPA policies in [finops-moving-window-policy](https://github.com/krateoplatformops/finops-moving-window-policy) to call the endpoint of the [finops-moving-window-optimization-microservice](https://github.com/krateoplatformops/finops-moving-window-microservice). The policy mutates the composition through the [finops-webhook-template](https://github.com/krateoplatformops/finops-webhook-template) to add the optimization to the field `spec.optimization`, which is then displayed in the frontend.
+The optimizations rely on Open Policy Agent (OPA). The instances of this composition definition will install it automatically through the [finops-webhook-template-chart](https://github.com/krateoplatformops/finops-webhook-template-chart), which is imported as a dependency. The composition relies on the OPA policies in [finops-moving-window-policy](https://github.com/krateoplatformops/finops-moving-window-policy) to call the endpoint of the [finops-moving-window-optimization-microservice](https://github.com/krateoplatformops/finops-moving-window-microservice). The policy mutates the composition through the [finops-webhook-template](https://github.com/krateoplatformops/finops-webhook-template) to add the optimization to the field `spec.optimization`, which is then displayed in the frontend.
 
 The policy is triggered by a `CronJob` running periodically (every day by default) that labels the Composition resource with a label `optimization` that has as the value the timestamp with the last optimization request.
 
@@ -55,7 +55,7 @@ The modules involved are:
 - [policies](https://github.com/krateoplatformops/finops-moving-window-policy-chart)
 - [finops-moving-window-microservice](https://github.com/krateoplatformops/finops-moving-window-microservice)
 - [finops-moving-window-microservice-chart](https://github.com/krateoplatformops/finops-moving-window-microservice-chart)
-- [finops-webhook-template-chart](github.com/krateoplatformops/finops-webhook-template-chart)
+- [finops-webhook-template-chart](https://github.com/krateoplatformops/finops-webhook-template-chart)
 
 ## Summary of Functionality
 The complete flow of the architecture starts with the creation of a generic composition definition that includes FinOps tags and custom resources. When a new composition definition is created, it is immediately parsed by the [finops-composition-definition-parser](https://github.com/krateoplatformops/finops-composition-definition-parser) looking for resource annotations that will be used to connect the custom resources created with pricing information stored in the database. If pricing information is available, then it is displayed inside the frontend.

@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Krateo PlatformOps Docs',
-  tagline: 'Unleash Your Cloud Platform Potential',
+  tagline: 'Rule The Platform',
   favicon: 'img/favicon_io/favicon.ico',
 
   // Set the production url of your site here
@@ -85,8 +85,8 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://discord.gg/sjca4QvVTa',
-            label: 'Krateo Community',
+            href: 'https://killercoda.com/krateoplatformops/',
+            label: 'Krateo Free Self-Service Labs',
             position: 'right',
           },
         ],

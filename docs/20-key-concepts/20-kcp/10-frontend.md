@@ -1,23 +1,8 @@
 # frontend
 
-Our frontend (https://github.com/krateoplatformops/frontend) can be defined as a data-driven meta-framework, but what does that mean exactly? Essentially, we created an architecture that ensures a consistent user experience by design. This is achieved by pre-packaging graphic elements and layouts that can be used and composed to build the portal pages.
-
-It's important to note that the Krateo portal should not be seen as a black box, but rather as a central point for collecting valuable information for the platform's users, which is distributed across different systems.
-
-Another important requirement is that the portal must be easily extendable without requiring any coding. All efforts should be focused on understanding how to display services in the catalog, rather than on maintaining forms for collecting information.
-
-In summary, the Krateo frontend queries the backend (Kubernetes) via *snowplow* to know which layouts and graphic elements must processed with client-side runtime rendering.
-
-# Widgets
-
 In Krateo Composable Portal everything is based on the concept of widgets and their composition, a widget is a k8s CRD that maps to a UI element in the frontend (eg a Button) or to a configuration used by other widget (eg a Route)
 
 [see all widgets](./11-frontend-widget-api-reference.md)
-
-## Anatomy of a widget
-
-A widget source of truth is a JSON schema that is used to generate a CRD, this allow each widget to have it's own Kind and schema validation at the moment of apply
-example: [src/widgets/Button/Button.schema.json](https://github.com/krateoplatformops/frontend/blob/main/src/widgets/Button/Button.schema.json)
 
 ## widgetData
 
@@ -163,23 +148,24 @@ Widgets can define actions inside widgetData
 
 Used to trigger an HTTP request to a specified resource (mathing the resourceRefId)
 
-| Property                      | Type    | Required | Description                                                          | Additional Info                    |
-| ----------------------------- | ------- | -------- | -------------------------------------------------------------------- | ---------------------------------- |
-| payloadKey                    | string  | No       | Key used to nest the payload in the request body                     |                                    |
-| id                            | string  | No       | Unique identifier for the action                                     |                                    |
-| resourceRefId                 | string  | No       | The identifier of the k8s custom resource that should be represented |                                    |
-| requireConfirmation           | boolean | No       | Whether user confirmation is required before triggering the action   |                                    |
-| onSuccessNavigateTo           | string  | No       | URL to navigate to after successful execution                        |                                    |
-| onEventNavigateTo             | object  | No       | Conditional navigation triggered by a specific event                 | additionalProperties: false        |
-| onEventNavigateTo.eventReason | string  | Yes      | Identifier of the awaited event reason                               |                                    |
-| onEventNavigateTo.url         | string  | Yes      | URL to navigate to when the event is received                        |                                    |
-| onEventNavigateTo.timeout     | integer | No       | The timeout in seconds to wait for the event                         | Default: 50                        |
-| loading                       | string  | No       | Defines the loading indicator behavior for the action                | Enum: ["global", "inline", "none"] |
-| type                          | string  | No       | Type of action to execute                                            | Enum: ["rest"]                     |
-| payload                       | object  | No       | Static payload sent with the request                                 | additionalProperties: true         |
-| payloadToOverride             | array   | No       | List of payload fields to override dynamically                       | Array of objects                   |
-| payloadToOverride.name        | string  | Yes      | Name of the field to override                                        |                                    |
-| payloadToOverride.value       | string  | Yes      | Value to use for overriding the field                                |                                    |
+| Property                         | Type    | Required | Description                                                          | Additional Info                    |
+| -------------------------------- | ------- | -------- | -------------------------------------------------------------------- | ---------------------------------- |
+| payloadKey                       | string  | No       | Key used to nest the payload in the request body                     |                                    |
+| id                               | string  | No       | Unique identifier for the action                                     |                                    |
+| resourceRefId                    | string  | No       | The identifier of the k8s custom resource that should be represented |                                    |
+| requireConfirmation              | boolean | No       | Whether user confirmation is required before triggering the action   |                                    |
+| onSuccessNavigateTo              | string  | No       | URL to navigate to after successful execution                        |                                    |
+| onEventNavigateTo                | object  | No       | Conditional navigation triggered by a specific event                 | additionalProperties: false        |
+| onEventNavigateTo.eventReason    | string  | Yes      | Identifier of the awaited event reason                               |                                    |
+| onEventNavigateTo.url            | string  | Yes      | URL to navigate to when the event is received                        |                                    |
+| onEventNavigateTo.timeout        | integer | No       | The timeout in seconds to wait for the event                         | Default: 50                        |
+| onEventNavigateTo.loadingMessage | string  | No       | Message to display while waiting for the event                       |                                    |
+| loading                          | string  | No       | Defines the loading indicator behavior for the action                | Enum: ["global", "inline", "none"] |
+| type                             | string  | No       | Type of action to execute                                            | Enum: ["rest"]                     |
+| payload                          | object  | No       | Static payload sent with the request                                 | additionalProperties: true         |
+| payloadToOverride                | array   | No       | List of payload fields to override dynamically                       | Array of objects                   |
+| payloadToOverride.name           | string  | Yes      | Name of the field to override                                        |                                    |
+| payloadToOverride.value          | string  | Yes      | Value to use for overriding the field                                |                                    |
 
 #### Example
 

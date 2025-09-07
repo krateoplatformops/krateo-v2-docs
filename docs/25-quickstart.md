@@ -110,7 +110,7 @@ Let's click on the *krateo-demo* composition panel.
 
 ### Events
 
-![Composition-Events](/img/quickstart/09_composition_1composition_events_.png)
+![Composition-Events](/img/quickstart/09_composition_1composition_events.png)
 
 ### Composition Status
 

@@ -10,9 +10,9 @@ We have created a `Button` and a `Page` that references it. In order to see disp
 
 ## Next steps
 
-We will update the `Button` to trigger an action on click, there are different types of actions that can be triggered by a button, in this guide we will use the `openDrawer` action, more info about actions can be found in [docs](../20-key-concepts/10-frontend.md)
+We will update the `Button` to trigger an action on click, there are different types of actions that can be triggered by a button, in this guide we will use the `openDrawer` action, more info about actions can be found in [docs](../../20-key-concepts/20-kcp/10-frontend.md)
 
-NB: the namespace and the name of the `Button` is the same as the one used in the [Simple page guide](../simple-page/simple-page.md), so beware that we will overwrite the one created in the previous guide.
+NB: the namespace and the name of the `Button` is the same as the one used in the [Simple page guide](./10-simple-page-guide.md), so beware that we will overwrite the one created in the previous guide.
 
 ```sh
 cat <<EOF | kubectl apply -f -

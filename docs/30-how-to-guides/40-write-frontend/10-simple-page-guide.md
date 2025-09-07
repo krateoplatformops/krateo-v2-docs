@@ -107,7 +107,7 @@ EOF
 
 by examining the previous yaml we can see that we referenced our Button by name in `spec.resourcesRefs.items[0]` and added an id (`simple-button-id`).
 
-Declaring resurces in `spec.resourcesRefs` is the way Krateo knows to load these widgets, they can be declare manually like in our case or dynamically (see `resourcesRefsTemplate` section in [docs](../../20-key-concepts/10-frontend.md) for more info.) This concept is generic to any widget and is used to load other resources.
+Declaring resurces in `spec.resourcesRefs` is the way Krateo knows to load these widgets, they can be declare manually like in our case or dynamically (see `resourcesRefsTemplate` section in [docs](../../20-key-concepts/20-kcp/10-frontend.md) for more info.) This concept is generic to any widget and is used to load other resources.
 
 ## Where is the Page?
 

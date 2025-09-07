@@ -100,7 +100,7 @@ Fill the form fields in the following way:
 
 A new Composition is now available and an automatic redirect is done:
 
-![Composition_Overview_NotFilled](/img/quickstart/09_composition_1composition_events_.png)
+![Composition_Overview_NotFilled](/img/quickstart/09_composition_1composition_events.png)
 
 Let's move back to the `Compositions` menu:
 

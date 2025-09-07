@@ -9,7 +9,6 @@ The composition-dynamic-controller is an operator that is instantiated by the [c
 - [Overview](#overview)
 - [Examples](#examples)
 - [Configuration](#configuration)
-  
 
 ## Architecture
 
@@ -17,7 +16,7 @@ The composition-dynamic-controller is an operator that is instantiated by the [c
 
 ## Workflow
 
-![composition-dynamic-controller State Diagram](/img/kco/composition-dynamic-controller-flow.png "composition-dynamic-controller  State Diagram")
+![composition-dynamic-controller State Diagram](/img/kco/composition-dynamic-controller-flow.png "composition-dynamic-controller State Diagram")
 
 ### **Composition Dynamic Controller (CDC) & Chart Inspector: Secure Helm Lifecycle Management**
 
@@ -79,6 +78,65 @@ The **Composition Dynamic Controller (CDC)** is a specialized Kubernetes operato
    - **Upgrade** proceeds *only after* the CRD and RBAC are confirmed active.  
 3. **Result**: Zero downtime; no "helm upgrade failed: CRD missing" errors.
 
+
+## Composition Dynamic Controller Values Injection
+
+The composition-dynamic-controller inject labels and values into the installed resources and in the helm chart release values. This values contains informations about the composition resource associated with the helm release.
+The values are injected in the following way:
+
+| Helm Chart Release Values | Installed Resources Labels | Description |
+|:--------------------------|:---------------------------|:------------|
+| `global.compositionId`    | `krateo.io/composition-id` | The composition resource uid |
+| `global.compositionName`  | `krateo.io/composition-name` | The composition resource name |
+| `global.compositionNamespace` | `krateo.io/composition-namespace` | The composition resource namespace |
+| `global.compositionInstalledVersion` | `krateo.io/composition-installed-version` | The version of the composition resource installed. This value changes if the chart version is upgraded |
+| `global.compositionApiVersion` | not injected | The api version of the composition resource. This values is deprecated but is mainteined for backward compatibility. |
+| `global.compositionGroup` | `krateo.io/composition-group` | The group of the composition resource. |
+| `global.compositionResource` | `krateo.io/composition-resource` | The plural name of the composition resource. |
+| `global.compositionKind` | `krateo.io/composition-kind` | The kind of the composition resource. |
+| `global.krateoNamespace` | `krateo.io/krateo-namespace` | The namespace where Krateo is installed. This value is used to identify the Krateo resources in the cluster. |
+| `global.gracefullyPaused`| not injected | This value is set to `true` if the annotation `krateo.io/gracefully-paused` is set on the composition resource. This value is used to pause the reconciliation of the composition resource only after the value is injected in the helm release values with a successful helm upgrade. Read the [paragraph below](#about-the-gracefullypaused-value) for more details. |
+
+### About the `gracefullyPaused` value
+
+The `global.gracefullyPaused` value provides a way to gracefully pause both the composition resource and all Krateo resources within its Helm chart.
+
+#### How it works:
+1. **Trigger**: Set the annotation `krateo.io/gracefully-paused` on the composition resource
+2. **Activation**: The pause takes effect only after the next successful Helm upgrade injects this value into the chart
+3. **Scope**: Pauses both the composition reconciliation AND any Krateo resources in the chart that respect the `krateo.io/paused` annotation
+
+#### Use cases:
+- **Graceful pause**: Temporarily halt all composition-related activity without resource deletion
+- **Coordinated pause**: Ensure both the composition and its managed resources pause simultaneously
+- **Safe maintenance**: Pause operations during maintenance windows
+
+#### Comparison with `krateo.io/paused`:
+
+| Annotation | Scope | When it takes effect |
+|------------|-------|---------------------|
+| `krateo.io/gracefully-paused` | Composition + chart resources | After next Helm upgrade |
+| `krateo.io/paused` | Composition only | Immediately |
+
+**Example**: Use `krateo.io/gracefully-paused` when you need to pause an entire application stack, or `krateo.io/paused` for immediate composition-only pausing.
+
+#### How to include the pause in a resource included in the chart
+
+To include the pause in a resource included in the chart, you can use the `krateo.io/paused` annotation on the resource. This will ensure that the resource is paused when the composition is paused.
+
+```yaml
+apiVersion: git.krateo.io/v1alpha1
+kind: Repo
+metadata:
+  name: {{ include "fireworks-app.fullname" . }}-repo
+  labels:
+    {{- include "fireworks-app.labels" . | nindent 4 }}
+  annotations:
+    krateo.io/paused: "{{ default false (and .Values.global .Values.global.gracefullyPaused) }}"
+spec:
+...
+```
+
 ## Configuration
 
 ### Operator Env Vars
@@ -94,11 +152,12 @@ These enviroment varibles can be changed in the Deployment of the composition-dy
 | COMPOSITION_CONTROLLER_VERSION         | resource api version       |               | populated by `core-provider` |
 | COMPOSITION_CONTROLLER_RESOURCE        | resource plural name       |               | populated by `core-provider` |
 | COMPOSITION_CONTROLLER_SA_NAME         | cdc deployment ServiceAccount name |  | populated by `core-provider` |
-| COMPOSITION_CONTROLLER_SA_NAMESPACE        | cdc deployment ServiceAccount namespace | populated by `core-provider` |
-| URL_PLURALS                            | url to krateo pluraliser service       | `http://snowplow.krateo-system.svc.cluster.local:8081/api-info/names`  |   
+| COMPOSITION_CONTROLLER_SA_NAMESPACE        | cdc deployment ServiceAccount namespace | |populated by `core-provider` |
+| URL_PLURALS                            | NOT USED from version 0.17.1 - URL to krateo pluraliser service | `http://snowplow.krateo-system.svc.cluster.local:8081/api-info/names` | Ignored from version 0.17.1 |
 | URL_CHART_INSPECTOR                    | url to chart inspector   |  `http://chart-inspector.krateo-system.svc.cluster.local:8081/`             |   
 | KRATEO_NAMESPACE                       | namespace where krateo is installed       |  krateo-system |
 | HELM_REGISTRY_CONFIG_PATH | default helm config path | /tmp |
 | HELM_MAX_HISTORY | Max Helm History | 10 |
-| COMPOSITION_MAX_ERROR_RETRY_INTERVAL | The maximum interval between retries when an error occurs. This should be less than the half of the poll interval. |  0m |
-| COMPOSITION_MIN_ERROR_RETRY_INTERVAL | The minimum interval between retries when an error occurs. This should be less than max-error-retry-interval. | 1m |
+| COMPOSITION_CONTROLLER_MAX_ERROR_RETRY_INTERVAL | The maximum interval between retries when an error occurs. This should be less than the half of the poll interval. |  0m |
+| COMPOSITION_CONTROLLER_MIN_ERROR_RETRY_INTERVAL | The minimum interval between retries when an error occurs. This should be less than max-error-retry-interval. | 1m |
+| COMPOSITION_CONTROLLER_METRICS_SERVER_PORT | The port where the metrics server will be listening. If not set, the metrics server is disabled. |  |

@@ -158,12 +158,7 @@ spec:
 
 A Composition is a Helm Chart archive (.tgz) with a JSON Schema for the `values.yaml` file. The JSON Schema file must be named `values.schema.json`.
 
-Here are some online tools to generate and validate JSON Schemas:
-
-- https://jsonformatter.org/yaml-to-jsonschema
-- https://codebeautify.org/yaml-to-json-schema-generator
-- https://www.jsonschemavalidator.net/
-- https://json-schema.hyperjump.io/
+Our official tool to generate a valid JSON schemas is [krateoctl](https://github.com/krateoplatformops/krateoctl).
 
 #### CRD Specification
 

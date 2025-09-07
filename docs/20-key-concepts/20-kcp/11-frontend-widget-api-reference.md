@@ -68,40 +68,47 @@ Button represents an interactive component which, when clicked, triggers a speci
 | actions.rest[].id | yes | unique identifier for the action | string |
 | actions.rest[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.rest[].requireConfirmation | no | whether user confirmation is required before triggering the action | boolean |
+| actions.rest[].errorMessage | no | a message that will be displayed inside a toast in case of error | string |
+| actions.rest[].successMessage | no | a message that will be displayed inside a toast in case of success | string |
 | actions.rest[].onSuccessNavigateTo | no | url to navigate to after successful execution | string |
 | actions.rest[].onEventNavigateTo | no | conditional navigation triggered by a specific event | object |
 | actions.rest[].onEventNavigateTo.eventReason | yes | identifier of the awaited event reason | string |
 | actions.rest[].onEventNavigateTo.url | yes | url to navigate to when the event is received | string |
 | actions.rest[].onEventNavigateTo.timeout | no | the timeout in seconds to wait for the event | integer |
-| actions.rest[].loading | no | defines the loading indicator behavior for the action | `global` \| `inline` \| `none` |
-| actions.rest[].type | no | type of action to execute | `rest` |
+| actions.rest[].onEventNavigateTo.reloadRoutes | no |  | boolean |
+| actions.rest[].type | yes | type of action to execute | `rest` |
+| actions.rest[].headers | no |  | array |
 | actions.rest[].payload | no | static payload sent with the request | object |
 | actions.rest[].payloadToOverride | no | list of payload fields to override dynamically | array |
 | actions.rest[].payloadToOverride[].name | yes | name of the field to override | string |
 | actions.rest[].payloadToOverride[].value | yes | value to use for overriding the field | string |
+| actions.rest[].loading | no |  | object |
+| actions.rest[].loading.display | yes |  | boolean |
 | actions.navigate | no | client-side navigation actions | array |
 | actions.navigate[].id | yes | unique identifier for the action | string |
-| actions.navigate[].type | yes | type of navigation action | `navigate` |
-| actions.navigate[].name | yes | name of the navigation action | string |
-| actions.navigate[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
+| actions.navigate[].loading | no |  | object |
+| actions.navigate[].loading.display | yes |  | boolean |
+| actions.navigate[].path | no | the identifier of the route to navigate to | string |
+| actions.navigate[].resourceRefId | no | the identifier of the k8s custom resource that should be represented | string |
 | actions.navigate[].requireConfirmation | no | whether user confirmation is required before navigating | boolean |
-| actions.navigate[].loading | no | defines the loading indicator behavior during navigation | `global` \| `inline` \| `none` |
+| actions.navigate[].type | yes | type of navigation action | `navigate` |
 | actions.openDrawer | no | actions to open side drawer components | array |
 | actions.openDrawer[].id | yes | unique identifier for the drawer action | string |
 | actions.openDrawer[].type | yes | type of drawer action | `openDrawer` |
 | actions.openDrawer[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.openDrawer[].requireConfirmation | no | whether user confirmation is required before opening | boolean |
-| actions.openDrawer[].loading | no | defines the loading indicator behavior for the drawer | `global` \| `inline` \| `none` |
 | actions.openDrawer[].size | no | drawer size to be displayed | `default` \| `large` |
 | actions.openDrawer[].title | no | title shown in the drawer header | string |
+| actions.openDrawer[].loading | no |  | object |
+| actions.openDrawer[].loading.display | yes |  | boolean |
 | actions.openModal | no | actions to open modal dialog components | array |
 | actions.openModal[].id | yes | unique identifier for the modal action | string |
 | actions.openModal[].type | yes | type of modal action | `openModal` |
-| actions.openModal[].name | yes | name of the modal action | string |
 | actions.openModal[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.openModal[].requireConfirmation | no | whether user confirmation is required before opening | boolean |
-| actions.openModal[].loading | no | defines the loading indicator behavior for the modal | `global` \| `inline` \| `none` |
 | actions.openModal[].title | no | title shown in the modal header | string |
+| actions.openModal[].loading | no |  | object |
+| actions.openModal[].loading.display | yes |  | boolean |
 | color | no | the color of the button | `default` \| `primary` \| `danger` \| `blue` \| `purple` \| `cyan` \| `green` \| `magenta` \| `pink` \| `red` \| `orange` \| `yellow` \| `volcano` \| `geekblue` \| `lime` \| `gold` |
 | label | no | the label of the button | string |
 | icon | no | the icon of the button (font awesome icon name eg: `fa-inbox`) | string |
@@ -121,6 +128,26 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+    - barcharts
+    - buttons
+    - columns
+    - datagrids
+    - eventlists
+    - filters
+    - flowcharts
+    - forms
+    - linecharts
+    - markdowns
+    - pages
+    - panels
+    - paragraphs
+    - piecharts
+    - restactions
+    - rows
+    - tables
+    - tablists
+    - yamlviewers
     icon: fa-trash
     type: default
     shape: circle
@@ -132,12 +159,13 @@ spec:
           type: rest
           requireConfirmation: true
   resourcesRefs:
-    - id: delete
-      apiVersion: composition.krateo.io/v1-1-15
-      resource: testapps
-      name: hello-test-2
-      namespace: test-namespace
-      verb: DELETE
+    items:
+      - id: delete
+        apiVersion: composition.krateo.io/v1-1-15
+        resource: testapps
+        name: hello-test-2
+        namespace: test-namespace
+        verb: DELETE
 ```
 </details>
 
@@ -151,6 +179,7 @@ Column is a layout component that arranges its children in a vertical stack, ali
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | items | yes | the items of the column | array |
 | items[].resourceRefId | yes | the identifier of the k8s Custom Resource that should be represented, usually a widget | string |
 | size | no | the number of cells that the column will occupy, from 0 (not displayed) to 24 (occupies all space) | integer |
@@ -166,22 +195,41 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - barcharts
+      - buttons
+      - columns
+      - datagrids
+      - eventlists
+      - filters
+      - flowcharts
+      - forms
+      - linecharts
+      - markdowns
+      - panels
+      - paragraphs
+      - piecharts
+      - rows
+      - tables
+      - tablists
+      - yamlviewers
     items:
       - resourceRefId: table-of-pods
       - resourceRefId: pie-chart-inside-column
   resourcesRefs:
-    - id: table-of-pods
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: table-of-pods
-      namespace: test-namespace
-      resource: tables
-      verb: GET
-    - id: pie-chart-inside-column
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: pie-chart-inside-column
-      namespace: test-namespace
-      resource: piecharts
-      verb: GET
+    items:
+      - id: table-of-pods
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: table-of-pods
+        namespace: test-namespace
+        resource: tables
+        verb: GET
+      - id: pie-chart-inside-column
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: pie-chart-inside-column
+        namespace: test-namespace
+        resource: piecharts
+        verb: GET
 ```
 </details>
 
@@ -195,19 +243,20 @@ spec:
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
-| prefix | no | it's the filters prefix to get right values | string |
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | asGrid | no | to show children as list or grid | boolean |
-| grid | no | The grid type of list. You can set grid to something like `{gutter: 16, column: 4}` or specify the integer for columns based on their size, e.g. sm, md, etc. to make it responsive. | object |
+| grid | no | The grid type of list. You can set grid to something like {gutter: 16, column: 4} or specify the integer for columns based on their size, e.g. sm, md, etc. to make it responsive. | object |
 | grid.gutter | no | The spacing between grid | integer |
 | grid.column | no | The column of grid | integer |
-| grid.xs | no | `<576px` column of grid | integer |
-| grid.sm | no | `≥576px` column of grid | integer |
-| grid.md | no | `≥768px` column of grid | integer |
-| grid.lg | no | `≥992px` column of grid | integer |
-| grid.xl | no | `≥1200px` column of grid | integer |
-| grid.xxl | no | `≥1600px` column of grid | integer |
+| grid.xs | no | <576px column of grid | integer |
+| grid.sm | no | ≥576px column of grid | integer |
+| grid.md | no | ≥768px column of grid | integer |
+| grid.lg | no | ≥992px column of grid | integer |
+| grid.xl | no | ≥1200px column of grid | integer |
+| grid.xxl | no | ≥1600px column of grid | integer |
 | items | yes |  | array |
 | items[].resourceRefId | yes |  | string |
+| prefix | no | it's the filters prefix to get right values | string |
 
 ---
 
@@ -245,6 +294,7 @@ EventList renders data coming from a Kubernetes cluster or Server Sent Events as
 | events[].source | yes | information about the source generating the event | object |
 | events[].source.component | no | component source of the event | string |
 | events[].source.host | no | host where the event originated | string |
+| prefix | no | filter prefix used to filter data | string |
 | sseEndpoint | no | endpoint url for server sent events connection | string |
 | sseTopic | no | subscription topic for server sent events | string |
 
@@ -332,22 +382,28 @@ FlowChart represents a Kubernetes composition as a directed graph. Each node rep
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
 | data | no | list of kubernetes resources and their relationships to render as nodes in the flow chart | array |
-| data[].createdAt | yes | timestamp indicating when the resource was created | string |
-| data[].health | no | health status of the resource | object |
-| data[].health.message | no | optional description of the health state | string |
-| data[].health.reason | no | reason explaining the current health status | string |
-| data[].health.status | no | short status keyword (e.g. healthy, degraded) | string |
-| data[].health.type | no | type or category of health check | string |
+| data[].date | yes | optional date value to be shown in the node, formatted as ISO 8601 string | string |
+| data[].icon | no | custom icon displayed for the resource node | object |
+| data[].icon.name | no | FontAwesome icon class name (e.g. 'fa-check') | string |
+| data[].icon.color | no | CSS color value for the icon background | string |
+| data[].icon.message | no | optional tooltip message displayed on hover | string |
+| data[].statusIcon | no | custom status icon displayed alongside resource info | object |
+| data[].statusIcon.name | no | FontAwesome icon class name representing status | string |
+| data[].statusIcon.color | no | CSS color value for the status icon background | string |
+| data[].statusIcon.message | no | optional tooltip message describing the status | string |
 | data[].kind | yes | kubernetes resource type (e.g. Deployment, Service) | string |
 | data[].name | yes | name of the resource | string |
 | data[].namespace | yes | namespace in which the resource is defined | string |
 | data[].parentRefs | no | list of parent resources used to define graph relationships | array |
-| data[].parentRefs[].createdAt | no | timestamp indicating when the parent resource was created | string |
-| data[].parentRefs[].health | no | health status of the parent resource | object |
-| data[].parentRefs[].health.message | no | optional description of the health state | string |
-| data[].parentRefs[].health.reason | no | reason explaining the current health status | string |
-| data[].parentRefs[].health.status | no | short status keyword | string |
-| data[].parentRefs[].health.type | no | type or category of health check | string |
+| data[].parentRefs[].date | no | optional date value to be shown in the node, formatted as ISO 8601 string | string |
+| data[].parentRefs[].icon | no | custom icon for the parent resource | object |
+| data[].parentRefs[].icon.name | no | FontAwesome icon class name | string |
+| data[].parentRefs[].icon.color | no | CSS color value for the icon background | string |
+| data[].parentRefs[].icon.message | no | optional tooltip message | string |
+| data[].parentRefs[].statusIcon | no | custom status icon for the parent resource | object |
+| data[].parentRefs[].statusIcon.name | no | FontAwesome icon class name | string |
+| data[].parentRefs[].statusIcon.color | no | CSS color value for the status icon background | string |
+| data[].parentRefs[].statusIcon.message | no | optional tooltip message | string |
 | data[].parentRefs[].kind | no | resource type of the parent | string |
 | data[].parentRefs[].name | no | name of the parent resource | string |
 | data[].parentRefs[].namespace | no | namespace of the parent resource | string |
@@ -370,56 +426,111 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
-    data: [
-    {
-        "createdAt": "2025-05-29T14:35:56Z",
-        "health": {
-            "message": "Kind: Application - Name: hello-test-2 - Namespace: test-namespace - Message: Failed to load target state: failed to generate manifest for source 1 of 1: rpc error: code = Unknown desc = failed to list refs: authentication required: Repository not found.",
-            "reason": "False",
-            "status": "Degraded",
-            "type": "CompositionStatus"
-        },
-        "kind": "CompositionReference",
-        "name": "hello-test-2",
-        "namespace": "fireworksapp-system",
-        "parentRefs": [
-            {}
-        ],
-        "resourceVersion": "39743",
-        "uid": "a691a7b2-3170-4929-b3cf-a38b10e2d0a2",
-        "version": "resourcetrees.krateo.io/v1"
-    },
-    {
-        "createdAt": "2025-05-29T14:35:56Z",
-        "health": {},
-        "kind": "ConfigMap",
-        "name": "hello-test-2-fireworks-app-replace-values",
-        "namespace": "fireworksapp-system",
-        "parentRefs": [
-            {
-                "createdAt": "2025-05-29T14:35:56Z",
-                "health": {
-                    "message": "Kind: Application - Name: hello-test-2 - Namespace: test-namespace - Message: Failed to load target state: failed to generate manifest for source 1 of 1: rpc error: code = Unknown desc = failed to list refs: authentication required: Repository not found.",
-                    "reason": "False",
-                    "status": "Degraded",
-                    "type": "CompositionStatus"
-                },
-                "kind": "CompositionReference",
-                "name": "hello-test-2",
-                "namespace": "fireworksapp-system",
-                "parentRefs": [
-                    {}
-                ],
-                "resourceVersion": "39743",
-                "uid": "a691a7b2-3170-4929-b3cf-a38b10e2d0a2",
-                "version": "resourcetrees.krateo.io/v1"
-            }
-        ],
-        "resourceVersion": "27039",
-        "uid": "4ac6e09f-3ccf-4d65-ad3a-d4c1e1438bbf",
-        "version": "v1"
-    }
-]
+    data:
+      - date: "2025-07-24T15:30:36Z"
+        icon:
+          name: "fa-cubes"
+          color: "#1890ff"
+        statusIcon:
+          name: "fa-check"
+          color: "#52c41a"
+          message: "Available"
+        kind: "FrontendGithubScaffolding"
+        name: "test2"
+        namespace: "demo-system"
+        parentRefs:
+          - {}
+        resourceVersion: ""
+        uid: "1eed3c65-90d2-4823-a85c-3430d4e41944"
+        version: "composition.krateo.io/v0-0-1"
+
+      - date: "2024-07-31T15:30:39Z"
+        icon:
+          name: "fa-file-alt"
+          color: "#faad14"
+        statusIcon:
+          name: "fa-ellipsis"
+          color: "#1890ff"
+          message: "Progressing"
+        kind: "ConfigMap"
+        name: "test2-replace-values"
+        namespace: "demo-system"
+        parentRefs:
+          - kind: "FrontendGithubScaffolding"
+            name: "test2"
+            namespace: "demo-system"
+            parentRefs: [{}]
+            uid: "1eed3c65-90d2-4823-a85c-3430d4e41944"
+            version: "composition.krateo.io/v0-0-1"
+        resourceVersion: "77493"
+        uid: "e99a3efe-7461-4ffe-b956-55cb3882f0c5"
+        version: "v1"
+
+      - date: "2025-07-31T15:30:39Z"
+        icon:
+          name: "fa-cogs"
+          color: "#13c2c2"
+        statusIcon:
+          name: "fa-pause"
+          color: "#faad14"
+          message: "Suspended"
+        kind: "Application"
+        name: "test2"
+        namespace: "krateo-system"
+        parentRefs:
+          - kind: "FrontendGithubScaffolding"
+            name: "test2"
+            namespace: "demo-system"
+            parentRefs: [{}]
+            uid: "1eed3c65-90d2-4823-a85c-3430d4e41944"
+            version: "composition.krateo.io/v0-0-1"
+        resourceVersion: "2769771"
+        uid: "10c62b82-8096-4f40-a991-8f1a420a7c42"
+        version: "argoproj.io/v1alpha1"
+
+      - date: "2025-07-31T15:30:39Z"
+        icon:
+          name: "fa-database"
+          color: "#722ed1"
+        statusIcon:
+          name: "fa-xmark"
+          color: "#ff4d4f"
+          message: "Degraded"
+        kind: "Repo"
+        name: "test2-repo"
+        namespace: "demo-system"
+        parentRefs:
+          - kind: "FrontendGithubScaffolding"
+            name: "test2"
+            namespace: "demo-system"
+            parentRefs: [{}]
+            uid: "1eed3c65-90d2-4823-a85c-3430d4e41944"
+            version: "composition.krateo.io/v0-0-1"
+        resourceVersion: "2771491"
+        uid: "36177476-08c3-42dd-a148-48d0b94bbf13"
+        version: "git.krateo.io/v1alpha1"
+
+      - date: "2025-07-31T15:30:39Z"
+        icon:
+          name: "fa-book"
+          color: "#eb2f96"
+        statusIcon:
+          name: "fa-question"
+          color: "#d9d9d9"
+          message: "Unknown"
+        kind: "Repo"
+        name: "test2-repo"
+        namespace: "demo-system"
+        parentRefs:
+          - kind: "FrontendGithubScaffolding"
+            name: "test2"
+            namespace: "demo-system"
+            parentRefs: [{}]
+            uid: "1eed3c65-90d2-4823-a85c-3430d4e41944"
+            version: "composition.krateo.io/v0-0-1"
+        resourceVersion: "77512"
+        uid: "cc1fb868-3ae9-435a-a748-aa54dcd1b26b"
+        version: "github.kog.krateo.io/v1alpha1"
 ```
 </details>
 
@@ -436,47 +547,76 @@ name of the k8s Custom Resource
 | actions | yes | the actions of the widget | object |
 | actions.rest | no | rest api call actions triggered by the widget | array |
 | actions.rest[].payloadKey | no | key used to nest the payload in the request body | string |
+| actions.rest[].headers | no |  | array |
 | actions.rest[].id | yes | unique identifier for the action | string |
 | actions.rest[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.rest[].requireConfirmation | no | whether user confirmation is required before triggering the action | boolean |
 | actions.rest[].onSuccessNavigateTo | no | url to navigate to after successful execution | string |
+| actions.rest[].errorMessage | no | a message that will be displayed inside a toast in case of error | string |
+| actions.rest[].successMessage | no | a message that will be displayed inside a toast in case of success | string |
 | actions.rest[].onEventNavigateTo | no | conditional navigation triggered by a specific event | object |
 | actions.rest[].onEventNavigateTo.eventReason | yes | identifier of the awaited event reason | string |
 | actions.rest[].onEventNavigateTo.url | yes | url to navigate to when the event is received | string |
 | actions.rest[].onEventNavigateTo.timeout | no | the timeout in seconds to wait for the event | integer |
-| actions.rest[].loading | no | defines the loading indicator behavior for the action | `global` \| `inline` \| `none` |
-| actions.rest[].type | no | type of action to execute | `rest` |
+| actions.rest[].onEventNavigateTo.reloadRoutes | no |  | boolean |
+| actions.rest[].type | yes | type of action to execute | `rest` |
 | actions.rest[].payload | no | static payload sent with the request | object |
 | actions.rest[].payloadToOverride | no | list of payload fields to override dynamically | array |
 | actions.rest[].payloadToOverride[].name | yes | name of the field to override | string |
 | actions.rest[].payloadToOverride[].value | yes | value to use for overriding the field | string |
+| actions.rest[].loading | no |  | object |
+| actions.rest[].loading.display | yes |  | boolean |
 | actions.navigate | no | client-side navigation actions | array |
 | actions.navigate[].id | yes | unique identifier for the action | string |
-| actions.navigate[].type | yes | type of navigation action | `navigate` |
-| actions.navigate[].name | yes | name of the navigation action | string |
-| actions.navigate[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
+| actions.navigate[].loading | no |  | object |
+| actions.navigate[].loading.display | yes |  | boolean |
+| actions.navigate[].path | no | the identifier of the route to navigate to | string |
+| actions.navigate[].resourceRefId | no | the identifier of the k8s custom resource that should be represented | string |
 | actions.navigate[].requireConfirmation | no | whether user confirmation is required before navigating | boolean |
-| actions.navigate[].loading | no | defines the loading indicator behavior during navigation | `global` \| `inline` \| `none` |
+| actions.navigate[].type | yes | type of navigation action | `navigate` |
 | actions.openDrawer | no | actions to open side drawer components | array |
 | actions.openDrawer[].id | yes | unique identifier for the drawer action | string |
 | actions.openDrawer[].type | yes | type of drawer action | `openDrawer` |
 | actions.openDrawer[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.openDrawer[].requireConfirmation | no | whether user confirmation is required before opening | boolean |
-| actions.openDrawer[].loading | no | defines the loading indicator behavior for the drawer | `global` \| `inline` \| `none` |
 | actions.openDrawer[].size | no | drawer size to be displayed | `default` \| `large` |
 | actions.openDrawer[].title | no | title shown in the drawer header | string |
+| actions.openDrawer[].loading | no |  | object |
+| actions.openDrawer[].loading.display | yes |  | boolean |
 | actions.openModal | no | actions to open modal dialog components | array |
 | actions.openModal[].id | yes | unique identifier for the modal action | string |
 | actions.openModal[].type | yes | type of modal action | `openModal` |
-| actions.openModal[].name | yes | name of the modal action | string |
 | actions.openModal[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.openModal[].requireConfirmation | no | whether user confirmation is required before opening | boolean |
-| actions.openModal[].loading | no | defines the loading indicator behavior for the modal | `global` \| `inline` \| `none` |
 | actions.openModal[].title | no | title shown in the modal header | string |
+| actions.openModal[].loading | no |  | object |
+| actions.openModal[].loading.display | yes |  | boolean |
+| buttonConfig | no | custom labels and icons for form buttons | object |
+| buttonConfig.primary | no | primary button configuration | object |
+| buttonConfig.primary.label | no | text label for primary button | string |
+| buttonConfig.primary.icon | no | icon name for primary button | string |
+| buttonConfig.secondary | no | secondary button configuration | object |
+| buttonConfig.secondary.label | no | text label for secondary button | string |
+| buttonConfig.secondary.icon | no | icon name for secondary button | string |
 | schema | no | the schema of the form as an object | object |
 | stringSchema | no | the schema of the form as a string | string |
 | submitActionId | yes | the id of the action to be called when the form is submitted | string |
 | fieldDescription | no |  | `tooltip` \| `inline` |
+| autocomplete | no | autocomplete configuration for the form fields | array |
+| autocomplete[].path | yes | the path of the field to apply autocomplete | string |
+| autocomplete[].fetch | yes | remote data source configuration for autocomplete | object |
+| autocomplete[].fetch.url | yes | the URL to fetch autocomplete options from | string |
+| autocomplete[].fetch.verb | yes | HTTP method to use for fetching options | `GET` \| `POST` |
+| dependencies | no | list of dependencies for the form fields | array |
+| dependencies[].path | yes | the path of the field | string |
+| dependencies[].dependsField | yes |  | object |
+| dependencies[].dependsField.field | no | the field that this field depends on | string |
+| dependencies[].fetch | yes |  | object |
+| dependencies[].fetch.url | yes | the URL to fetch options | string |
+| dependencies[].fetch.verb | yes | HTTP method to use for fetching options | `GET` \| `POST` |
+| objectFields | no | configuration for object fields in the form | array |
+| objectFields[].path | yes | the path of the object field | string |
+| objectFields[].displayField | yes | the field to display in the objects list | string |
 
 <details>
 <summary>Example</summary>
@@ -489,6 +629,26 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - barcharts
+      - buttons
+      - columns
+      - datagrids
+      - eventlists
+      - filters
+      - flowcharts
+      - forms
+      - linecharts
+      - markdowns
+      - pages
+      - panels
+      - paragraphs
+      - piecharts
+      - restactions
+      - rows
+      - tables
+      - tablists
+      - yamlviewers
     submitActionId: firework-submit-action
     stringSchema: |
       {
@@ -517,6 +677,11 @@ spec:
         },
         "required": ["name", "image"]
       }
+    autocomplete:
+      - path: name
+        fetch:
+          url: https://loremipsum.io/api/1
+          method: GET
     actions:
       rest:
         - id: firework-submit-action
@@ -528,12 +693,13 @@ spec:
             - name: metadata.name
               value: ${ git.toRepo.name }
   resourcesRefs:
-    - id: resource-ref-1
-      apiVersion: composition.krateo.io/v2-0-0
-      name: new-app
-      namespace: test-namespace
-      resource: fireworksapps
-      verb: POST
+    items:
+      - id: resource-ref-1
+        apiVersion: composition.krateo.io/v2-0-0
+        name: new-app
+        namespace: test-namespace
+        resource: fireworksapps
+        verb: POST
 ```
 </details>
 
@@ -598,6 +764,33 @@ spec:
 
 ---
 
+### Markdown
+
+Markdown receives markdown in string format and renders it gracefully
+
+#### Props
+
+| Property | Required | Description | Type |
+|----------|----------|-------------|------|
+| markdown | yes | markdown string to be displayed | string |
+
+<details>
+<summary>Example</summary>
+
+```yaml
+kind: Markdown
+apiVersion: widgets.templates.krateo.io/v1beta1
+metadata:
+  name: test-markdown
+  namespace: test-namespace
+spec:
+  widgetData:
+    markdown: "# Titolo H1\n## Sottotitolo\nTesto **in grassetto**, _in corsivo_ e `codice inline`.\n\n- Lista 1\n- Lista 2\n\n1. Primo\n2. Secondo\n\n> Questo è un blockquote.\n\n[Link a Google](https://google.com)\n\n```js\nconsole.log('Ciao mondo');\n```"
+```
+</details>
+
+---
+
 ### NavMenu
 
 NavMenu is a container for NavMenuItem widgets, which are used to setup navigation inside the application
@@ -606,6 +799,7 @@ NavMenu is a container for NavMenuItem widgets, which are used to setup navigati
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | items | yes | list of navigation entries each pointing to a k8s custom resource | array |
 | items[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented, usually a NavMenuItem | string |
 
@@ -620,15 +814,18 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - navmenuitems
     items:
       - resourceRefId: nav-menu-item-templates
   resourcesRefs:
-    - id: nav-menu-item-templates
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: nav-menu-item-templates
-      namespace: test-namespace
-      resource: navemenuitems
-      verb: GET
+    items:
+      - id: nav-menu-item-templates
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: nav-menu-item-templates
+        namespace: test-namespace
+        resource: navmenuitems
+        verb: GET
 ```
 </details>
 
@@ -642,11 +839,12 @@ NavMenuItem represents a single item in the navigation menu and links to a speci
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
-| label | yes | text displayed as the menu item's label | string |
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | icon | yes | name of the icon to display alongside the label (font awesome icon name eg: `fa-inbox`) | string |
+| label | yes | text displayed as the menu item's label | string |
+| order | no | a weight to be used to sort the items in the menu | integer |
 | path | yes | route path to navigate to when the menu item is clicked | string |
 | resourceRefId | yes | the identifier of the k8s custom resource that should be represented, usually a widget | string |
-| order | no | a weight to be used to sort the items in the menu | integer |
 
 <details>
 <summary>Example</summary>
@@ -659,6 +857,8 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - pages
     resourceRefId: templates-page
     label: Templates
     icon: fa-rectangle-list
@@ -666,12 +866,13 @@ spec:
     order: 20
 
   resourcesRefs:
-    - id: templates-page
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: templates-page
-      namespace: test-namespace
-      resource: pages
-      verb: GET
+    items:
+      - id: templates-page
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: templates-page
+        namespace: test-namespace
+        resource: pages
+        verb: GET
 ```
 </details>
 
@@ -685,9 +886,10 @@ Page is a wrapper component, placed at the top of the component tree, that wraps
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
-| title | no | title of the page shown in the browser tab | string |
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | items | yes | list of resources to be rendered within the route | array |
 | items[].resourceRefId | yes | the identifier of the k8s custom resource that should be rendered, usually a widget | string |
+| title | no | title of the page shown in the browser tab | string |
 
 <details>
 <summary>Example</summary>
@@ -700,15 +902,34 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - barcharts
+      - buttons
+      - columns
+      - datagrids
+      - eventlists
+      - filters
+      - flowcharts
+      - forms
+      - linecharts
+      - markdowns
+      - panels
+      - paragraphs
+      - piecharts
+      - rows
+      - tables
+      - tablists
+      - yamlviewers
     items:
-      - resourceRefId: composition-test-row
+      - resourceRefId: composition-test-item
   resourcesRefs:
-    - id: composition-test-row
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: composition-test-row
-      namespace: test-namespace
-      resource: rows
-      verb: GET
+    items:
+      - id: composition-test-item
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: composition-test-item
+        namespace: test-namespace
+        resource: nav
+        verb: GET
 ```
 </details>
 
@@ -725,47 +946,53 @@ Panel is a container to display information
 | actions | yes | the actions of the widget | object |
 | actions.rest | no | rest api call actions triggered by the widget | array |
 | actions.rest[].payloadKey | no | key used to nest the payload in the request body | string |
+| actions.rest[].headers | no |  | array |
 | actions.rest[].id | yes | unique identifier for the action | string |
 | actions.rest[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.rest[].requireConfirmation | no | whether user confirmation is required before triggering the action | boolean |
 | actions.rest[].onSuccessNavigateTo | no | url to navigate to after successful execution | string |
+| actions.rest[].errorMessage | no | a message that will be displayed inside a toast in case of error | string |
+| actions.rest[].successMessage | no | a message that will be displayed inside a toast in case of success | string |
 | actions.rest[].onEventNavigateTo | no | conditional navigation triggered by a specific event | object |
 | actions.rest[].onEventNavigateTo.eventReason | yes | identifier of the awaited event reason | string |
 | actions.rest[].onEventNavigateTo.url | yes | url to navigate to when the event is received | string |
 | actions.rest[].onEventNavigateTo.timeout | no | the timeout in seconds to wait for the event | integer |
-| actions.rest[].loading | no | defines the loading indicator behavior for the action | `global` \| `inline` \| `none` |
-| actions.rest[].type | no | type of action to execute | `rest` |
+| actions.rest[].onEventNavigateTo.reloadRoutes | no |  | boolean |
+| actions.rest[].type | yes | type of action to execute | `rest` |
 | actions.rest[].payload | no | static payload sent with the request | object |
 | actions.rest[].payloadToOverride | no | list of payload fields to override dynamically | array |
 | actions.rest[].payloadToOverride[].name | yes | name of the field to override | string |
 | actions.rest[].payloadToOverride[].value | yes | value to use for overriding the field | string |
+| actions.rest[].loading | no |  | object |
+| actions.rest[].loading.display | yes |  | boolean |
 | actions.navigate | no | client-side navigation actions | array |
 | actions.navigate[].id | yes | unique identifier for the action | string |
-| actions.navigate[].type | yes | type of navigation action | `navigate` |
-| actions.navigate[].name | yes | name of the navigation action | string |
-| actions.navigate[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
+| actions.navigate[].loading | no |  | object |
+| actions.navigate[].loading.display | yes |  | boolean |
+| actions.navigate[].path | no | the identifier of the route to navigate to | string |
+| actions.navigate[].resourceRefId | no | the identifier of the k8s custom resource that should be represented | string |
 | actions.navigate[].requireConfirmation | no | whether user confirmation is required before navigating | boolean |
-| actions.navigate[].loading | no | defines the loading indicator behavior during navigation | `global` \| `inline` \| `none` |
+| actions.navigate[].type | yes | type of navigation action | `navigate` |
 | actions.openDrawer | no | actions to open side drawer components | array |
 | actions.openDrawer[].id | yes | unique identifier for the drawer action | string |
 | actions.openDrawer[].type | yes | type of drawer action | `openDrawer` |
 | actions.openDrawer[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.openDrawer[].requireConfirmation | no | whether user confirmation is required before opening | boolean |
-| actions.openDrawer[].loading | no | defines the loading indicator behavior for the drawer | `global` \| `inline` \| `none` |
 | actions.openDrawer[].size | no | drawer size to be displayed | `default` \| `large` |
 | actions.openDrawer[].title | no | title shown in the drawer header | string |
+| actions.openDrawer[].loading | no |  | object |
+| actions.openDrawer[].loading.display | yes |  | boolean |
 | actions.openModal | no | actions to open modal dialog components | array |
 | actions.openModal[].id | yes | unique identifier for the modal action | string |
 | actions.openModal[].type | yes | type of modal action | `openModal` |
-| actions.openModal[].name | yes | name of the modal action | string |
 | actions.openModal[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.openModal[].requireConfirmation | no | whether user confirmation is required before opening | boolean |
-| actions.openModal[].loading | no | defines the loading indicator behavior for the modal | `global` \| `inline` \| `none` |
 | actions.openModal[].title | no | title shown in the modal header | string |
+| actions.openModal[].loading | no |  | object |
+| actions.openModal[].loading.display | yes |  | boolean |
 | clickActionId | no | the id of the action to be executed when the panel is clicked | string |
 | footer | no | footer section of the panel containing additional items | array |
 | footer[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented, usually a widget | string |
-| tags | no | list of string tags to be displayed in the footer | array |
 | headerLeft | no | optional text to be displayed under the title, on the left side of the Panel | string |
 | headerRight | no | optional text to be displayed under the title, on the right side of the Panel | string |
 | icon | no | icon displayed in the panel header | object |
@@ -773,6 +1000,7 @@ Panel is a container to display information
 | icon.color | no | color of the icon | string |
 | items | yes | list of resource references to display as main content in the panel | array |
 | items[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented, usually a widget | string |
+| tags | no | list of string tags to be displayed in the footer | array |
 | title | no | text to be displayed as the panel title | string |
 | tooltip | no | optional tooltip text shown on the top right side of the card to provide additional context | string |
 
@@ -787,6 +1015,26 @@ metadata:
 spec:
   widgetData:
     actions: {}
+    allowedResources:
+      - barcharts
+      - buttons
+      - columns
+      - datagrids
+      - eventlists
+      - filters
+      - flowcharts
+      - forms
+      - linecharts
+      - markdowns
+      - pages
+      - panels
+      - paragraphs
+      - piecharts
+      - restactions
+      - rows
+      - tables
+      - tablists
+      - yamlviewers
     title: My Panel
     items:
       - resourceRefId: my-pie-chart
@@ -797,30 +1045,31 @@ spec:
         - resourceRefId: button-1
         - resourceRefId: button-2
   resourcesRefs:
-    - id: my-table
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: my-table
-      namespace: test-namespace
-      resource: tables
-      verb: GET
-    - id: my-pie-chart
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: my-pie-chart
-      namespace: test-namespace
-      resource: piecharts
-      verb: GET
-    - id: button-1
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: button-1
-      namespace: test-namespace
-      resource: buttons
-      verb: GET
-    - id: button-2
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: button-2
-      namespace: test-namespace
-      resource: buttons
-      verb: GET
+    items:
+      - id: my-table
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: my-table
+        namespace: test-namespace
+        resource: tables
+        verb: GET
+      - id: my-pie-chart
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: my-pie-chart
+        namespace: test-namespace
+        resource: piecharts
+        verb: GET
+      - id: button-1
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: button-1
+        namespace: test-namespace
+        resource: buttons
+        verb: GET
+      - id: button-2
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: button-2
+        namespace: test-namespace
+        resource: buttons
+        verb: GET
 ```
 </details>
 
@@ -919,7 +1168,9 @@ RoutesLoader loads the Route widgets it doesn't render anything by itself
 
 #### Props
 
-*No props available.*
+| Property | Required | Description | Type |
+|----------|----------|-------------|------|
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 
 ---
 
@@ -931,6 +1182,7 @@ name of the k8s Custom Resource
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | items | yes | the items of the row | array |
 | items[].resourceRefId | yes |  | string |
 | items[].size | no | the number of cells that the item will occupy, from 0 (not displayed) to 24 (occupies all space) | integer |
@@ -946,15 +1198,34 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - barcharts
+      - buttons
+      - columns
+      - datagrids
+      - eventlists
+      - filters
+      - flowcharts
+      - forms
+      - linecharts
+      - markdowns
+      - panels
+      - paragraphs
+      - piecharts
+      - rows
+      - tables
+      - tablists
+      - yamlviewers
     items:
       - resourceRefId: composition-test-panel
   resourcesRefs:
-    - id: composition-test-panel
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: composition-test-panel
-      namespace: test-namespace
-      resource: panels
-      verb: GET
+    items:
+      - id: composition-test-panel
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: composition-test-panel
+        namespace: test-namespace
+        resource: panels
+        verb: GET
 ```
 </details>
 
@@ -968,14 +1239,14 @@ Table displays structured data with customizable columns and pagination
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
-| prefix | no | it's the filters prefix to get right values | string |
-| pageSize | no | number of rows displayed per page | integer |
-| data | yes | array of objects representing the table's row data | array |
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | columns | yes | configuration of the table's columns | array |
 | columns[].color | no | the color of the value (or the icon) to be represented | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` |
-| columns[].kind | no | type of data to be represented | `value` \| `icon` |
 | columns[].title | yes | column header label | string |
 | columns[].valueKey | yes | key used to extract the value from row data | string |
+| data | yes | Array of table rows | array |
+| pageSize | no | number of rows displayed per page | integer |
+| prefix | no | it's the filters prefix to get right values | string |
 
 <details>
 <summary>Example</summary>
@@ -988,14 +1259,44 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - barcharts
+      - buttons
+      - filters
+      - flowcharts
+      - linecharts
+      - markdowns
+      - paragraphs
+      - piecharts
+      - yamlviewers
     pageSize: 10
     data: 
-      - name: Alice
-        age: 30
-        icon: fa-rocket
-      - name: Bob
-        age: 45
-        icon: fa-exclamation-circle
+      - 
+        - valueKey: name
+          kind: jsonSchemaType
+          type: string
+          stringValue: Alice
+        - valueKey: age
+          kind: jsonSchemaType
+          type: integer
+          numberValue: 30
+        - valueKey: icon
+          kind: icon
+          stringValue: fa-rocket
+
+      - 
+        - valueKey: name
+          kind: jsonSchemaType
+          type: string
+          stringValue: Bob
+        - valueKey: age
+          kind: jsonSchemaType
+          type: integer
+          numberValue: 45
+        - valueKey: icon
+          kind: icon
+          stringValue: fa-exclamation-circle
+
     columns:
       - valueKey: name
         title: Name
@@ -1018,6 +1319,7 @@ TabList display a set of tab items for navigation or content grouping
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
+| allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | items | yes | the items of the tab list | array |
 | items[].label | no | text displayed on the tab | string |
 | items[].resourceRefId | yes | the identifier of the k8s custom resource represented by the tab content | string |
@@ -1033,24 +1335,35 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
+    allowedResources:
+      - barcharts
+      - buttons
+      - filters
+      - flowcharts
+      - linecharts
+      - markdowns
+      - paragraphs
+      - piecharts
+      - yamlviewers
     items:
       - label: first tab
         resourceRefId: first-column
       - label: second tab
         resourceRefId: second-column
   resourcesRefs:
-    - id: first-column
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: first-column
-      namespace: test-namespace
-      resource: columns
-      verb: GET
-    - id: second-column
-      apiVersion: widgets.templates.krateo.io/v1beta1
-      name: second-column
-      namespace: test-namespace
-      resource: columns
-      verb: GET
+    items:
+      - id: first-column
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: first-column
+        namespace: test-namespace
+        resource: columns
+        verb: GET
+      - id: second-column
+        apiVersion: widgets.templates.krateo.io/v1beta1
+        name: second-column
+        namespace: test-namespace
+        resource: columns
+        verb: GET
 ```
 </details>
 

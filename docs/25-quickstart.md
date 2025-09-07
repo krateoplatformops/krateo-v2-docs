@@ -10,14 +10,14 @@ import TabItem from '@theme/TabItem';
 
 This guide presents a basic introduction to Krateo PlatformOps. Together, we will:
 
-* Install Krateo PlatformOps into a local cluster.
-* Deploy the FireworksApp Template
-* Deploy a Composition leveraging the FireworksApp Template
+* Install Krateo PlatformOps 2.5.1 into a local cluster.
+* Deploy the `github-scaffolding-with-composition-page` Blueprint
+* Deploy a Composition leveraging the `github-scaffolding-with-composition-page` Blueprint
 * Destroy the cluster
 
 ## Requirements
 
-The FireworksApp Template will create a new public GitHub repository in your organization. Fill the form according to the organization name.
+The `github-scaffolding-with-composition-page` Blueprint will create a new public GitHub repository in your organization. Fill the form according to the organization name.
 
 ## Deploy Krateo PlatformOps on a local cluster (kind)
 
@@ -64,41 +64,32 @@ Login into the Krateo Composable Portal: [http://localhost:30080/](http://localh
 
 Navigate the dashboard:
 
-![Dashboard_NoTemplates](/img/quickstart/02_dashboard_notemplates.png)
+![Dashboard_NoBlueprints](/img/quickstart/02_dashboard_noblueprints.png)
 
-## Deploy the FireworksApp Template
+## Deploy the `github-scaffolding-with-composition-page` Blueprint
 
-We will leverage the [FireworksApp template](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp).
-Follow the [README](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md#setup-toolchain-on-krateo-system-namespace-1) instructions to deploy the template leveraging [Krateo Composable Portal](https://github.com/krateoplatformops/krateo-v2-template-fireworksapp/blob/main/README.md#form-not-ordered-in-alphabetical-order).
+We will leverage the [github-scaffolding-with-composition-page blueprint](https://github.com/krateoplatformops-blueprints/github-scaffolding-with-composition-page).
+Follow the [README](https://github.com/krateoplatformops-blueprints/github-scaffolding-with-composition-page/blob/main/README.md) instructions to deploy the blueprint leveraging Krateo Composable Portal.
 
 Navigate again the dashboard and observe how the state changes while *CompositionDefinition* becomes *Ready:True*.
 
-![Dashboard_1Template_Unknown](/img/quickstart/03_dashboard_1template_unknown.png)
+![Dashboard_1Blueprint_ReadyFalse](/img/quickstart/03_dashboard_1blueprint_false.png)
 
-Wait for the *CompositionDefinition* to become *Ready:False*:
+![Dashboard_1Blueprint_ReadyTrue](/img/quickstart/04_dashboard_1blueprint_true.png)
 
-```shell
-kubectl wait compositiondefinition fireworksapp --for condition=Ready=False --namespace fireworksapp-system --timeout=300s
-```
+![Dashboard_2Blueprint_ReadyFalse](/img/quickstart/05_dashboard_2blueprint_false.png)
 
-![Dashboard_1Template_ReadyFalse](/img/quickstart/04_dashboard_1template_readyfalse.png)
+![Dashboard_2Blueprint_ReadyTrue](/img/quickstart/06_dashboard_2blueprint_true.png)
 
-Wait for the *CompositionDefinition* to become *Ready:True*:
-```shell
-kubectl wait compositiondefinition fireworksapp --for condition=Ready=True --namespace fireworksapp-system --timeout=300s
-```
+Check the *Blueprints* section in the Portal:
 
-![Dashboard_1Template_ReadyTrue](/img/quickstart/07_dashboard_1template_readytrue.png)
+![Blueprints](/img/quickstart/07_blueprints_1blueprint_true.png)
 
-Check the *Templates* section in the Portal:
+## Deploy a Composition leveraging the `github-scaffolding-with-composition-page` Blueprint
 
-![Templates](/img/quickstart/06_templates_1template_readytrue.png)
+Click on the *GItHub Scaffolding with Composition Page* card, a form will appear on the right:
 
-## Deploy a Composition leveraging the FireworksApp Template
-
-Click on the *FireworksApp* card, a form will appear on the right:
-
-![Form](/img/quickstart/08_templates_1template_form.png)
+![Form](/img/quickstart/08_blueprints_1blueprint_form.png)
 
 Fill the form fields in the following way:
 
@@ -109,33 +100,25 @@ Fill the form fields in the following way:
 
 A new Composition is now available and an automatic redirect is done:
 
-![Composition_Overview_NotFilled](/img/quickstart/09_composition_overview_notfilled.png)
+![Composition_Overview_NotFilled](/img/quickstart/09_composition_1composition_events_.png)
 
-Let's move back to the Composition menu:
+Let's move back to the `Compositions` menu:
 
-![Compositions](/img/quickstart/12_compositions.png)
+![Compositions](/img/quickstart/12_compositions_1composition_true.png)
 
 Let's click on the *krateo-demo* composition panel.
 
-### Overview
+### Events
 
-![Composition-Overview](/img/quickstart/13_composition_overview_filled.png)
+![Composition-Events](/img/quickstart/09_composition_1composition_events_.png)
 
 ### Composition Status
 
-![Composition-CompositionStatus](/img/quickstart/14_composition_status.png)
-
-### Application Status
-
-![Composition-ApplicationStatus](/img/quickstart/15_composition_application.png)
-
-### Events
-
-![Composition-Events](/img/quickstart/10_composition_events.png)
+![Composition-CompositionStatus](/img/quickstart/10_composition_1composition_status.png)
 
 ### Values
 
-![Composition-Values](/img/quickstart/11_composition_values.png)
+![Composition-Values](/img/quickstart/11_composition_1composition_values.png)
 
 ## Destroy the cluster
 

@@ -114,11 +114,11 @@ Let's click on the *krateo-demo* composition panel.
 
 ### Composition Status
 
-![Composition-CompositionStatus](/img/quickstart/10_composition_1composition_status.png)
+![Composition-CompositionStatus](/img/quickstart/10_compositions_1composition_status.png)
 
 ### Values
 
-![Composition-Values](/img/quickstart/11_composition_1composition_values.png)
+![Composition-Values](/img/quickstart/11_compositions_1composition_values.png)
 
 ## Destroy the cluster
 

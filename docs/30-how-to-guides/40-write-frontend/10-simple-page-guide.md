@@ -1,4 +1,9 @@
-# simple-page-guide
+---
+description: Simple Page Guide
+sidebar_label: Simple Page Guide
+---
+
+# Simple Page Guide
 
 By following this guide you'll learn how to:
 

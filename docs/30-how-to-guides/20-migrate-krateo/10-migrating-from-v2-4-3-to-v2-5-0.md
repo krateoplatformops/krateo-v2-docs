@@ -61,41 +61,41 @@ helm upgrade installer installer \
 ```
 
 This is the `login` page of Krateo 2.4.3:
-![image](/img/migrating/01_2-4-3-login.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/01_2-4-3-login.png)
 
 This is the `dashboard` page of an empty Krateo 2.4.3 installation:
-![image](/img/migrating/02_2-4-3-dashboard_notemplates.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/02_2-4-3-dashboard_notemplates.png)
 
 Let's apply a Fireworksapp `compositiondefinition` version 1.1.15: https://github.com/krateoplatformops/krateo-v2-template-fireworksapp, follow instruction for Krateo version 2.4.3 or lower
 
 This is the `dashboard` page of Krateo 2.4.3 installation with the installed `compositiondefinition` with status `Ready:False`:
-![image](/img/migrating/03_2-4-3-dashboard_1template_readyfalse.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/03_2-4-3-dashboard_1template_readyfalse.png)
 
 This is the `dashboard` page of Krateo 2.4.3 installation with the install `compositiondefinition` that, after a while,e has status `Ready:True`:
-![image](/img/migrating/04_2-4-3-dashboard_1template_readytrue.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/04_2-4-3-dashboard_1template_readytrue.png)
 
 Moving to the `template` page of Krateo 2.4.3 installation, a Card is available:
-![image](/img/migrating/05_2-4-3-templates_1template_readytrue.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/05_2-4-3-templates_1template_readytrue.png)
 
 Let's click on the Card to open the Drawer with the CustomForm:
-![image](/img/migrating/06_2-4-3-templates_1template_form.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/06_2-4-3-templates_1template_form.png)
 
 Let's fill the form:
-![image](/img/migrating/07_2-4-3-templates_1template_form_filled.png)
-![image](/img/migrating/08_2-4-3-templates_1template_form_submitted.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/07_2-4-3-templates_1template_form_filled.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/08_2-4-3-templates_1template_form_submitted.png)
 
 Krateo automatically opens the `compositions` page once the `fireworksapp-tomigrate` composition is created:
-![image](/img/migrating/09_2-4-3-compositions.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/09_2-4-3-compositions.png)
 
 Let's navigate the `fireworksapp-tomigrate` composition widgets:
-![image](/img/migrating/10_2-4-3-composition_overview.png)
-![image](/img/migrating/11_2-4-3-composition_status.png)
-![image](/img/migrating/12_2-4-3-composition_application.png)
-![image](/img/migrating/13_2-4-3-composition_events.png)
-![image](/img/migrating/14_2-4-3-composition_values.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/10_2-4-3-composition_overview.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/11_2-4-3-composition_status.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/12_2-4-3-composition_application.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/13_2-4-3-composition_events.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/14_2-4-3-composition_values.png)
 
 This is the `dashboard` page of Krateo 2.4.3 installation with the installed `fireworksapp-tomigrate` composition:
-![image](/img/migrating/15_2-4-3-dashboard_1template_1composition.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/15_2-4-3-dashboard_1template_1composition.png)
 
  ### Scale Krateo 2.4.3 core-provider to zero replicas
 
@@ -132,15 +132,15 @@ kubectl scale deployment core-provider --replicas=1 -n krateo-system
 ```
 
 This is the `login` page of Krateo 2.5.0:
-![image](/img/migrating/16_2-5-0-login.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/16_2-5-0-login.png)
 
 This is the `dashboard` page of a Krateo 2.5.0 installation:
-![image](/img/migrating/17_2-5-0-dashboard_1template_1composition.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/17_2-5-0-dashboard_1template_1composition.png)
 
 Let's configure Krateo 2.5.0 for Fireworksapp `compositiondefinition` version 2.0.2: https://github.com/krateoplatformops/krateo-v2-template-fireworksapp, follow instruction for Krateo >= 2.5.0
 
 Let's navigate the `compositions` page of Krateo 2.5.0 - it is empty since the composition `fireworksapp-tomigrate` has not been migrated yet:
-![image](/img/migrating/18_2-5-0-compositions_empty.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/18_2-5-0-compositions_empty.png)
 
 Let's migrate the composition, changing the Fireworksapp `compositiondefinition` version from 1.1.15 to 2.0.2:
 ```sh
@@ -159,14 +159,14 @@ EOF
 ```
 
 Let's navigate again the `compositions` page of Krateo 2.5.0 - now the composition `fireworksapp-tomigrate` is migrated:
-![image](/img/migrating/19_2-5-0-compositions.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/19_2-5-0-compositions.png)
 
 Let's navigate the `fireworksapp-tomigrate` composition widgets:
-![image](/img/migrating/20_2-5-0-composition_overview.png)
-![image](/img/migrating/21_2-5-0-composition_status.png)
-![image](/img/migrating/22_2-5-0-composition_application.png)
-![image](/img/migrating/23_2-5-0-composition_events.png)
-![image](/img/migrating/24_2-5-0-composition_values.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/20_2-5-0-composition_overview.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/21_2-5-0-composition_status.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/22_2-5-0-composition_application.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/23_2-5-0-composition_events.png)
+![image](/img/migrating/from-2-4-3-to-2-5-0/24_2-5-0-composition_values.png)
 
 The composition `fireworksapp-tomigrate` has been migrated. 
 

@@ -1,4 +1,4 @@
-# Release 2.5.0 Shaping the Future of the Platform
+# Release 2.5.0 - Shaping the Future of the Platform
 
 Krateo version 2.5.0 marks a significant milestone in the evolution of the platform. This release introduces foundational changes—especially in the frontend experience and FinOps integration—that set the stage for a more composable, multi-tenant, and cost-aware future.
 

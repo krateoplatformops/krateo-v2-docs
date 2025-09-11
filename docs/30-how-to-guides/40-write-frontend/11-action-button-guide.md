@@ -1,4 +1,9 @@
-# action-button-guide
+---
+description: Action Button Guide
+sidebar_label: Action Button Guide
+---
+
+# Action Button Guide
 
 ## Prerequisites
 

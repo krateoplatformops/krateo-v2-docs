@@ -650,7 +650,7 @@ kubectl get fireworksapp -n fireworksapp-system -o yaml
 - Controller pod logs for reconciliation errors
 - Helm release history for the composition
 
-#### 4. Certificate Issues: Mutating Webhook Configuration - Valid ONLY for versions of core-provider before <0.24.2>
+#### 4. Certificate Issues: Mutating Webhook Configuration - Valid ONLY for versions of core-provider before `0.24.2`
 **Note:** This issue is only valid for versions of core-provider before <0.24.2. In versions after this, the management of certificates is automatically handled by the core-provider and you should not face this issue.
 
 **Symptoms:**

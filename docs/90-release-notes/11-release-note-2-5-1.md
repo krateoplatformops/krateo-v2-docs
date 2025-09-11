@@ -1,4 +1,4 @@
-# **Krateo 2.5.1 – The Blueprint Marketplace is Live!**
+# Release 2.5.1 – The Blueprint Marketplace is Live!
 
 Krateo 2.5.1 is a cornerstone release. Krateo 2.5.1 builds on the foundations of 2.5 and takes an important step forward: it officially opens the door to the **Blueprint Marketplace**.
 

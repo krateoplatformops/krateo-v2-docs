@@ -78,7 +78,7 @@ kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/krateo-v2-t
 
 Moving to the `template` page of Krateo 2.5.0 installation, a Card is available:
 ![image](/img/migrating/from-2-5-0-to-2-5-1/05_2-5-0-templates_1template_readytrue.png)
-
+ 
 Let's click on the Card to open the Drawer with the CustomForm:
 ![image](/img/migrating/from-2-5-0-to-2-5-1/06_2-5-0-templates_1template_form.png)
 
@@ -257,4 +257,4 @@ Let's go back to the `blueprints` page:
 
 The new form is available:
 
-![image](/img/migrating/from-2-5-0-to-2-5-1/24-2-5-1-blueprints-1blueprint-migrated.png)
+![image](/img/migrating/from-2-5-0-to-2-5-1/24_2-5-1-blueprints-1blueprint-migrated.png)

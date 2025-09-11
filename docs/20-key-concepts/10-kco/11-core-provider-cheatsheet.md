@@ -650,8 +650,8 @@ kubectl get fireworksapp -n fireworksapp-system -o yaml
 - Controller pod logs for reconciliation errors
 - Helm release history for the composition
 
-#### 4. Certificate Issues: Mutating Webhook Configuration - Valid ONLY for versions of core-provider before `0.24.2`
-**Note:** This issue is only valid for versions of core-provider before <0.24.2. In versions after this, the management of certificates is automatically handled by the core-provider and you should not face this issue.
+#### 4. Certificate Issues: Mutating Webhook Configuration - Valid ONLY for versions of core-provider before `<0.24.2`
+**Note:** This issue is only valid for versions of core-provider before `<0.24.2`. In versions after this, the management of certificates is automatically handled by the core-provider and you should not face this issue.
 
 **Symptoms:**
 - You receive an error like `Internal error occurred: failed calling webhook "core.provider.krateo.io": failed to call webhook: Post "https://core-provider-webhook-

@@ -135,6 +135,14 @@ krateoplatformops:
 Install Krateo PlatformOps:
 
 ```shell
+helm upgrade installer-crd installer-crd \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --install \
+  --version 2.6.0 \
+  --wait
+
 helm upgrade installer installer \
   --repo https://charts.krateo.io \
   --namespace krateo-system \

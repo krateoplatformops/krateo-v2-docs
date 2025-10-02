@@ -37,7 +37,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=true \
   --install \
-  --version 2.5.1 \
+  --version 2.6.0 \
   --wait
 ```
 
@@ -76,7 +76,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
-  --version 2.5.1 \
+  --version 2.6.0 \
   --wait
 ```
 

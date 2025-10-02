@@ -29,7 +29,7 @@ Krateo PlatformOps is exposed via NodePort by default. In order to customize env
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.5.1 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.6.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -107,7 +107,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.5.1 \
+  --version 2.6.0 \
   --wait
 ```
 

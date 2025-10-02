@@ -123,15 +123,14 @@ spec:
         - id: submit-action-id
           resourceRefId: resource-ref-1
           type: rest
-          payloadKey: spec
+          headers:
+          - "Content-Type: application/json"
           payloadToOverride:
             - name: metadata.name
-              value: '${ .name }'
+              value: '${ .json.name }'
           payload:
             apiVersion: v1
             kind: Pod
-            metadata:
-              name: "aa"
             spec:
               containers:
                 - image: 'nginx:latest'

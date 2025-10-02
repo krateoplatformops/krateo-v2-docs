@@ -1,5 +1,5 @@
 ---
-description: Migrating Krateo PlatformOps from v2.4.3 to v2.5.0 (AKS example)
+description: Migrating Krateo PlatformOps from v2.4.3 to v2.5.0 (AKS example) 
 sidebar_label: Migrating Krateo PlatformOps from v2.4.3 to v2.5.0 (AKS example)
 ---
 
@@ -43,12 +43,13 @@ spec:
   resourcesRefsTemplate: []
 ```
  
- Updated schemas for the new frontend are collected here: https://github.com/krateoplatformops/frontend-chart/tree/main/chart/crds
+Updated schemas for the new frontend are collected here: https://github.com/krateoplatformops/frontend-chart/tree/0.0.19/chart/crds
  
- ## Starting point: Krateo 2.4.3, Fireworksapp compositiondefinition 1.1.15, fireworksapp-tomigrate composition
+## Starting point: Krateo 2.4.3, Fireworksapp compositiondefinition 1.1.15, fireworksapp-tomigrate composition
  
- Krateo 2.4.3 has been installed on AKS in the following way:
- ```
+Krateo 2.4.3 has been installed on AKS in the following way:
+
+```sh
 helm upgrade installer installer \
   --repo https://charts.krateo.io \
   --namespace krateo-system \
@@ -97,38 +98,99 @@ Let's navigate the `fireworksapp-tomigrate` composition widgets:
 This is the `dashboard` page of Krateo 2.4.3 installation with the installed `fireworksapp-tomigrate` composition:
 ![image](/img/migrating/from-2-4-3-to-2-5-0/15_2-4-3-dashboard_1template_1composition.png)
 
- ### Scale Krateo 2.4.3 core-provider to zero replicas
-
- ```sh
-kubectl scale deployment core-provider --replicas=0 -n krateo-system
-```
-
- ### Scale Krateo 2.4.3 oasgen-provider to zero replicas
-
-```sh
-kubectl scale deployment oasgen-provider --replicas=0 -n krateo-system
-```
-
 ## Ending point: Krateo 2.5.0, Fireworksapp compositiondefinition 2.0.2 (version changed within the same compositiondefinition, previous fireworksapp-tomigrate composition
  
-A parallel installation of Krateo 2.5.0 has been installed on AKS in the following way:
+Let's upgrade Krateo from v2.4.3 to v2.5.0 on AKS in the following way:
  
- ```sh
-git clone --branch 249-prepare-release-250 https://github.com/krateoplatformops/installer-chart.git
-cd installer-chart
-helm install installer-v2 ./chart --namespace krateo-v2-system --create-namespace -f ./chart/values.yaml --wait
+```sh
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: krateo-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: helm-runner
+  namespace: krateo-system
+---
+# For simplicity, cluster-admin. Tighten later if needed.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: helm-runner-cluster-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: helm-runner
+    namespace: krateo-system
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: krateo-pre-upgrade-2-5-0
+  namespace: krateo-system
+spec:
+  backoffLimit: 4
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      serviceAccountName: helm-runner
+      restartPolicy: OnFailure
+      containers:
+        - name: runner
+          image: dtzar/helm-kubectl:3.14.4
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/sh","-lc"]
+          args:
+            - |
+              set -euo pipefail
+
+              echo "Annotate/label CRD compositionreferences.resourcetrees.krateo.io..."
+              kubectl annotate crd compositionreferences.resourcetrees.krateo.io \
+                meta.helm.sh/release-name=resource-tree-handler \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              kubectl label crd compositionreferences.resourcetrees.krateo.io \
+                app.kubernetes.io/managed-by=Helm --overwrite
+
+              echo "Annotate secret admin-password in krateo-system..."
+              kubectl annotate secret admin-password -n krateo-system \
+                meta.helm.sh/release-name=composable-portal-starter \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              echo "Annotate user admin in krateo-system..."
+              kubectl annotate user admin -n krateo-system \
+                meta.helm.sh/release-name=composable-portal-starter \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              echo "Pre-upgrade 2.5.0 job done ✅"
+EOF
 ```
 
- ### Scale Krateo 2.5.0 core-provider to zero replicas
+Update then Krateo to version 2.5.0:
 
- ```sh
-kubectl scale deployment core-provider --replicas=0 -n krateo-v2-system
-```
-
- ### Scale Krateo 2.4.3 core-provider to one replica
-
- ```sh
-kubectl scale deployment core-provider --replicas=1 -n krateo-system
+```sh
+helm upgrade installer installer \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --set krateoplatformops.service.type=LoadBalancer \
+  --set krateoplatformops.service.externalIpAvailable=true \
+  --set krateoplatformops.finopsdatabasehandler.chart.version=0.4.5 \
+  --install \
+  --version 2.5.0 \
+  --wait
 ```
 
 This is the `login` page of Krateo 2.5.0:
@@ -137,26 +199,10 @@ This is the `login` page of Krateo 2.5.0:
 This is the `dashboard` page of a Krateo 2.5.0 installation:
 ![image](/img/migrating/from-2-4-3-to-2-5-0/17_2-5-0-dashboard_1template_1composition.png)
 
-Let's configure Krateo 2.5.0 for Fireworksapp `compositiondefinition` version 2.0.2: https://github.com/krateoplatformops/krateo-v2-template-fireworksapp, follow instruction for Krateo >= 2.5.0
-
 Let's navigate the `compositions` page of Krateo 2.5.0 - it is empty since the composition `fireworksapp-tomigrate` has not been migrated yet:
 ![image](/img/migrating/from-2-4-3-to-2-5-0/18_2-5-0-compositions_empty.png)
 
-Let's migrate the composition, changing the Fireworksapp `compositiondefinition` version from 1.1.15 to 2.0.2:
-```sh
-cat <<EOF | kubectl apply -f -
-apiVersion: core.krateo.io/v1alpha1
-kind: CompositionDefinition
-metadata:
-  name: fireworksapp
-  namespace: fireworksapp-system
-spec:
-  chart:
-    repo: fireworks-app
-    url: https://charts.krateo.io
-    version: 2.0.2
-EOF
-```
+Let's configure Krateo 2.5.0 for Fireworksapp `compositiondefinition` version 2.0.2: https://github.com/krateoplatformops/krateo-v2-template-fireworksapp, follow instruction for Krateo == 2.5.0
 
 Let's navigate again the `compositions` page of Krateo 2.5.0 - now the composition `fireworksapp-tomigrate` is migrated:
 ![image](/img/migrating/from-2-4-3-to-2-5-0/19_2-5-0-compositions.png)

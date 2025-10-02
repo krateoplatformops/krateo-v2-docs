@@ -1,5 +1,7 @@
 # frontend-widget-api-reference
 
+
+
 ## Widgets
 
 List of implemented widgets:
@@ -76,8 +78,9 @@ Button represents an interactive component which, when clicked, triggers a speci
 | actions.rest[].onEventNavigateTo.url | yes | url to navigate to when the event is received | string |
 | actions.rest[].onEventNavigateTo.timeout | no | the timeout in seconds to wait for the event | integer |
 | actions.rest[].onEventNavigateTo.reloadRoutes | no |  | boolean |
+| actions.rest[].onEventNavigateTo.loadingMessage | no | message to display while waiting for the event | string |
 | actions.rest[].type | yes | type of action to execute | `rest` |
-| actions.rest[].headers | no |  | array |
+| actions.rest[].headers | yes | array of headers as strings, format 'key: value' | array |
 | actions.rest[].payload | no | static payload sent with the request | object |
 | actions.rest[].payloadToOverride | no | list of payload fields to override dynamically | array |
 | actions.rest[].payloadToOverride[].name | yes | name of the field to override | string |
@@ -109,6 +112,8 @@ Button represents an interactive component which, when clicked, triggers a speci
 | actions.openModal[].title | no | title shown in the modal header | string |
 | actions.openModal[].loading | no |  | object |
 | actions.openModal[].loading.display | yes |  | boolean |
+| actions.openModal[].customWidth | no | the custom width of the value, which should be used by setting the 'custom' value inside the 'size' property | string |
+| actions.openModal[].size | no | sets the Modal size, 'default' is 520px, 'large' is 80% of the screen width, 'fullscreen' is 100% of the screen width, 'custom' should be used with the 'customWidth' property | `default` \| `large` \| `fullscreen` \| `custom` |
 | color | no | the color of the button | `default` \| `primary` \| `danger` \| `blue` \| `purple` \| `cyan` \| `green` \| `magenta` \| `pink` \| `red` \| `orange` \| `yellow` \| `volcano` \| `geekblue` \| `lime` \| `gold` |
 | label | no | the label of the button | string |
 | icon | no | the icon of the button (font awesome icon name eg: `fa-inbox`) | string |
@@ -128,26 +133,6 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
-    allowedResources:
-    - barcharts
-    - buttons
-    - columns
-    - datagrids
-    - eventlists
-    - filters
-    - flowcharts
-    - forms
-    - linecharts
-    - markdowns
-    - pages
-    - panels
-    - paragraphs
-    - piecharts
-    - restactions
-    - rows
-    - tables
-    - tablists
-    - yamlviewers
     icon: fa-trash
     type: default
     shape: circle
@@ -248,12 +233,12 @@ spec:
 | grid | no | The grid type of list. You can set grid to something like `{gutter: 16, column: 4}` or specify the integer for columns based on their size, e.g. sm, md, etc. to make it responsive. | object |
 | grid.gutter | no | The spacing between grid | integer |
 | grid.column | no | The column of grid | integer |
-| grid.xs | no | `<576px column of grid` | integer |
-| grid.sm | no | `≥576px column of grid` | integer |
-| grid.md | no | `≥768px column of grid` | integer |
-| grid.lg | no | `≥992px column of grid` | integer |
-| grid.xl | no | `≥1200px column of grid` | integer |
-| grid.xxl | no | `≥1600px column of grid` | integer |
+| grid.xs | no | `<576px` column of grid | integer |
+| grid.sm | no | `≥576px` column of grid | integer |
+| grid.md | no | `≥768px` column of grid | integer |
+| grid.lg | no | `≥992px` column of grid | integer |
+| grid.xl | no | `≥1200px` column of grid | integer |
+| grid.xxl | no | `≥1600px` column of grid | integer |
 | items | yes |  | array |
 | items[].resourceRefId | yes |  | string |
 | prefix | no | it's the filters prefix to get right values | string |
@@ -385,11 +370,11 @@ FlowChart represents a Kubernetes composition as a directed graph. Each node rep
 | data[].date | yes | optional date value to be shown in the node, formatted as ISO 8601 string | string |
 | data[].icon | no | custom icon displayed for the resource node | object |
 | data[].icon.name | no | FontAwesome icon class name (e.g. 'fa-check') | string |
-| data[].icon.color | no | CSS color value for the icon background | string |
+| data[].icon.color | no | CSS color value for the icon background | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` \| `violet` |
 | data[].icon.message | no | optional tooltip message displayed on hover | string |
 | data[].statusIcon | no | custom status icon displayed alongside resource info | object |
 | data[].statusIcon.name | no | FontAwesome icon class name representing status | string |
-| data[].statusIcon.color | no | CSS color value for the status icon background | string |
+| data[].statusIcon.color | no | CSS color value for the status icon background | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` \| `violet` |
 | data[].statusIcon.message | no | optional tooltip message describing the status | string |
 | data[].kind | yes | kubernetes resource type (e.g. Deployment, Service) | string |
 | data[].name | yes | name of the resource | string |
@@ -398,11 +383,11 @@ FlowChart represents a Kubernetes composition as a directed graph. Each node rep
 | data[].parentRefs[].date | no | optional date value to be shown in the node, formatted as ISO 8601 string | string |
 | data[].parentRefs[].icon | no | custom icon for the parent resource | object |
 | data[].parentRefs[].icon.name | no | FontAwesome icon class name | string |
-| data[].parentRefs[].icon.color | no | CSS color value for the icon background | string |
+| data[].parentRefs[].icon.color | no | CSS color value for the icon background | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` \| `violet` |
 | data[].parentRefs[].icon.message | no | optional tooltip message | string |
 | data[].parentRefs[].statusIcon | no | custom status icon for the parent resource | object |
 | data[].parentRefs[].statusIcon.name | no | FontAwesome icon class name | string |
-| data[].parentRefs[].statusIcon.color | no | CSS color value for the status icon background | string |
+| data[].parentRefs[].statusIcon.color | no | CSS color value for the status icon background | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` \| `violet` |
 | data[].parentRefs[].statusIcon.message | no | optional tooltip message | string |
 | data[].parentRefs[].kind | no | resource type of the parent | string |
 | data[].parentRefs[].name | no | name of the parent resource | string |
@@ -430,10 +415,10 @@ spec:
       - date: "2025-07-24T15:30:36Z"
         icon:
           name: "fa-cubes"
-          color: "#1890ff"
+          color: "blue"
         statusIcon:
           name: "fa-check"
-          color: "#52c41a"
+          color: "green"
           message: "Available"
         kind: "FrontendGithubScaffolding"
         name: "test2"
@@ -447,10 +432,10 @@ spec:
       - date: "2024-07-31T15:30:39Z"
         icon:
           name: "fa-file-alt"
-          color: "#faad14"
+          color: "orange"
         statusIcon:
           name: "fa-ellipsis"
-          color: "#1890ff"
+          color: "blue"
           message: "Progressing"
         kind: "ConfigMap"
         name: "test2-replace-values"
@@ -469,10 +454,10 @@ spec:
       - date: "2025-07-31T15:30:39Z"
         icon:
           name: "fa-cogs"
-          color: "#13c2c2"
+          color: "gray"
         statusIcon:
           name: "fa-pause"
-          color: "#faad14"
+          color: "orange"
           message: "Suspended"
         kind: "Application"
         name: "test2"
@@ -491,10 +476,10 @@ spec:
       - date: "2025-07-31T15:30:39Z"
         icon:
           name: "fa-database"
-          color: "#722ed1"
+          color: "violet"
         statusIcon:
           name: "fa-xmark"
-          color: "#ff4d4f"
+          color: "red"
           message: "Degraded"
         kind: "Repo"
         name: "test2-repo"
@@ -513,10 +498,10 @@ spec:
       - date: "2025-07-31T15:30:39Z"
         icon:
           name: "fa-book"
-          color: "#eb2f96"
+          color: "red"
         statusIcon:
           name: "fa-question"
-          color: "#d9d9d9"
+          color: "gray"
           message: "Unknown"
         kind: "Repo"
         name: "test2-repo"
@@ -547,7 +532,7 @@ name of the k8s Custom Resource
 | actions | yes | the actions of the widget | object |
 | actions.rest | no | rest api call actions triggered by the widget | array |
 | actions.rest[].payloadKey | no | key used to nest the payload in the request body | string |
-| actions.rest[].headers | no |  | array |
+| actions.rest[].headers | yes | array of headers as strings, format 'key: value' | array |
 | actions.rest[].id | yes | unique identifier for the action | string |
 | actions.rest[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.rest[].requireConfirmation | no | whether user confirmation is required before triggering the action | boolean |
@@ -559,6 +544,7 @@ name of the k8s Custom Resource
 | actions.rest[].onEventNavigateTo.url | yes | url to navigate to when the event is received | string |
 | actions.rest[].onEventNavigateTo.timeout | no | the timeout in seconds to wait for the event | integer |
 | actions.rest[].onEventNavigateTo.reloadRoutes | no |  | boolean |
+| actions.rest[].onEventNavigateTo.loadingMessage | no | message to display while waiting for the event | string |
 | actions.rest[].type | yes | type of action to execute | `rest` |
 | actions.rest[].payload | no | static payload sent with the request | object |
 | actions.rest[].payloadToOverride | no | list of payload fields to override dynamically | array |
@@ -591,6 +577,8 @@ name of the k8s Custom Resource
 | actions.openModal[].title | no | title shown in the modal header | string |
 | actions.openModal[].loading | no |  | object |
 | actions.openModal[].loading.display | yes |  | boolean |
+| actions.openModal[].customWidth | no | the custom width of the value, which should be used by setting the 'custom' value inside the 'size' property | string |
+| actions.openModal[].size | no | sets the Modal size, 'default' is 520px, 'large' is 80% of the screen width, 'fullscreen' is 100% of the screen width, 'custom' should be used with the 'customWidth' property | `default` \| `large` \| `fullscreen` \| `custom` |
 | buttonConfig | no | custom labels and icons for form buttons | object |
 | buttonConfig.primary | no | primary button configuration | object |
 | buttonConfig.primary.label | no | text label for primary button | string |
@@ -629,26 +617,6 @@ metadata:
   namespace: test-namespace
 spec:
   widgetData:
-    allowedResources:
-      - barcharts
-      - buttons
-      - columns
-      - datagrids
-      - eventlists
-      - filters
-      - flowcharts
-      - forms
-      - linecharts
-      - markdowns
-      - pages
-      - panels
-      - paragraphs
-      - piecharts
-      - restactions
-      - rows
-      - tables
-      - tablists
-      - yamlviewers
     submitActionId: firework-submit-action
     stringSchema: |
       {
@@ -772,6 +740,9 @@ Markdown receives markdown in string format and renders it gracefully
 
 | Property | Required | Description | Type |
 |----------|----------|-------------|------|
+| allowCopy | no | displays a copy button on top of the widget to allow copy to clipboard | boolean |
+| allowDownload | no | displays a download button on top of the widget to allow download of the text | boolean |
+| downloadFileExtension | no | if 'allowDownload' is set, this property allows to set an extension for the downloaded file. Default is .txt | string |
 | markdown | yes | markdown string to be displayed | string |
 
 <details>
@@ -946,7 +917,7 @@ Panel is a container to display information
 | actions | yes | the actions of the widget | object |
 | actions.rest | no | rest api call actions triggered by the widget | array |
 | actions.rest[].payloadKey | no | key used to nest the payload in the request body | string |
-| actions.rest[].headers | no |  | array |
+| actions.rest[].headers | yes | array of headers as strings, format 'key: value' | array |
 | actions.rest[].id | yes | unique identifier for the action | string |
 | actions.rest[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented | string |
 | actions.rest[].requireConfirmation | no | whether user confirmation is required before triggering the action | boolean |
@@ -958,6 +929,7 @@ Panel is a container to display information
 | actions.rest[].onEventNavigateTo.url | yes | url to navigate to when the event is received | string |
 | actions.rest[].onEventNavigateTo.timeout | no | the timeout in seconds to wait for the event | integer |
 | actions.rest[].onEventNavigateTo.reloadRoutes | no |  | boolean |
+| actions.rest[].onEventNavigateTo.loadingMessage | no | message to display while waiting for the event | string |
 | actions.rest[].type | yes | type of action to execute | `rest` |
 | actions.rest[].payload | no | static payload sent with the request | object |
 | actions.rest[].payloadToOverride | no | list of payload fields to override dynamically | array |
@@ -990,6 +962,8 @@ Panel is a container to display information
 | actions.openModal[].title | no | title shown in the modal header | string |
 | actions.openModal[].loading | no |  | object |
 | actions.openModal[].loading.display | yes |  | boolean |
+| actions.openModal[].customWidth | no | the custom width of the value, which should be used by setting the 'custom' value inside the 'size' property | string |
+| actions.openModal[].size | no | sets the Modal size, 'default' is 520px, 'large' is 80% of the screen width, 'fullscreen' is 100% of the screen width, 'custom' should be used with the 'customWidth' property | `default` \| `large` \| `fullscreen` \| `custom` |
 | clickActionId | no | the id of the action to be executed when the panel is clicked | string |
 | footer | no | footer section of the panel containing additional items | array |
 | footer[].resourceRefId | yes | the identifier of the k8s custom resource that should be represented, usually a widget | string |
@@ -1008,6 +982,7 @@ Panel is a container to display information
 <summary>Example</summary>
 
 ```yaml
+kind: Panel
 apiVersion: widgets.templates.krateo.io/v1beta1
 metadata:
   name: my-panel
@@ -1015,35 +990,14 @@ metadata:
 spec:
   widgetData:
     actions: {}
-    allowedResources:
-      - barcharts
-      - buttons
-      - columns
-      - datagrids
-      - eventlists
-      - filters
-      - flowcharts
-      - forms
-      - linecharts
-      - markdowns
-      - pages
-      - panels
-      - paragraphs
-      - piecharts
-      - restactions
-      - rows
-      - tables
-      - tablists
-      - yamlviewers
     title: My Panel
     items:
       - resourceRefId: my-pie-chart
       - resourceRefId: my-table
     tooltip: this is a tooltip!
     footer:
-      items:
-        - resourceRefId: button-1
-        - resourceRefId: button-2
+      - resourceRefId: button-1
+      - resourceRefId: button-2
   resourcesRefs:
     items:
       - id: my-table
@@ -1115,7 +1069,7 @@ PieChart is a visual component used to display categorical data as segments of a
 | series | no | data to be visualized in the pie chart | object |
 | series.total | yes | sum of all data values, used to calculate segment sizes | integer |
 | series.data | yes | individual segments of the pie chart | array |
-| series.data[].color | yes | color used to represent the segment | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` |
+| series.data[].color | yes | color used to represent the segment | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` \| `violet` |
 | series.data[].value | yes | numeric value for the segment | integer |
 | series.data[].label | yes | label for the segment | string |
 
@@ -1186,6 +1140,7 @@ name of the k8s Custom Resource
 | items | yes | the items of the row | array |
 | items[].resourceRefId | yes |  | string |
 | items[].size | no | the number of cells that the item will occupy, from 0 (not displayed) to 24 (occupies all space) | integer |
+| items[].alignment | no | the alignment of the element inside the cell. Default is 'left' | `center` \| `left` \| `right` |
 
 <details>
 <summary>Example</summary>
@@ -1323,6 +1278,7 @@ TabList display a set of tab items for navigation or content grouping
 | items | yes | the items of the tab list | array |
 | items[].label | no | text displayed on the tab | string |
 | items[].resourceRefId | yes | the identifier of the k8s custom resource represented by the tab content | string |
+| items[].title | no | optional title to be displayed inside the tab | string |
 
 <details>
 <summary>Example</summary>

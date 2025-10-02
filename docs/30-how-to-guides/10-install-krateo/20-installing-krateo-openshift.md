@@ -38,7 +38,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.externalIpAvailable=true \
   --set krateoplatformops.finopscratedb.openshift.enabled=true \
   --install \
-  --version 2.5.1 \
+  --version 2.6.0 \
   --wait
 ```
 
@@ -78,7 +78,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --set krateoplatformops.finopscratedb.openshift.enabled=true \
   --install \
-  --version 2.5.1 \
+  --version 2.6.0 \
   --wait
 ```
 

@@ -230,7 +230,7 @@ spec:
 |----------|----------|-------------|------|
 | allowedResources | yes | the list of resources that are allowed to be children of this widget or referenced by it | array |
 | asGrid | no | to show children as list or grid | boolean |
-| grid | no | The grid type of list. You can set grid to something like {gutter: 16, column: 4} or specify the integer for columns based on their size, e.g. sm, md, etc. to make it responsive. | object |
+| grid | no | The grid type of list. You can set grid to something like `{gutter: 16, column: 4}` or specify the integer for columns based on their size, e.g. sm, md, etc. to make it responsive. | object |
 | grid.gutter | no | The spacing between grid | integer |
 | grid.column | no | The column of grid | integer |
 | grid.xs | no | <576px column of grid | integer |

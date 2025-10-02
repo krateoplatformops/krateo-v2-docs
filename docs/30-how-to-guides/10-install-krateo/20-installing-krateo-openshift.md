@@ -30,6 +30,14 @@ Krateo PlatformOps can be exposed via LoadBalancer service type that exposes an 
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
 
+helm upgrade installer-crd installer-crd \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --install \
+  --version 2.6.0 \
+  --wait
+
 helm upgrade installer installer \
   --repo https://charts.krateo.io \
   --namespace krateo-system \
@@ -69,6 +77,14 @@ Krateo PlatformOps can be exposed via LoadBalancer service type that exposes a h
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
+
+helm upgrade installer-crd installer-crd \
+  --repo https://charts.krateo.io \
+  --namespace krateo-system \
+  --create-namespace \
+  --install \
+  --version 2.6.0 \
+  --wait
 
 helm upgrade installer installer \
   --repo https://charts.krateo.io \

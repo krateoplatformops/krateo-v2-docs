@@ -1,4 +1,4 @@
-# core-provider-cheatsheet
+# Krateo Composable Operations (KCO) Cheatsheet
 
 ## Comprehensive Deployment Guide with Expected Outcomes
 

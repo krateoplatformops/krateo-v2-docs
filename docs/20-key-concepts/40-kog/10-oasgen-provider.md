@@ -40,7 +40,7 @@ It enables seamless integration of API-defined resources into Kubernetes environ
 ## Requirements
 
 - Kubernetes cluster (v1.20+ recommended).
-- OpenAPI Specification 3.0/3.1 documents for the APIs you want to manage. Please refer to the [Usage Guide section](11-oasgen-provider-cheatsheet.md) for more details on the OAS document management.
+- OpenAPI Specification 3.0/3.1 documents for the APIs you want to manage. Please refer to the [Usage Guide section](./11-oasgen-provider-cheatsheet.md) for more details on the OAS document management.
 - Network access to API endpoints from the cluster.
 
 ## How to Install
@@ -206,7 +206,7 @@ The `RestDefinition` is the core Custom Resource Definition (CRD) used by the OA
 
 ### CRD Specification
 
-The RestDefinition CRD specification can be found here: [RestDefinition CRD](crds/ogen.krateo.io_restdefinitions.yaml).
+The RestDefinition CRD specification can be found here: [RestDefinition CRD](https://github.com/krateoplatformops/oasgen-provider/blob/main/crds/ogen.krateo.io_restdefinitions.yaml).
 
 ### How to create a RestDefinition
 
@@ -527,7 +527,7 @@ Some consistency requirements includes but may not be limited to:
 
 Any API behavior that does not match these requirements will require a web service wrapper to normalize / fix the API interface. 
 This is common with APIs that do not follow consistent naming conventions or have different response structures.
-To learn more about web service wrappers, please refer to the [usage guide](docs/USAGE_GUIDE.md#extended-example-external-api-that-requires-a-plugin-to-handle-external-api-calls).
+To learn more about web service wrappers, please refer to the [usage guide](./11-oasgen-provider-cheatsheet.md#extended-example-external-api-that-requires-a-plugin-to-handle-external-api-calls).
 
 ### Type-Safe Status Fields
 
@@ -584,7 +584,7 @@ The OASGen Provider currently supports 2 authentication mechanisms to connect to
 
 This means that the external API must support one of these authentication methods to be compatible with the OASGen Provider.
 
-The authentication method must be defined in the OpenAPI Specification (OAS) document using the `securitySchemes` component as better explained in the [Usage Guide](docs/USAGE_GUIDE.md#supported-authentication-methods).
+The authentication method must be defined in the OpenAPI Specification (OAS) document using the `securitySchemes` component as better explained in the [Usage Guide](./11-oasgen-provider-cheatsheet.md#supported-authentication-methods).
 
 The authentication details are stored in the generated configuration resource, which is used by the `rest-dynamic-controller` to connect to the external API.
 The authentication details are referenced in the configuration resource using Kubernetes secrets.
@@ -666,7 +666,7 @@ An example of this field in a RestDefinition manifest is as follows:
 
 ## Usage guide
 
-A more practical, step-by-step, usage guide with examples and troubleshooting tips can be found in the [Usage Guide](docs/USAGE_GUIDE.md).
+A more practical, step-by-step, usage guide with examples and troubleshooting tips can be found in the [Usage Guide](./11-oasgen-provider-cheatsheet.md).
 
 ## Environment Variables and Flags
 

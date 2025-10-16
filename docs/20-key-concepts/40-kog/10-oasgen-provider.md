@@ -112,70 +112,15 @@ Instead of writing and maintaining custom operators for each API, OASGen leverag
 In the following diagrams, we illustrate the architecture and workflow of the OASGen Provider in two scenarios: a standard scenario and a scenario that includes an optional Plugin (Wrapper Web Service).
 
 ### Standard scenario
-```mermaid
-flowchart LR
 
-  subgraph Generator
-  provider[oasgen-provider]
-  restdefinition[[RestDefinition Manifest]]
-  crd[[CRD Manifest]]
-  end
-
-  subgraph Dynamic_Controller["Dynamic Controller"]
-  rdc[rest-dynamic-controller]
-  cr[[Custom resource Manifest]]
-  end
-
-  er[(External Resource)]
-
-  restdefinition -.->|Definition for| provider
-
-  provider -->|Generate| crd
-
-  provider -->|Deploy| rdc
-
-  cr -.->|Definition for| rdc
-
-  rdc -->|"Manage (Observe, Create, Update, Delete)"| er
-
-  cr -.->|Instance of| crd
-```
+![oasgen-provider State Diagram](/img/kog/normal.png)
 
 <br/>
 The diagram illustrates how the OASGen Provider processes OpenAPI Specifications to generate CRDs and deploy the Rest Dynamic Controller (RDC). The RDC manages custom resources and interacts with external APIs.
 
 ### Scenario with Plugin (Wrapper Web Service)
 
-```mermaid
-flowchart LR
-
-  subgraph Generator
-  provider[oasgen-provider]
-  restdefinition[[RestDefinition Manifest]]
-  crd[[CRD Manifest]]
-  end
-
-  subgraph Dynamic_Controller["Dynamic Controller"]
-  rdc[rest-dynamic-controller]
-  cr[[Custom resource Manifest]]
-  end
-
-  er[(External Resource)]
-
-  restdefinition -.->|Definition for| provider
-
-  provider -->|Generate| crd
-
-  provider -->|Deploy| rdc
-
-  cr -.->|Definition for| rdc
-
-  rdc --> |"Manage (Observe, Create, Update, Delete)"| ws[Plugin <br>Wrapper Web Service]
-
-  ws --> er
-
-  cr -.->|Instance of| crd
-```
+![oasgen-provider State Diagram With Wrapper](/img/kog/wrapper.png)
 
 <br/>
 In this secondo scenario, very similar to the first one, the Rest Dynamic Controller interacts with an optional Plugin (Wrapper Web Service) to handle API calls. This is useful when the external API does not conform to the expected interface or requires additional processing.

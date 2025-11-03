@@ -574,7 +574,9 @@ kubectl delete compositiondefinition fireworksapp-cd \
 - The `deletionTimestamp` is set in the generated CRD and in all the compositions related to this CRD.
 - The `compositiondefinition` and all associated resources are deleted. (It may take a few minutes because any release associated with the composition will be deleted first.)
 
-Note: If some compositions are stuck in the deletion process, do not enforce their deletion by removing the finalizer in the CRD. Instead, you should check the logs of the `composition-dynamic-controller` to understand why the deletion is stuck. If you need to force the deletion, you can do so by removing the finalizer in the composition CR. Then the core-provider will safely delete the CRD. 
+:::note
+If some compositions are stuck in the deletion process, do not enforce their deletion by removing the finalizer in the CRD. Instead, you should check the logs of the `composition-dynamic-controller` to understand why the deletion is stuck. If you need to force the deletion, you can do so by removing the finalizer in the composition CR. Then the core-provider will safely delete the CRD. 
+:::
 
 Deleting the finalizer in the CRD can cause problems with Kubernetes etcd, so it is not recommended. See section 5. Error after creating CompositionDefinition for troubleshooting.
 

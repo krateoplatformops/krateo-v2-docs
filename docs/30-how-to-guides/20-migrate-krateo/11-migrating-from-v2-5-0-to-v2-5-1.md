@@ -5,8 +5,9 @@ sidebar_label: Migrating Krateo PlatformOps from v2.5.0 to v2.5.1 (AKS example)
 
 # Migrating Krateo PlatformOps from v2.5.0 to v2.5.1 (AKS example)
 
-> [!NOTE]  
+:::note
 > Skip this section if you have already Krateo v.2.5.0 installed
+:::
 
 Krateo 2.5.1 release note is available here: ../../90-release-notes/11-release-note-2-5-1.md
  
@@ -190,8 +191,9 @@ spec:
 EOF
 ```
 
-> [!NOTE]  
-> The LoadBalancer IP for the Portal will change
+:::note
+The LoadBalancer IP for the Portal will change
+:::
 
 Login with the new password generated for the admin user:
 

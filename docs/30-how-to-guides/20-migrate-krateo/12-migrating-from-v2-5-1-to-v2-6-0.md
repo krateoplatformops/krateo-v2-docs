@@ -5,8 +5,9 @@ sidebar_label: Migrating Krateo PlatformOps from v2.5.1 to v2.6.0 (AKS example)
 
 # Migrating Krateo PlatformOps from v2.5.1 to v2.6.0 (AKS example)
 
-> [!NOTE]  
-> Skip this section if you have already Krateo v.2.5.1 installed
+:::note
+Skip this section if you have already Krateo v.2.5.1 installed
+:::
 
 Krateo 2.6.0 release note is available here: ../../90-release-notes/12-release-note-2-6-0.md
  
@@ -354,6 +355,51 @@ spec:
               kubectl label crd restdefinitions.ogen.krateo.io \
                 app.kubernetes.io/managed-by=Helm --overwrite
 
+              kubectl annotate crd databaseconfigs.finops.krateo.io \
+                meta.helm.sh/release-name=finops-operator-exporter \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              kubectl label crd databaseconfigs.finops.krateo.io \
+                app.kubernetes.io/managed-by=Helm --overwrite
+
+              kubectl annotate crd exporterscraperconfigs.finops.krateo.io \
+                meta.helm.sh/release-name=finops-operator-exporter \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              kubectl label crd exporterscraperconfigs.finops.krateo.io \
+                app.kubernetes.io/managed-by=Helm --overwrite
+
+              kubectl annotate crd focusconfigs.finops.krateo.io \
+                meta.helm.sh/release-name=finops-operator-focus \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              kubectl label crd focusconfigs.finops.krateo.io \
+                app.kubernetes.io/managed-by=Helm --overwrite
+
+              kubectl annotate crd notebooks.finops.krateo.io \
+                meta.helm.sh/release-name=finops-database-handler-uploader \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              kubectl label crd notebooks.finops.krateo.io \
+                app.kubernetes.io/managed-by=Helm --overwrite
+
+              kubectl annotate crd scraperconfigs.finops.krateo.io \
+                meta.helm.sh/release-name=finops-operator-scraper \
+                meta.helm.sh/release-namespace=krateo-system \
+                app.kubernetes.io/managed-by=Helm \
+                --overwrite
+
+              kubectl label crd scraperconfigs.finops.krateo.io \
+                app.kubernetes.io/managed-by=Helm --overwrite
+
               kubectl annotate crd krateoplatformops.krateo.io \
                 meta.helm.sh/release-name=installer-crd \
                 meta.helm.sh/release-namespace=krateo-system \
@@ -373,7 +419,7 @@ spec:
               kubectl label krateoplatformops krateo -n krateo-system \
                 app.kubernetes.io/managed-by=Helm --overwrite
 
-              kubectl -n krateo-system delete secret -l owner=helm,name=krateoplatformops
+              kubectl -n krateo-system delete secret -l owner=helm,name=installer
 
               echo "Pre-upgrade 2.6.0 job done ✅"
 EOF
@@ -426,8 +472,9 @@ The three-way merge preserves out-of-band modifications (e.g., sidecars, labels/
 **Why it applies on the second upgrade**
 After the first upgrade, the “old base” stored in the release history is updated to the new revision. When Helm recalculates the diff with the updated old/live/new, certain differences now appear as applicable, and a patch is produced—making the change visible only on the second run.
 
-> [!NOTE]  
-> The LoadBalancer IP for the Portal will change
+:::note
+The LoadBalancer IP for the Portal will change
+:::
 
 Login with the new password generated for the admin user:
 

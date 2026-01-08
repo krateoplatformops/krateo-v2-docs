@@ -26,7 +26,7 @@ All endpoints must have the basic auth header field compiled with the username a
 
 - POST    `/upload`: the webservice receives the data (divided into chunks) and directly uploads it into the specified table in the database
 - POST    `/compute/<compute_name>`: calls the specified compute notebook with the POST body data being the parameters required by the given algorithm, encoded in JSON as parameter_name=parameter_value
-- POST    `/compute/<compute_name>/upload?overwrite=[true|false]`: uploads the specified notebook into the database with the name <compute_name>, with overwriting if configured (if not, defaults to no overwrite)
+- POST    `/compute/<compute_name>/upload?overwrite=[true|false]`: uploads the specified notebook into the database with the name `compute_name`, with overwriting if configured (if not, defaults to no overwrite)
 - DELETE  `/compute/<compute_name>`: deletes the specified notebook from the database
 - GET     `/compute/list`: lists all available compute notebooks
 

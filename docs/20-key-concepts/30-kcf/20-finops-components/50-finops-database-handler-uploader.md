@@ -10,7 +10,7 @@ This service allows to upload python code notebookes into the [finops-database-h
 4. [Installation](#installation)
 
 ## Overview
-To upload a new notebook into the [finops-database-handler](https://github.com/krateoplatformops/finops-database-handler) you need to create a new `Notebook` custom resource (see [sample data](./sample_data/)). The field `type` can be either `inline` or `api`. If you use inline, you need to put the notebook code in the `inline` field. Otherwise, if you use the api type, you need to compile the `api` field. See the [examples](#examples) section for more details. The name of the endpoint of the notebook (see [endpoints for the finops-database-handler](https://github.com/krateoplatformops/finops-database-handler?tab=readme-ov-file#api)) is the name of the custom resource.
+To upload a new notebook into the [finops-database-handler](https://github.com/krateoplatformops/finops-database-handler) you need to create a new `Notebook` custom resource (see [sample data](https://github.com/krateoplatformops/finops-database-handler-uploader/tree/main/sample_data)). The field `type` can be either `inline` or `api`. If you use inline, you need to put the notebook code in the `inline` field. Otherwise, if you use the api type, you need to compile the `api` field. See the [examples](#examples) section for more details. The name of the endpoint of the notebook (see [endpoints for the finops-database-handler](https://github.com/krateoplatformops/finops-database-handler?tab=readme-ov-file#api)) is the name of the custom resource.
 
 ## Configuration
 The finops-database-handler-uploader accepts six environment variables (or parameters):

@@ -50,7 +50,7 @@ spec:
 ### Example Use Case
 The Composable FinOps can be used to display pricing, costs and optimizations in the Krateo Composable Portal through a dedicated blueprint. You can find out more here: 
 - [azure-vm-finops](https://github.com/krateoplatformops-blueprints/azure-vm-finops).
-- [azure-compute-optimization-toolkit](github.com/krateoplatformops-blueprints/azure-compute-optimization-toolkit)
+- [azure-compute-optimization-toolkit](https://github.com/krateoplatformops-blueprints/azure-compute-optimization-toolkit)
 
 ## Configuration
 

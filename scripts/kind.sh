@@ -69,7 +69,7 @@ helm upgrade installer-crd installer-crd \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 
 helm upgrade installer installer \
@@ -77,5 +77,5 @@ helm upgrade installer installer \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait

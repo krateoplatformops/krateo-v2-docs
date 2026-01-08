@@ -14,7 +14,7 @@ Installing Krateo with default configuration is quick and easy.
 
 You will need:
 
-* [Helm](https://helm.sh/docs/): These instructions were tested with v3.13.1.
+* [Helm](https://helm.sh/docs/): These instructions were tested with v3.19.4.
 * A Kubernetes cluster.
 
 :::note
@@ -35,7 +35,7 @@ helm upgrade installer-crd installer-crd \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 
 helm upgrade installer installer \
@@ -45,7 +45,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=true \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 ```
 
@@ -82,7 +82,7 @@ helm upgrade installer-crd installer-crd \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 
 helm upgrade installer installer \
@@ -92,7 +92,7 @@ helm upgrade installer installer \
   --set krateoplatformops.service.type=LoadBalancer \
   --set krateoplatformops.service.externalIpAvailable=false \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 ```
 
@@ -106,7 +106,7 @@ At the end of this process:
 * Find the Krateo Composable Portal hostname:
 
 ```shell
-kubectl get svc krateo-frontend -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
+kubectl get svc frontend -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}'
 ```
 
 * The Krateo Composable Portal will be accessible at previous hostname at port 8080.

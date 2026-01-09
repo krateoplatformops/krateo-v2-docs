@@ -144,7 +144,7 @@ DataGrid is a layout component that renders its children as a responsive list or
 | grid | no | The grid type of list. You can set grid to something like `{gutter: 16, column: 4}` or specify the integer for columns based on their size, e.g. sm, md, etc. to make it responsive. | object |
 | grid.gutter | no | The spacing between grid | integer |
 | grid.column | no | The column of grid | integer |
-| grid.xs | no | <576px column of grid | integer |
+| grid.xs | no | \<576px column of grid | integer |
 | grid.sm | no | ≥576px column of grid | integer |
 | grid.md | no | ≥768px column of grid | integer |
 | grid.lg | no | ≥992px column of grid | integer |

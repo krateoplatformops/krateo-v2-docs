@@ -14,7 +14,7 @@ Installing Krateo with default configuration is quick and easy.
 
 You will need:
 
-* [Helm](https://helm.sh/docs/): These instructions were tested with v3.13.1.
+* [Helm](https://helm.sh/docs/): These instructions were tested with v3.19.4.
 * A Kubernetes cluster.
 
 :::note
@@ -29,7 +29,7 @@ Krateo PlatformOps is exposed via NodePort by default. In order to customize sec
 ```shell
 helm repo add krateo https://charts.krateo.io
 helm repo update krateo
-helm inspect values krateo/installer --version 2.6.0 > ~/krateo-values.yaml
+helm inspect values krateo/installer --version 2.7.0 > ~/krateo-values.yaml
 ```
 
 Modify the *krateo-values.yaml* file as the following example:
@@ -108,7 +108,7 @@ helm upgrade installer-crd installer-crd \
   --namespace krateo-system \
   --create-namespace \
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 
 helm upgrade installer installer \
@@ -117,7 +117,7 @@ helm upgrade installer installer \
   --create-namespace \
   -f ~/krateo-values.yaml
   --install \
-  --version 2.6.0 \
+  --version 2.7.0 \
   --wait
 ```
 

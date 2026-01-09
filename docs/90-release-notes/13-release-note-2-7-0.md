@@ -1,6 +1,8 @@
 # Krateo 2.7.0 – Core Stability, Advanced REST Capabilities, and Enhanced FinOps
 
-Krateo 2.7.0 represents a significant step forward in platform stability and flexibility. This release introduces a revamped reconciliation engine, advanced capabilities for generating CRDs from OpenAPI specs, and a transition to OCI-based policies for FinOps.
+Krateo 2.7.0 represents a significant step forward in platform stability and flexibility. In this release, we deliberately chose to focus on **stability over new features** and to introduce a formal **deprecation policy** to ensure smoother handling of breaking changes in the future.
+
+This release introduces a revamped reconciliation engine, advanced capabilities for generating CRDs from OpenAPI specs, and a transition to OCI-based policies for FinOps.
 
 ## 🚀 What’s New
 
@@ -28,6 +30,8 @@ Krateo 2.7.0 represents a significant step forward in platform stability and fle
 * **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
 * **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
 
+
+
 **Snowplow**
 
 * **AWS Support:** Added AWS authentication support. Any component that uses Snowplow trackers can now send data to AWS endpoints.
@@ -40,22 +44,33 @@ Krateo 2.7.0 represents a significant step forward in platform stability and fle
 
 **New Component: Sweeper**
 
-* Introduced the **Sweeper** component (v0.2.0) to handle resource cleanup tasks. **Sweeper** is a lightweight Go service designed to monitor etcd storage usage and automatically trigger cleanup or maintenance actions before the database reaches its configured quota limit.
-
+* **Proactive Storage Management:** We introduced the **Sweeper** component (v0.2.0) to explicitly address issues related to **etcd pressure and reaching quota limits**.
+* **Functionality:** Sweeper is a lightweight Go service that monitors etcd storage usage and automatically triggers cleanup or maintenance actions before the database reaches its configured quota limit.
+* **Requirements:** Sweeper strictly requires an etcd setup that exposes the **Maintenance API**. It is included by default in Krateo 2.7.0 and is pre-configured to work with the new Krateo etcd chart.
 
 ---
 
-## ⚠️ Breaking Changes & Deprecations
+## ⚠️ Deprecations and a few Breaking Changes
 
 **Authn (v0.22.2)**
 
-* **RESTAction Header Logic:** The automatic token injection logic has changed. Existing RESTActions for OAuth2 and OIDC must now manually include the authorization header.
-* *Required Change:* Update your templates to include: `headers: - "${ \"Authorization: Bearer \" + .token }"`
-* The `token` is now passed directly as a parameter.
+* **RESTAction Header Logic:** The automatic token injection logic has changed. Existing RESTActions for OAuth2 and OIDC must now manually include the authorization header. The `token` is now passed directly as a parameter.
+* *Required Change:* Update your templates to include the header explicitly:
+```yaml
+# Manually include the authorization header
+headers: - "${ \"Authorization: Bearer \" + .token }"
+
+```
+
+
 
 **FinOps Policies**
 
-* **OCI Transition:** Policies are no longer managed via ConfigMaps. They are now mounted directly from OCI images managed by OPA. The `Finopspolicies` component has been removed from the Krateo Installer.
+* **OCI Transition:** Policies are no longer managed via ConfigMaps. They are now mounted directly from OCI images managed by OPA.
+* **Component Removal:** The `Finopspolicies` component has been removed from the Krateo Installer.
+* *Migration Note:* If you have existing policies defined in ConfigMaps, these are now deprecated. You must migrate your policies to OCI images to ensure functionality with v2.7.0+.
+
+
 
 **Frontend**
 
@@ -65,7 +80,10 @@ Krateo 2.7.0 represents a significant step forward in platform stability and fle
 
 **Etcd**
 
-* **Configuration Changes:** Significant changes to `values.yaml` and templates for Etcd (v3.6.6). Verify the new RBAC templating and removal of legacy values.
+* **Chart Migration (Bitnami to Krateo):** We have replaced the Bitnami etcd chart (used in versions prior to 2.7.0) with a new custom chart: [`krateoplatformops/etcd-chart`](https://www.google.com/search?q=%5Bhttps://github.com/krateoplatformops/etcd-chart%5D(https://github.com/krateoplatformops/etcd-chart)).
+* **Reason:** The Bitnami chart does not allow configuring etcd to expose the **Maintenance API**, which is a strict requirement for the **Sweeper** component to perform storage cleanups.
+  * **Impact on Data:** This internal Etcd instance is used exclusively by Krateo internal components (eventsse and eventrouter) to store transient event data. Consequently, deleting this instance will not impact user configuration or business data. The only effect is the loss of historical internal event logs.
+
 
 ---
 
@@ -73,3 +91,4 @@ Krateo 2.7.0 represents a significant step forward in platform stability and fle
 
 **New Blueprints**
 
+* **Cloud Native Stack:** A new comprehensive stack that demonstrates the flexibility of Krateo. This blueprint includes customizations for `portal-blueprint-page` and `portal-composition-page`, showcasing how the platform UI can be tailored to specific architectural needs.

@@ -28,6 +28,10 @@ Krateo 2.7.0 represents a significant step forward in platform stability and fle
 * **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
 * **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
 
+**Snowplow**
+
+* **AWS Support:** Added AWS authentication support. Any component that uses Snowplow trackers can now send data to AWS endpoints.
+
 **FinOps & Observability**
 
 * **Generic Metrics:** Added support for generic metric types in Exporters.

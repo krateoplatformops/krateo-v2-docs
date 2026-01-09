@@ -1,13 +1,26 @@
-# snowplow
+# `snowplow`
 
 Snowplow is a web service that plays a key role within the suite of components that make up Krateo PlatformOps. 
 
 It serves multiple purposes, primarily acting as a bridge between Krateo's custom resources and the UI. By enabling a dynamic and declarative approach to defining UI components and layouts, Snowplow ensures that the interface is interpreted and rendered seamlessly by Krateo Frontend.
 
-Currently, Snowplow handles on-demand resolution of the [RESTAction](./21-snowplow-RESTAction.md) custom resource. For all other custom resources within Krateo, it delegates the task to the Kubernetes API server, which, in turn, leverages Krateo’s custom aggregation API layer to process them. 
+It handles on-demand resolution of the `RESTAction` custom resource and all Krateo Frontend `Widgets` custom resources.
 
-Looking ahead, Snowplow will take full responsibility for managing all custom resources beyond RESTAction, eventually eliminating the need for delegation altogether.
+## Learn More
 
-As of today, the overall architecture is structured as follows:
+### Developer Guide
 
-![snowplow architecture](/img/kcp/snowplow-architecture.png)
+- [Building `snowplow`](howto/developer-guide.md)
+- [ADR: Decoupling `authn` from `snowplow` for Testing and Operations](howto/decoupling-authn-from-snowplow-for-testing.md)
+
+### User Guide
+
+- [`Endpoint` reference](howto/endpoints.md)
+- [`RESTAction` reference](howto/restactions.md)
+- [Understanding the `Widget` Custom Resource](howto/widgets.md)
+- [Installing `snowplow` on Kind](howto/install.md)
+
+### Examples
+
+- [RESTAction: list _cluster namespaces_](howto/restactions/example-cluster-namespaces.md)
+- [RESTAction: invoke _external API_](howto/restactions/example-external-api.md)

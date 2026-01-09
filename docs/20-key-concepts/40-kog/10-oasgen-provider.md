@@ -1,7 +1,7 @@
 # Krateo OASGen Provider
 
 The Krateo OASGen Provider is a Kubernetes controller that generates Custom Resource Definitions (CRDs) and controllers to manage resources directly from OpenAPI Specification (OAS) 3.0/3.1 documents.
-It enables seamless integration of API-defined resources into Kubernetes environments.
+It enables seamless integration of API-defined resources into Kubernetes environments without the need to write custom operators.
 
 ## Summary
 
@@ -32,16 +32,16 @@ It enables seamless integration of API-defined resources into Kubernetes environ
 - [Configuration resources](#configuration-resources)
 - [Usage guide](#usage-guide)
 - [Environment Variables and Flags](#environment-variables-and-flags)
-- [Security Features](#security-features)
+- [Security features](#security-features)
 - [Best Practices](#best-practices)
 - [Unsupported features](#unsupported-features)
-  - [OAS 3.0 vs OAS 3.1](#oas-30-vs-oas-31)
+- [OAS 3.0 vs OAS 3.1](#oas-30-vs-oas-31)
 
 ## Requirements
 
 - Kubernetes cluster (v1.20+ recommended).
 - OpenAPI Specification 3.0/3.1 documents for the APIs you want to manage. Please refer to the [Usage Guide section](./11-oasgen-provider-cheatsheet.md) for more details on the OAS document management.
-- Network access to API endpoints from the cluster.
+- Network access to the API endpoints to be managed from within the Kubernetes cluster.
 
 ## How to Install
 
@@ -112,15 +112,70 @@ Instead of writing and maintaining custom operators for each API, OASGen leverag
 In the following diagrams, we illustrate the architecture and workflow of the OASGen Provider in two scenarios: a standard scenario and a scenario that includes an optional Plugin (Wrapper Web Service).
 
 ### Standard scenario
+```mermaid
+flowchart LR
 
-![oasgen-provider State Diagram](/img/kog/normal.png)
+  subgraph Generator
+  provider[oasgen-provider]
+  restdefinition[[RestDefinition Manifest]]
+  crd[[CRD Manifest]]
+  end
+
+  subgraph Dynamic_Controller["Dynamic Controller"]
+  rdc[rest-dynamic-controller]
+  cr[[Custom resource Manifest]]
+  end
+
+  er[(External Resource)]
+
+  restdefinition -.->|Definition for| provider
+
+  provider -->|Generate| crd
+
+  provider -->|Deploy| rdc
+
+  cr -.->|Definition for| rdc
+
+  rdc -->|"Manage (Observe, Create, Update, Delete)"| er
+
+  cr -.->|Instance of| crd
+```
 
 <br/>
 The diagram illustrates how the OASGen Provider processes OpenAPI Specifications to generate CRDs and deploy the Rest Dynamic Controller (RDC). The RDC manages custom resources and interacts with external APIs.
 
 ### Scenario with Plugin (Wrapper Web Service)
 
-![oasgen-provider State Diagram With Wrapper](/img/kog/wrapper.png)
+```mermaid
+flowchart LR
+
+  subgraph Generator
+  provider[oasgen-provider]
+  restdefinition[[RestDefinition Manifest]]
+  crd[[CRD Manifest]]
+  end
+
+  subgraph Dynamic_Controller["Dynamic Controller"]
+  rdc[rest-dynamic-controller]
+  cr[[Custom resource Manifest]]
+  end
+
+  er[(External Resource)]
+
+  restdefinition -.->|Definition for| provider
+
+  provider -->|Generate| crd
+
+  provider -->|Deploy| rdc
+
+  cr -.->|Definition for| rdc
+
+  rdc --> |"Manage (Observe, Create, Update, Delete)"| ws[Plugin <br>Wrapper Web Service]
+
+  ws --> er
+
+  cr -.->|Instance of| crd
+```
 
 <br/>
 In this secondo scenario, very similar to the first one, the Rest Dynamic Controller interacts with an optional Plugin (Wrapper Web Service) to handle API calls. This is useful when the external API does not conform to the expected interface or requires additional processing.
@@ -148,6 +203,9 @@ In this secondo scenario, very similar to the first one, the Rest Dynamic Contro
 ## RestDefinition
 
 The `RestDefinition` is the core Custom Resource Definition (CRD) used by the OASGen Provider to define how external API resources are managed in Kubernetes based on OpenAPI Specifications (OAS) 3.0/3.1 documents.
+It allows to specify the location of the OAS file, the resource group for generated resources, and detailed mappings of CRUD operations to HTTP endpoints defined in the OAS.
+In addition, it provides options to customize resource identification, status fields, and configuration parameters.
+More information about the `RestDefinition` CRD and how to create one is provided below.
 
 ### CRD Specification
 
@@ -163,7 +221,7 @@ This section shows how to author and apply a `RestDefinition` and provides a fie
   - `configmap://<namespace>/<name>/<key>`
   - `http(s)://<url>`
 
-  The `spec.oasPath` field must match one of these forms (see the regex below). Be aware you can change `oasPath` over time **but avoid changing the request body of the `create` action** or its parameters when you do so. Otherwise, you most likely need to delete/recreate the RestDefinition in order to avoid CRD/schema drift.
+  The `spec.oasPath` field must match one of these forms. Be aware you can change `oasPath` over time **but avoid changing the request body of the `create` action** or its parameters when you do so. Otherwise, you most likely need to delete/recreate the RestDefinition in order to avoid CRD/schema drift. In general, it is not reccommended to change the OAS file on the fly as there are many implications to consider.
 
 #### Minimal example
 
@@ -171,7 +229,7 @@ This section shows how to author and apply a `RestDefinition` and provides a fie
 apiVersion: ogen.krateo.io/v1alpha1
 kind: RestDefinition
 metadata:
-  name: my-resource
+  name: widget-rd
   namespace: default
 spec:
   # 1) Where the OAS file is
@@ -213,23 +271,42 @@ spec:
           - get
           - findby
 
-    # REQUIRED: map CRUD/find operations to HTTP endpoints
+    # required: map CRUD/find operations to HTTP endpoints
     verbsDescription:
       - action: findby
         method: GET
         path: /widgets
+        identifiersMatchPolicy: OR # optional, default is OR (if not set).
+        pagination: # optional
+          type: continuationToken
+          continuationToken:
+            request:
+              tokenIn: query
+              tokenPath: "continuationToken"
+            response:
+              tokenIn: header
+              tokenPath: "X-Ms-Continuationtoken"
       - action: get
         method: GET
         path: /widgets/{id}
+        requestFieldMapping: # optional, map path/query/body field to another field
+        - inPath: id
+          inCustomResource: status.metadata.id
       - action: create
         method: POST
         path: /widgets
       - action: update
         method: PATCH
         path: /widgets/{id}
+        requestFieldMapping: # optional, map path/query/body field to another field
+        - inPath: id
+          inCustomResource: status.metadata.id
       - action: delete
         method: DELETE
         path: /widgets/{id}
+        requestFieldMapping: # optional, map path/query/body field to another field
+        - inPath: id
+          inCustomResource: status.metadata.id
 ```
 
 Apply and verify:
@@ -238,9 +315,12 @@ kubectl apply -f sample-restdefinition.yaml
 kubectl get restdefinitions
 ```
 
-The CRD exposes columns like `READY`, `AGE`, `API VERSION`, `KIND`, and `OAS PATH` to quickly inspect state.
+The CRD exposes columns like `READY`, `AGE`, `API VERSION`, `KIND`, and `OAS PATH` to quickly inspect the state of the RestDefinition.
 
 #### Field reference
+
+You can find the complete field reference for the `RestDefinition` CRD here: [RestDefinition CRD Reference](https://github.com/krateoplatformops/oasgen-provider/blob/main/crds/ogen.krateo.io_restdefinitions.yaml).
+The table below summarizes the key fields of the `RestDefinition` CRD (not exhaustive).
 
 All paths are relative to `spec.*` unless stated otherwise. The “Immutable” column reflects Kubernetes validation rules; immutable fields require deleting/recreating the RestDefinition CR if you need to change them. 
 The content of this table is derived from the CRD’s OpenAPI schema.
@@ -251,17 +331,19 @@ The content of this table is derived from the CRD’s OpenAPI schema.
 | `resourceGroup` | string | ✔︎ | ✔︎ | API group of the generated resource(s). | Changing is rejected by validation. |
 | `resource` | object | ✔︎ | ✖︎ | Container for resource mapping and options. |  |
 | `resource.kind` | string | ✔︎ | ✔︎ | Name (Kind) of the resource to manage (generated CRD Kind). | Changing is rejected by validation. |
-| `resource.verbsDescription[]` | `array<object>` | ✔︎ | ✖︎ | List of actions that the controller will execute. Each item is a single action mapping. | Must include at least the actions you plan to use in reconciliation. |
+| `resource.verbsDescription[]` | array<object> | ✔︎ | ✖︎ | List of actions that the controller will execute. Each item is a single action mapping. | Must include at least the actions you plan to use in reconciliation. |
 | `resource.verbsDescription[].action` | string (enum) | ✔︎ | — | Action name. | One of: `create`, `update`, `get`, `delete`, `findby`. |
 | `resource.verbsDescription[].method` | string (enum) | ✔︎ | — | HTTP method to call. | One of: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`. |
 | `resource.verbsDescription[].path` | string | ✔︎ | — | HTTP path for the endpoint; must exist in the referenced OAS. | Should exactly match the OAS path you mapped. |
-| `resource.identifiers[]` | `array<string>` | ✖︎ | ✔︎ | Fields used to uniquely identify a resource for `findby` and are written in status. | Immutable once generated. It is important to choose identifiers that are unique per resource. If `findby` is not present use just `additionalStatusFields` and not `identifiers`. |
-| `resource.additionalStatusFields[]` | `array<string>` | ✖︎ | ✔︎ | Extra fields to expose in status (e.g., technical IDs like `id`, `uuid` but also others returned by the API you want to see in status). Usually some of these are used in the `get` action. | Immutable once generated. |
-| `resource.excludedSpecFields[]` | `array<string>` | ✖︎ | ✔︎ | Fields to exclude from spec (e.g., server-generated technical IDs you don't want users to set). | Immutable once generated. |
-| `resource.configurationFields[]` | `array<object>`| ✖︎ | ✔︎ | Declares configuration parameters in the generated `*Configuration` CRD. | Immutable once generated. Authentication is always included if needed (you do not need to specify it here). |
+| `resource.verbsDescription[].requestFieldMapping[]` | array<object> | ✖︎ | — | Optional field mappings to map request fields (path/query/body) to different fields in the Custom Resource. | Useful when the API request uses different field names than those in the resource spec/status. |
+| `resource.verbsDescription[].identifiersMatchPolicy` | string (enum) | ✖︎ | — | Policy to match identifiers in the `findby` action. | One of: `OR` (default), `AND`. |
+| `resource.identifiers[]` | array<string> | ✖︎ | ✔︎ | Fields used to uniquely identify a resource for `findby` and are written in status. | Immutable once generated. It is important to choose identifiers that are unique per resource. If `findby` is not present use just `additionalStatusFields` and not `identifiers`. |
+| `resource.additionalStatusFields[]` | array<string> | ✖︎ | ✔︎ | Extra fields to expose in status (e.g., technical IDs like `id`, `uuid` but also others returned by the API you want to see in status). Usually some of these are used in the `get` action. | Immutable once generated. |
+| `resource.excludedSpecFields[]` | array<string> | ✖︎ | ✔︎ | Fields to exclude from spec (e.g., server-generated technical IDs you don't want users to set). | Immutable once generated. |
+| `resource.configurationFields[]` | array<object> | ✖︎ | ✔︎ | Declares configuration parameters in the generated `*Configuration` CRD. | Immutable once generated. Authentication is always included if needed (you do not need to specify it here). |
 | `resource.configurationFields[].fromOpenAPI.in` | string | ✔︎ | — | Location of the parameter in the OAS. | Could be `query`, `path`, `header`, `cookie` etc. |
 | `resource.configurationFields[].fromOpenAPI.name` | string | ✔︎ | — | Parameter name as defined in the OAS. | Must match the OAS exactly. |
-| `resource.configurationFields[].fromRestDefinition.actions[]` | `array<string>` | ✔︎ | — | Which actions the parameter applies to. | `["*"]` applies to all defined actions; at least 1 item is required. |
+| `resource.configurationFields[].fromRestDefinition.actions[]` | array<string> | ✔︎ | — | Which actions the parameter applies to. | `["*"]` applies to all defined actions; at least 1 item is required. |
 
 **Required top-level fields:** `spec.oasPath`, `spec.resourceGroup`, and `spec.resource`. 
 **Within** `spec.resource`, `kind` and `verbsDescription` are mandatory.
@@ -269,20 +351,18 @@ The content of this table is derived from the CRD’s OpenAPI schema.
 **Validation & mutability highlights**:
 - `resourceGroup`, `resource.kind`, `resource.identifiers`, `resource.additionalStatusFields`, `resource.excludedSpecFields`, and `resource.configurationFields` are **immutable** (Kubernetes validation enforces `self == oldSelf`). Plan carefully before applying.
 - `verbsDescription[].action`/`method` are **enum**-restricted; `path` must point to an endpoint present in your OAS.
-- `oasPath` accepts either `configmap://...` or `http(s)://...` and can be updated over time; keep the `create` request body and parameters stable to avoid CRD/schema drift. Otherwise, you may need to delete/recreate the RestDefinition.
+- `oasPath` accepts either `configmap://...` or `http(s)://...` and can be updated over time; keep the `create` request body and parameters stable to avoid CRD/schema drift. Otherwise, you may need to delete/recreate the RestDefinition. In general, it is not reccommended to change the OAS file on the fly as there are many implications to consider.
 
 #### Tips and best practices for RestDefinition authoring
 
-- Start with both `findby` and `get` actions where applicable: `findby` to locate a resource using human-friendly identifiers, `get` for subsequent, efficient lookups using technical IDs. (See the dedicated action sections below: [action `findby`](#action-findby) and [action `get`](#action-get).)
-- Keep `identifiers` small, unique, and human-friendly (e.g., name, email), and place technical IDs (e.g., id, uuid) under `additionalStatusFields`. It is important to choose identifiers that are unique per resource.
-- Use `excludedSpecFields` to avoid putting server-generated fields in spec (e.g., `id`). Usually we want to avoid users setting these fields but rather have them in status.
-- Use `configurationFields` to expose cookies, headers, query and path parameters (e.g., `api-version`) across specific actions with a specific array or all actions with ["*"]. It is duty of the platform engineer to decide whether a parameter should be considered a configuration parameter rather than an application parameter.
+Start with both `findby` and `get` actions where applicable: `findby` to locate a resource using human-friendly identifiers, `get` for subsequent (after reconciliation loop number 1), efficient lookups using technical IDs. (See the dedicated action sections below: [action findby](#action-findby) and [action get](#action-get).)
 
-#### Regex and enums (for reference)
 
-- `resource.oasPath` regex: `^(configmap:\/\/([a-z0-9-]+)\/([a-z0-9-]+)\/([a-zA-Z0-9.-_]+)|https?:\/\/\S+)$`
-- Allowed `verbsDescription[].action` values: `create`, `update`, `get`, `delete`, `findby`
-- Allowed HTTP `verbsDescription[].method` values: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`
+Identify the right `identifiers` for the `findby` action (e.g., name, email), and place technical IDs (e.g., id, uuid) under `additionalStatusFields`. It is important to choose identifiers that are unique per resource. Note that filling `identifiers` make sense only if you define the `findby` action.
+
+Use `excludedSpecFields` to avoid server-generated fields (e.g., `id`) to be put in spec during CRD generation by OASGen Provider. Usually we want to avoid users setting these fields but rather have them in status and set by the controller. Additionally, since usually these fields are path parameter marked as `required` in the OAS schema, excluding them from spec avoids validation errors from Kubernetes API server when applying the resource manifest to the cluster. Indeed, in these cases, creation of resources would fail because these required fields would be missing from spec.
+
+Use `configurationFields` to move path parameters, query parameters, headers, cookies (e.g., `api-version`) to a dedicated Configuration CRD. This allows reusing configurations among many resources and following a separation of concerns pattern. Configuration fields can be set across specific actions with a specific array or all actions with ["*"]. It is duty of the user to decide whether a parameter should be considered a configuration parameter rather than an application parameter.
 
 ### About Resource reconciliation and RestDefinition Actions
 
@@ -291,7 +371,7 @@ Krateo controllers (among which `rest-dynamic-controller`) support 4 verbs to pr
 - **Observe**: This verb observes the resource state in the external system. It fetches the current state of the resource. If the resource does not exist or differs from the desired state, the controller will create or update it accordingly.
 - **Create**: This verb creates a new resource in the external system.
 - **Update**: This verb updates an existing resource in the external system.
-- **Delete**: This verb deletes a resource from the external system.
+- **Delete**: This verb deletes a resource in the external system.
 
 OASGen Provider defines and supports 5 **actions**: `findby`, `get`, `create`, `update`, and `delete`.
 These actions are used by the `rest-dynamic-controller` to actually implement the above verbs for the resource reconciliation process:
@@ -323,7 +403,7 @@ graph LR
 ### Action `findby`
 
 The `findby` action finds a resource using its **identifiers**, which are defined as a list of fields in the RestDefinition manifest.
-The API endpoint used for this action must return a **list or collection of resources**, from which the `rest-dynamic-controller` will select the matching resource.
+The API endpoint used for this action must return a **list or collection of resources**, from which the `rest-dynamic-controller` will select the matching resource using the defined identifiers.
 
 #### Purpose of Identifiers
 
@@ -335,24 +415,38 @@ Unlike the so-called "technical keys" or "technical identifiers" such as `id` or
 Note that it is the responsibility of the user to ensure that the identifiers defined in the RestDefinition manifest are indeed unique within the external system.
 For instance, if `name` is used as an identifier, the user must ensure that no two resources can have the same `name` in the external system in the context of the resource being managed. 
 
-As an example, in the context of a Email service, `email` is a good candidate for an identifier because it is unique per user. Even if the external system uses a unique technical identifier (like `id` or `uuid`) as the primary key for users, `email` can still be used as an identifier for the `findby` action because it is unique per user and available before the user is created.
+As an example, in the context of a hypothetical Email service, `email` is a good candidate for an identifier because it is unique per user. Even if the external system uses a unique technical identifier (like `id` or `uuid`) as the primary key for users, `email` can still be used as an identifier for the `findby` action because it is unique per user and available before the user is created.
+
+#### `identifiersMatchPolicy` field
+
+This optional field in the RestDefinition manifest, at `verbsDescription[].identifiersMatchPolicy`, defines how strictly the `rest-dynamic-controller` should match the identifiers when using the `findby` action.
+It can take the following values: `OR` (default) or `AND`:
+- `OR`: The controller considers a resource a match if **at least one** of the identifiers matches.
+- `AND`: The controller considers a resource a match only if **all** of the identifiers match.
+This field can be set only for the `findby` action.
+
+#### `pagination` field
+
+The optional `pagination` field in the RestDefinition manifest, at `verbsDescription[].pagination`, allows configuring how the `rest-dynamic-controller` should handle paginated responses when using the `findby` action.
+Currently, only `continuationToken` pagination type is supported. Please refer to the [RestDefinition CRD Reference](https://github.com/krateoplatformops/oasgen-provider/blob/main/crds/ogen.krateo.io_restdefinitions.yaml) for more details on how to configure this field.
 
 #### Why Use `findby`?
 
-The `findby` action is commonly used by the Observe verb during the first step of the reconciliation process.
+The `findby` action is commonly used by the Observe verb during the first step of the reconciliation process (the first ever reconciliation loop) to check whether the resource already exists in the external system.
 
 When a resource manifest is applied to the Kubernetes cluster for the first time, the `rest-dynamic-controller` must check whether the resource already exists in the external system. At this stage:
-
-- The resource’s external identifier (id, uuid, etc.) is **not yet available in the resource manifest**.
+- The resource’s external identifier (`id`, `uuid`, etc.) is **not yet available in the resource manifest**.
 - These identifiers are typically generated by the external system upon creation.
 
-Because of this, usually the `rest-dynamic-controller` cannot use the `get` action, which typically requires a unique technical identifier (id, uuid, etc.) to fetch a single resource.
+Because of this, usually the `rest-dynamic-controller` cannot use the `get` action, which typically requires a unique technical identifier (`id`, `uuid`, etc.) to fetch a single resource.
 The HTTP GET endpoint for the `get` action would look like this:
 ```sh
 GET /resources/{id}
 ```
 Where `{id}` is a unique technical identifier that is not known before the resource is created but it is generated by the external system.
 In these cases, `rest-dynamic-controller` should rely on `findby` to search for the resource using the human-friendly identifiers that are available upfront.
+
+Then, if the resource is found using `findby`, the controller can proceed to use the `get` action in subsequent reconciliation loops (after the first one onward) to fetch the resource using its unique technical identifier. This is true if the resource is properly configured to hold the unique technical identifier in its status after the first observation or after creation. This can be usually achieved by defining the `additionalStatusFields` in the RestDefinition manifest to include the technical identifier field (e.g., `id`, `uuid`, etc.).
 
 #### When the `findby` action is not needed
 
@@ -466,9 +560,14 @@ The typical status code for a successful delete operation is `204 No Content`, b
 
 Some consistency requirements includes but may not be limited to:
 
-1. Field names must be consistent across all actions (`create`, `update`, `findby`, `get`, `delete`)
+1. Field names must be consistent across all actions (`create`, `update`, `findby`, `get`, `delete`). E.g., if the `create` action uses `id`, the `get` action should also use `id` and not `uuid` or `resourceId`.
 2. API responses must be consistent with the fields of the resource schema defined in the OAS document and so the CRD schema.
-3. Path parameters and request / response body fields should use consistent naming (e.g., `userId` vs `user_id` is not consistent, also having `repositoryId` as path paramter and `id` in the response body is not consistent).
+3. Path parameters and request / response body fields should use consistent naming (e.g., `userId` vs `user_id` is not consistent, also having `repositoryId` as path parameter and `id` in the response body is not consistent). 
+Note that the last example is a common case in many APIs, take for instance the following endpoints:
+   - `GET /repositories/{repositoryId}` (path parameter is `repositoryId`)
+   - Response body is like `{ "id": 123, "name": "my-repo" }` (field is `id` and not `repositoryId`)
+This case can be simply solved by carefully modifying the OAS document to use consistent naming, for example changing the path parameter to `id` instead of `repositoryId`. Therefore, simply changing the endpoint to `GET /repositories/{id}` would solve the inconsistency without the need to write a Plugin (Wrapper Web Service).
+In simple cases, this can be solved by using the `requestFieldMapping` field in the RestDefinition manifest to map fields between the Custom Resource and the API request (not response).
 
 Any API behavior that does not match these requirements will require a web service wrapper to normalize / fix the API interface. 
 This is common with APIs that do not follow consistent naming conventions or have different response structures.
@@ -480,13 +579,13 @@ The OASGen Provider automatically generates a `status` subresource for the gener
 The fields within the status are derived from two sources in your `RestDefinition`:
 
 - `identifiers`: Fields used to uniquely identify the resource with a `findby` action.
-- `additionalStatusFields`: Any other fields you wish to expose in the status. So also technical identifiers like `id`, `uuid`, etc. can be added here and can be used in the `get` action.
+- `additionalStatusFields`: Any other fields you wish to expose in the status. Therefore, also technical identifiers like `id`, `uuid`, etc. can be added here and can be used in the `get` action by the controller.
 
 To ensure type safety, the `oasgen-provider` inspects the response schema of the `get` (or `findby` as a fallback) action in your OpenAPI specification. It uses the types defined in the OAS to generate the corresponding fields in the CRD's status schema.
 
-#### String Fallback Mechanism in Status Fields
+#### String Fallback in Status Fields
 
-When the provider cannot find a specified `identifier` or `additionalStatusField` in the OAS response schema, it employs a **string fallback** mechanism for that status fields:
+When the provider cannot find a specified `identifier` or `additionalStatusField` in the OAS response schema, it employs a **string fallback** for that status fields:
 1.  The OASGen Provider logs a warning indicating that the field was not found in the OAS response.
 2.  It generates that specific status field with `type: string` as a safe default.
 
@@ -537,7 +636,7 @@ The section [Configuration resources](#configuration-resources) below provides m
 
 ## Configuration resources
 
-OASGen provider generates a **configuration resource** for each RestDefinition created.
+OASGen Provider can generate a **configuration resource** if the RestDefinition manifest defines configuration fields or if authentication is set in the OAS document.
 This configuration resource is used to store **configuration and authentication details** needed to connect to the external API.
 
 For example, if a RestDefinition is created to manage a GitHub Repo resource, the generated resources will be:
@@ -609,6 +708,57 @@ An example of this field in a RestDefinition manifest is as follows:
         actions: ["*"] # star means all actions set in the verbsDescription above
 ```
 
+It is duty of the user to decide whether a parameter should be considered a configuration parameter rather than an application parameter based on the specific use case and context.
+
+## CRD Schema generation
+
+The OASGen Provider automatically generates the Custom Resource Definition (CRD) schema for the resources based on the OpenAPI Specification (OAS) document provided in the RestDefinition manifest and based on the RestDefinition fields setup.
+The steps involved in the CRD schema generation are as follows:
+
+TODO
+
+## Real examples of RestDefinition manifests for edge cases
+
+You can find real-world examples of RestDefinition manifests dealing with various edge cases here: [RestDefinition Examples](./12-oasgen-provider-real-examples.md).
+These examples cover various edge cases and demonstrate how to use the OASGen Provider effectively and leverage all the features provided by the OASGen Provider and the Rest Dynamic Controller.
+
+## Cases where a Plugin / Middleware (Wrapper Web Service) is needed
+
+In some cases, the external API may have inconsistencies or behaviors that are not directly supported by the OASGen Provider or by Kubernetes controllers in general.
+In these cases, a web service wrapper (plugin/middleware) can be used to normalize the API interface.
+Some common cases where a web service wrapper is needed are reported below with real-world examples:
+
+### When multiple calls are needed to fullfill an action
+
+Example: Azure DevOps GitRepository - creation with `defaultBranch` field
+Description:
+- The standard Azure DevOps REST API has two different request body schemas for creating (`POST`) and updating (`PATCH`) Git repositories. In particular, the field `defaultBranch` is only available in the `PATCH` request body.
+- This endpoint allows you to create a Git repository with the `defaultBranch` field, which is not supported in the standard Azure DevOps REST API for the `POST` request body. Practically performing a `PATCH` operation on the repository immediately after creation.
+
+### When manipulation or transformation of values from the response is needed
+
+Example: Azure DevOps Pipelines - `folder` field
+Description:
+- The standard Azure DevOps REST API return the `folder` field with an "escaped backslash" as prefix like `"folder":"\\test-folder"`.
+- This endpoint returns the `folder` field without the "escaped backslash" prefix, allowing a correct comparison with the `folder` field set in the `spec` of the `Pipeline` resource. Otherwise, the reconciliation loop in KOG would always detect a difference, for example, between `"\\test-folder"` (from Azure DevOps REST API) and `"test-folder"` (from `spec`), leading to infinite drift detections and useless updates.
+
+Example: Azure DevOps PipelinePermission - `allPipelines` field
+Description:
+- The standard Azure DevOps REST API **does not return** the `allPipelines` property when said property is set to `authorized: false` on Azure DevOps (default behavior).
+- This endpoint checks if the response from the Azure DevOps REST API contains the `allPipelines` property and, if not, it adds it with a value of `authorized: false`. This is necessary to have a correct reconciliation loop in KOG, as the absence of the `allPipelines` property in the response would determine an incomplete comparison with the `spec` of the `PipelinePermission` resource.
+
+Example: GitHub Collaborators - `permission` field
+Description:
+- The GitHub REST API uses different values for the `permission` field between the request and the response bodies (e.g., `push` in the request body becomes `write` in the response body).
+- The plugin normalizes permission values from the response body to match those used in the request body: `write` → `push`, `read` → `pull`.
+
+### Different level of nesting between request and response bodies 
+
+Example: GitHub Collaborators - fields brought to root level of the response body
+Description:
+- The standard GitHub REST API nests some fields in the response body under a `user` object.
+- The plugin flattens these fields to the root level of the response body, allowing a correct comparison with the fields set in the `spec` of the `Collaborator` resource. 
+
 ## Usage guide
 
 A more practical, step-by-step, usage guide with examples and troubleshooting tips can be found in the [Usage Guide](./11-oasgen-provider-cheatsheet.md).
@@ -625,22 +775,23 @@ A more practical, step-by-step, usage guide with examples and troubleshooting ti
 | `OASGEN_PROVIDER_MAX_ERROR_RETRY_INTERVAL` | Maximum retry interval on errors | `1m`          | Duration |
 | `OASGEN_PROVIDER_MIN_ERROR_RETRY_INTERVAL` | Minimum retry interval on errors | `1s`          | Duration |
 
-## Security Features
+## Security features
 
 The OASGen Provider incorporates several security features, at different levels, to ensure safe operation within a Kubernetes environment:
 - Automatic generation of Kubernetes RBAC policies for custom resources
 - Secure credential management through Kubernetes secrets
 
-Additionally, whenever needed you can leverage custom web service wrappers for additional security layers if needed. For instance, you can use a web service wrapper to add request signing, or other security mechanisms that are not natively supported by the OASGen Provider.
+Additionally, whenever needed you can leverage custom web service middlewares for additional security layers if needed. For instance, you can use a web service to add request signing, or other security mechanisms that are not natively supported by the OASGen Provider.
 
 ## Best Practices
 
 To ensure optimal performance and reliability when using the OASGen Provider, consider the following best practices:
 1. Always use only OAS 3.0+ specifications as lower versions are not supported.
-2. Maintain consistent field naming across API endpoints.
-3. Use web service wrappers when API interfaces are inconsistent or additional processing is needed.
-4. Regularly update OAS documents to match API changes.
-5. Monitor controller logs with the `krateo.io/connector-verbose: "true"` annotation added to the CR of the resource you want to monitor.
+2. Maintain consistent field naming across API endpoints if you control the OAS document.
+3. If you need to manually edit the OAS document, log every change you made for future reference.
+4. Use web service wrappers when API interfaces are inconsistent or additional processing is needed.
+5. Regularly update OAS documents to match API changes.
+6. Monitor controller logs with the `krateo.io/connector-verbose: "true"` annotation added to the CR of the resource you want to monitor.
 
 ## Unsupported features
 
@@ -650,12 +801,13 @@ Currently, the following OAS features are not supported by OASGen Provider:
 - `nullable` is not supported. `nullable` was removed in OAS 3.1 in favor of using `null` type in the array `type`.
 - `anyOf`, `oneOf`, `not` are not supported.
 - `additionalProperties` is supported only in the boolean form (i.e., `additionalProperties: true`). If `additionalProperties` is an object, it is not supported.
-- `format` is not supported: if OASGen Provider encounters a `format` field, it will simply append it into the description of the field as a note, but it will not use it to generate a more specific type.
+- `format` is not supported: if OASGen Provider encounters a `format` field, it will simply append it into the description of the field as a note, but it will not use it to generate a more specific type in the underlying CRD schema.
 - `minItems`, `maxItems`, `minLength`, `maxLength`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, and `pattern` are not supported.
 - `readOnly` and `writeOnly` are not supported.
+- arrays and objects in operation parameters (path, query, header, and cookie) are not supported (more information [here](https://swagger.io/docs/specification/v3_0/serialization/)).
 
 Note that this list **may not be exhaustive** and other features may also be unsupported. 
 
-### OAS 3.0 vs OAS 3.1
+## OAS 3.0 vs OAS 3.1
 
 For a reference to the differences between OAS 3.0 and OAS 3.1, please check the official documentation: https://www.openapis.org/blog/2021/02/16/migrating-from-openapi-3-0-to-3-1-0

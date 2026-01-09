@@ -1,4 +1,4 @@
-# Krateo Operator Generator (KOG) Cheatsheet
+# Krateo Operator Generator (KOG) Usage Guide
 
 _(KOG = `oasgen-provider` + `rest-dynamic-controller`)_
 
@@ -56,7 +56,7 @@ paths:
   ...
 components:
 + securitySchemes:
-+   bearer:
++   bearer: # this field name can be anything
 +     type: http
 +     scheme: bearer
 ```
@@ -71,7 +71,7 @@ paths:
   ...
 components:
 + securitySchemes:
-+   basic:
++   basic: # this field name can be anything
 +     type: http
 +     scheme: basic
 ```

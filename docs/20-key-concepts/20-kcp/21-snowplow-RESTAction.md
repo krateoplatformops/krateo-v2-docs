@@ -1,94 +1,111 @@
-# snowplow-RESTAction 
+# `RESTAction`
 
-> This document provides an overview of the `RESTAction` CRD and its properties to facilitate its usage within Kubernetes environments.
+**API Group:** `templates.krateo.io`  
+**Kind:** `RESTAction`  
+**Version:** `v1`  
+**Scope:** Namespaced  
 
 ## Overview
-The `RESTAction` Custom Resource Definition (CRD) allows users to declaratively define calls to APIs that may depend on other API calls.
 
-## Schema `spec` Details
+The `RESTAction` is a Krateo PlatformOps resource that enables users to **declaratively define one or more REST API calls** within Kubernetes.
 
-| Property  | Type  | Description |
-|-----------|-------|-------------|
-| `api` | array | Defines API requests to an HTTP service. |
-| `filter` | string | A JQ filter that can be applied to the global response. |
+It allows you to chain HTTP requests, handle dependencies between them, extract data, and use filters to process results — all through a Kubernetes-native manifest.
 
-#### `api` Array Item Properties
+This approach is particularly useful for integrating external systems or Kubernetes APIs into workflows managed by Krateo PlatformOps.
 
-> A single `api` item defines an HTTP REST call. 
-> The invoked API **must produce a `JSON` content type**
+> `RESTAction` defines one or more declarative HTTP (REST) calls that can optionally depend on other calls.
 
-| Property  | Type  | Description |
-|-----------|-------|-------------|
-| `dependsOn` | object | Defines dependencies on other APIs. |
-| `endpointRef` | object | References an Endpoint object. |
-| `filter` | string | A JQ expression for response processing. |
-| `headers` | array of strings | Custom request headers (each header can be a JQ expression). |
-| `name` | string | Unique identifier for the API request. |
-| `path` | string | Request URI path (can be a JQ expression). |
-| `payload` | string | Request body payload (can be a JQ expression). |
-| `verb` | string | HTTP method (defaults to GET if omitted). |
-| `continueOnError` | bool | Controls behavior on HTTP errors; if true, it continues processing other APIs, otherwise (default: false), it stops. |
-| `errorKey` | string | Used when continueOnError=true, defines the key name in the JSON results for storing error details (default: "error"). |
+It allows you to orchestrate a chain of API requests across multiple endpoints using Kubernetes resources.
 
-#### `dependsOn` Object Properties
+A `RESTAction` resource declaratively defines one or more HTTP calls (`spec.api`) that can depend on each other.
 
-| Property  | Type  | Description |
-|-----------|-------|-------------|
-| `iterator` | string | A JQ expression that returns a JSON array on which to iterate. |
-| `name` | string | Name of another API on which this depends. |
+Each call can produce a JSON response that becomes part of a **shared global context**, enabling subsequent calls to reference previous results using **JQ expressions**, iterators, and filters.
 
-#### `endpointRef` Object Properties
+To fully leverage these advanced capabilities — such as resolving JQ expressions, using custom JQ functions or modules, and managing interdependent API calls — the `RESTAction` must be executed through the `snowplow` service endpoint (`/call`).  
 
-> Reference to a Kubernetes secret that describes the HTTP REST API endpoint.
+Only this endpoint implements the orchestration logic that:
+- Executes all HTTP requests defined under `spec.api`, respecting their declared dependencies (`dependsOn`).
+- Stores all API responses in a global JSON context.
+- Evaluates and resolves any JQ expressions or iterators defined within the resource.
+- Returns the computed output in the resource’s `status` field.
 
-| Property  | Type  | Description |
-|-----------|-------|-------------|
-| `name` | string | Name of the referenced object. |
-| `namespace` | string | Namespace of the referenced object. |
-
----
-
-### `status` Properties
-The `status` field is an open-ended object that preserves unknown fields for storing results of all the `api` calls.
+When a `RESTAction` is retrieved directly via Kubernetes (e.g. `kubectl get restaction <name>`), the resource is shown **as-is**, without JQ resolution or execution of any API calls.
 
 
-## Examples
+## `spec`
 
-Some `RESTAction` examples can be found [here](https://github.com/krateoplatformops/snowplow/tree/main/testdata/restactions/). Lets check the one that query [jsonplaceholder.typicode.com](https://jsonplaceholder.typicode.com) API:
+The `spec` field defines the configuration for the REST action workflow.
+
+| Field | Type | Description | Required |
+|--------|------|-------------|-----------|
+| `api` | `array` | List of API requests to execute. Each item defines one HTTP call. | ✅ |
+| `filter` | `string` | Optional filter to apply to the overall output or results. | ❌ |
+
+
+### `spec.api[]`
+
+Defines a single HTTP request and its dependencies.
+
+| Field | Type | Description | Required |
+|--------|------|-------------|-----------|
+| `name` | `string` | A unique identifier for this API call. | ✅ |
+| `verb` | `string` | The HTTP method (e.g., `GET`, `POST`, `PUT`, `DELETE`). Defaults to `GET`. | ❌ |
+| `path` | `string` | The URI path of the request. | ❌ |
+| `payload` | `string` | The request body (for methods like `POST`, `PUT`, etc.). | ❌ |
+| `headers` | `array` | Array of custom request headers to include in the request. | ❌ |
+| `filter` | `string` | Optional filter to process or extract data from the response. | ❌ |
+| `errorKey` | `string` | Key to identify error fields in the response. | ❌ |
+| `exportJwt` | `boolean` | If `true`, exports a JWT token from this request for later use. | ❌ |
+| `continueOnError` | `boolean` | If `true`, continues execution even if this call fails. | ❌ |
+| `endpointRef` | `object` | Reference to a Kubernetes [`Endpoint`](endpoints.md) object defining the target service. | ✅ |
+| `dependsOn` | `object` | Declares a dependency on another API call defined in this spec. | ❌ |
+
+### `spec.api[].endpointRef`
+
+Defines the reference to an [`Endpoint`](endpoints.md) resource that this API should call.
+
+| Field | Type | Description | Required |
+|--------|------|-------------|-----------|
+| `name` | `string` | Name of the referenced [`Endpoint`](endpoints.md) object. | ✅ |
+| `namespace` | `string` | Namespace of the referenced [`Endpoint`](endpoints.md) object. | ✅ |
+
+### `spec.api[].dependsOn`
+
+Defines a dependency on another API call within the same `RESTAction` definition.  
+Useful for chaining calls where one must complete before another.
+
+| Field | Type | Description | Required |
+|--------|------|-------------|-----------|
+| `name` | `string` | Name of another API call in the list that this call depends on. | ✅ |
+| `iterator` | `string` | Optional field on which to iterate (used for loop-like behavior). | ❌ |
+
+## Example
 
 ```yaml
----
-apiVersion: v1
-kind: Secret
-type: Opaque
-metadata:
-  name: typicode-endpoint
-  namespace: demo-system
-stringData:
-  server-url: https://jsonplaceholder.typicode.com
----
 apiVersion: templates.krateo.io/v1
 kind: RESTAction
 metadata:
-  name: typicode
-  namespace: demo-system
+  name: example-restaction
 spec:
-  filter: "[.todos[] as $todo | .users[] | select(.id == $todo.userId) | { name: .name, id: $todo.id, title: $todo.title, completed: $todo.completed }]"
   api:
-  - name: users
-    path: "/users"
-    endpointRef:
-      name: typicode-endpoint
-      namespace: demo-system
-    filter: map(select(.email | endswith(".biz")))
-  - name: todos
-    dependsOn: 
-      name: users
-      iterator: .users
-    path: ${ "/todos?userId=" + (.id|tostring) }
-    headers:
-      - ${ "X-UserID:" + (.id|tostring) }
-    endpointRef:
-      name: typicode-endpoint
-      namespace: demo-system
-```
+    - name: get-user
+      endpointRef:
+        name: user-endpoint
+        namespace: default
+      verb: GET
+      path: /users
+      headers:
+        - "Authorization: Bearer $(TOKEN)"
+      continueOnError: false
+
+    - name: update-user
+      dependsOn:
+        name: get-user
+      endpointRef:
+        name: user-endpoint
+        namespace: default
+      verb: PUT
+      path: /users/123
+      payload: '{"status":"active"}'
+
+  filter: ""

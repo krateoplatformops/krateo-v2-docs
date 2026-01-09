@@ -28,8 +28,6 @@ Krateo 2.7.0 represents a significant step forward in platform stability and fle
 * **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
 * **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
 
-
-
 **FinOps & Observability**
 
 * **Generic Metrics:** Added support for generic metric types in Exporters.

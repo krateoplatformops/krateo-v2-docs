@@ -1,9 +1,21 @@
 ---
-description: Migrating Krateo PlatformOps from v2.6.0 to v2.7.0 (AKS example)
-sidebar_label: Migrating Krateo PlatformOps from v2.6.0 to v2.7.0 (AKS example)
+description: Migrating Krateo PlatformOps from v2.6.0 to v2.7.0
+sidebar_label: Migrating Krateo PlatformOps from v2.6.0 to v2.7.0
 ---
 
-# Migrating Krateo PlatformOps from v2.6.0 to v2.7.0 (AKS example)
+# Migrating Krateo PlatformOps from v2.6.0 to v2.7.0
+
+This guide is focused on migrating an existing Krateo PlatformOps installation from version 2.6.0 to version 2.7.0.
+The examples is based on an AKS cluster (in particular the install/upgrade commands are taken from the ["How to Guides/Install Krateo"](../10-install-krateo/40-installing-krateo-via-loadbalancer.md)), but the steps remains the same for other supported Kubernetes distributions.
+You only need to adapt the installation commands to your environment.
+
+Here the links to the installation guides for other Kubernetes distributions:
+- [K8s with LoadBalancer](../10-install-krateo/40-installing-krateo-via-loadbalancer.md)
+- [K8s with Ingress](../10-install-krateo/50-installing-krateo-via-ingress.md)
+- [K8s with EnvVars](../10-install-krateo/60-installing-krateo-with-envvars.md)
+- [K8s with SecurityContext](../10-install-krateo/70-installing-krateo-with-securitycontext.md)
+- [Openshift](../10-install-krateo/20-installing-krateo-openshift.md)
+- [Kind](../10-install-krateo/10-installing-krateo-kind.md)
 
 :::note
 Skip this section if you already have Krateo v2.6.0 installed.

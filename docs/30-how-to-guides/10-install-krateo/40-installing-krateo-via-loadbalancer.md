@@ -59,7 +59,7 @@ At the end of this process:
 * Find the Krateo Composable Portal IP:
 
 ```shell
-kubectl get svc krateo-frontend -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
+kubectl get svc frontend -n krateo-system  -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
 * The Krateo Composable Portal will be accessible at previous IP at port 8080.

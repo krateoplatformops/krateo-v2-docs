@@ -57,17 +57,17 @@ Defines a single HTTP request and its dependencies.
 | `errorKey` | `string` | Key to identify error fields in the response. | ❌ |
 | `exportJwt` | `boolean` | If `true`, exports a JWT token from this request for later use. | ❌ |
 | `continueOnError` | `boolean` | If `true`, continues execution even if this call fails. | ❌ |
-| `endpointRef` | `object` | Reference to a Kubernetes [`Endpoint`](endpoints.md) object defining the target service. | ✅ |
+| `endpointRef` | `object` | Reference to a Kubernetes [`Endpoint`](./22-snowplow-endpoints.md) object defining the target service. | ✅ |
 | `dependsOn` | `object` | Declares a dependency on another API call defined in this spec. | ❌ |
 
 ### `spec.api[].endpointRef`
 
-Defines the reference to an [`Endpoint`](endpoints.md) resource that this API should call.
+Defines the reference to an [`Endpoint`](./22-snowplow-endpoints.md) resource that this API should call.
 
 | Field | Type | Description | Required |
 |--------|------|-------------|-----------|
-| `name` | `string` | Name of the referenced [`Endpoint`](endpoints.md) object. | ✅ |
-| `namespace` | `string` | Namespace of the referenced [`Endpoint`](endpoints.md) object. | ✅ |
+| `name` | `string` | Name of the referenced [`Endpoint`](./22-snowplow-endpoints.md) object. | ✅ |
+| `namespace` | `string` | Namespace of the referenced [`Endpoint`](./22-snowplow-endpoints.md) object. | ✅ |
 
 ### `spec.api[].dependsOn`
 

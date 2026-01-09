@@ -4,7 +4,7 @@
 
 > `Endpoint` defines connection details and credentials for accessing an external API or service. 
 
-It is stored as a Kubernetes [`Secret`](https://kubernetes.io/docs/concepts/configuration/secret/) and consumed by [`RESTAction`](restactions.md) to establish secure HTTP or HTTPS connections.
+It is stored as a Kubernetes [`Secret`](https://kubernetes.io/docs/concepts/configuration/secret/) and consumed by [`RESTAction`](./21-snowplow-RESTAction.md) to establish secure HTTP or HTTPS connections.
 
 ## `Endpoint` keys
 

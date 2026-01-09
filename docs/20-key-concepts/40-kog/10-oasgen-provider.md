@@ -331,19 +331,19 @@ The content of this table is derived from the CRD’s OpenAPI schema.
 | `resourceGroup` | string | ✔︎ | ✔︎ | API group of the generated resource(s). | Changing is rejected by validation. |
 | `resource` | object | ✔︎ | ✖︎ | Container for resource mapping and options. |  |
 | `resource.kind` | string | ✔︎ | ✔︎ | Name (Kind) of the resource to manage (generated CRD Kind). | Changing is rejected by validation. |
-| `resource.verbsDescription[]` | array<object> | ✔︎ | ✖︎ | List of actions that the controller will execute. Each item is a single action mapping. | Must include at least the actions you plan to use in reconciliation. |
+| `resource.verbsDescription[]` | `array<object>` | ✔︎ | ✖︎ | List of actions that the controller will execute. Each item is a single action mapping. | Must include at least the actions you plan to use in reconciliation. |
 | `resource.verbsDescription[].action` | string (enum) | ✔︎ | — | Action name. | One of: `create`, `update`, `get`, `delete`, `findby`. |
 | `resource.verbsDescription[].method` | string (enum) | ✔︎ | — | HTTP method to call. | One of: `GET`, `POST`, `PUT`, `DELETE`, `PATCH`. |
 | `resource.verbsDescription[].path` | string | ✔︎ | — | HTTP path for the endpoint; must exist in the referenced OAS. | Should exactly match the OAS path you mapped. |
-| `resource.verbsDescription[].requestFieldMapping[]` | array<object> | ✖︎ | — | Optional field mappings to map request fields (path/query/body) to different fields in the Custom Resource. | Useful when the API request uses different field names than those in the resource spec/status. |
+| `resource.verbsDescription[].requestFieldMapping[]` | `array<object>` | ✖︎ | — | Optional field mappings to map request fields (path/query/body) to different fields in the Custom Resource. | Useful when the API request uses different field names than those in the resource spec/status. |
 | `resource.verbsDescription[].identifiersMatchPolicy` | string (enum) | ✖︎ | — | Policy to match identifiers in the `findby` action. | One of: `OR` (default), `AND`. |
-| `resource.identifiers[]` | array<string> | ✖︎ | ✔︎ | Fields used to uniquely identify a resource for `findby` and are written in status. | Immutable once generated. It is important to choose identifiers that are unique per resource. If `findby` is not present use just `additionalStatusFields` and not `identifiers`. |
-| `resource.additionalStatusFields[]` | array<string> | ✖︎ | ✔︎ | Extra fields to expose in status (e.g., technical IDs like `id`, `uuid` but also others returned by the API you want to see in status). Usually some of these are used in the `get` action. | Immutable once generated. |
-| `resource.excludedSpecFields[]` | array<string> | ✖︎ | ✔︎ | Fields to exclude from spec (e.g., server-generated technical IDs you don't want users to set). | Immutable once generated. |
-| `resource.configurationFields[]` | array<object> | ✖︎ | ✔︎ | Declares configuration parameters in the generated `*Configuration` CRD. | Immutable once generated. Authentication is always included if needed (you do not need to specify it here). |
+| `resource.identifiers[]` | `array<string>` | ✖︎ | ✔︎ | Fields used to uniquely identify a resource for `findby` and are written in status. | Immutable once generated. It is important to choose identifiers that are unique per resource. If `findby` is not present use just `additionalStatusFields` and not `identifiers`. |
+| `resource.additionalStatusFields[]` | `array<string>` | ✖︎ | ✔︎ | Extra fields to expose in status (e.g., technical IDs like `id`, `uuid` but also others returned by the API you want to see in status). Usually some of these are used in the `get` action. | Immutable once generated. |
+| `resource.excludedSpecFields[]` | `array<string>` | ✖︎ | ✔︎ | Fields to exclude from spec (e.g., server-generated technical IDs you don't want users to set). | Immutable once generated. |
+| `resource.configurationFields[]` | `array<object>` | ✖︎ | ✔︎ | Declares configuration parameters in the generated `*Configuration` CRD. | Immutable once generated. Authentication is always included if needed (you do not need to specify it here). |
 | `resource.configurationFields[].fromOpenAPI.in` | string | ✔︎ | — | Location of the parameter in the OAS. | Could be `query`, `path`, `header`, `cookie` etc. |
 | `resource.configurationFields[].fromOpenAPI.name` | string | ✔︎ | — | Parameter name as defined in the OAS. | Must match the OAS exactly. |
-| `resource.configurationFields[].fromRestDefinition.actions[]` | array<string> | ✔︎ | — | Which actions the parameter applies to. | `["*"]` applies to all defined actions; at least 1 item is required. |
+| `resource.configurationFields[].fromRestDefinition.actions[]` | `array<string>` | ✔︎ | — | Which actions the parameter applies to. | `["*"]` applies to all defined actions; at least 1 item is required. |
 
 **Required top-level fields:** `spec.oasPath`, `spec.resourceGroup`, and `spec.resource`. 
 **Within** `spec.resource`, `kind` and `verbsDescription` are mandatory.

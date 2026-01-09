@@ -95,7 +95,7 @@ The **Composition Dynamic Controller (CDC)** is a specialized Kubernetes operato
 
 ## Helm Release Name Logic
 
-### Prior Versions (<= 0.19.9)
+### Prior Versions (\<= 0.19.9)
 
 For versions up to 0.19.9, the **`composition-dynamic-controller`** used the following logic to determine the **Helm release name** associated with a composition resource:
 
@@ -104,7 +104,7 @@ For versions up to 0.19.9, the **`composition-dynamic-controller`** used the fol
 
 ---
 
-### Subsequent Versions (>= 0.20.0)
+### Subsequent Versions (\>= 0.20.0)
 
 Starting from version 0.20.0, the **`composition-dynamic-controller`** uses the following logic to determine the Helm release name associated with a composition resource:
 

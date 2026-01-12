@@ -51,7 +51,7 @@ nodes:
     hostPort: 30082
   - containerPort: 30083 # Krateo EventSSE
     hostPort: 30083
-  - containerPort: 30085 # Krateo Resource Tree Handler
+  - containerPort: 30085 # Krateo Sweeper
     hostPort: 30085
   - containerPort: 30086 # Krateo FireworksApp Frontend
     hostPort: 30086

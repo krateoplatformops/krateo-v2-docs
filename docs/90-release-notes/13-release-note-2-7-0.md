@@ -25,10 +25,10 @@ This release introduces a revamped reconciliation engine, advanced capabilities 
 
 * **New Example Portal:** Added a portal example to test and display widget YAML documentation.
 * **Widget Enhancements:**
-* **Forms:** Improved handling of sliders, autocomplete labels, enums, and array fields.
-* **Charts:** Fixed dimension issues in Bar and Line charts when nested in Pages/Panels.
-* **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
-* **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
+  * **Forms:** Improved handling of sliders, autocomplete labels, enums, and array fields.
+  * **Charts:** Fixed dimension issues in Bar and Line charts when nested in Pages/Panels.
+  * **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
+  * **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
 
 
 

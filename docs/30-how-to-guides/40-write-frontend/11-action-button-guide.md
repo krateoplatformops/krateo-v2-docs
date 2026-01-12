@@ -5,158 +5,50 @@ sidebar_label: Action Button Guide
 
 # Action Button Guide
 
-## Prerequisites
+Before starting this guide, make sure you have completed the [Simple Page Guide](./10-simple-page-guide.md).
 
-NB: This guide depends on [Simple page guide](./10-simple-page-guide.md) complete it first.
+In the previous guide, you created:
 
-## Where we left off
+- a `Button` widget
+- a `Page` widget acting as a container for the `Button` widget
+- a `NavMenuItem` widget to navigate to the `Page` widget
 
-We have created a `Button` and a `Page` that references it. In order to see display the page we created a `NavMenuItem` that navigates to it.
+In this guide, you will extend that setup by adding **actions** to the `Button` widget, enabling user interactions.
 
-## Next steps
+## Adding an `openDrawer` Action to the `Button`
 
-We will update the `Button` to trigger an action on click, there are different types of actions that can be triggered by a button, in this guide we will use the `openDrawer` action, more info about actions can be found in [docs](../../20-key-concepts/20-kcp/10-frontend.md)
+We will update the existing `Button` widget so that it triggers an action when clicked. A `Button` widget can trigger different types of actions. For a complete overview of available actions, refer to the [Actions documentation](../../20-key-concepts/20-kcp/10-frontend.md).
 
-NB: the namespace and the name of the `Button` is the same as the one used in the [Simple page guide](./10-simple-page-guide.md), so beware that we will overwrite the one created in the previous guide.
+In this guide, we will use the `openDrawer` action, which opens a side panel (drawer) and renders another widget inside it. 
 
-```sh
-cat <<EOF | kubectl apply -f -
-kind: Button
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-button
-  namespace: simple-guide
-spec:
-  widgetData:
-    icon: fa-sun
-    label: I was updated again!!!
-    clickActionId: openDrawer-action-id # <- this needs to match the id of an action declared below in spec.actions
-    actions: 
-      openDrawer:
-        - id: openDrawer-action-id 
-          resourceRefId: paragraph-id # <- this needs to match the id of a resource declared below in spec.resourcesRefs
-          type: openDrawer
-          title: Composition form
-          size: large
-  resourcesRefs:
-    items:
-      - id: paragraph-id
-        apiVersion: widgets.templates.krateo.io/v1beta1
-        name: simple-guide-paragraph
-        namespace: simple-guide
-        resource: paragraphs
-        verb: GET
----
-kind: Paragraph
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-paragraph
-  namespace: simple-guide
-spec:
-  widgetData:
-    text: "This is a paragraph"
-EOF
-```
-
-Try clicking the button, you should see a drawer with the content of the `Paragraph` widget we declared in the `resourcesRefs` section.
-
-![drawer-paragraph](/img/action-button-guide/01_drawer_paragraph.gif)
-
-## Lets make a step forward
-
-Le's introduce a new widget, the `Form` widget, this widget can be used to create a new resource in the cluster.
+To apply the updated `Button` widget definition (this will override the previously created resource), run:
 
 ```sh
-cat <<EOF | kubectl apply -f -
-kind: Button
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-button
-  namespace: simple-guide
-spec:
-  widgetData:
-    icon: fa-sun
-    label: I open a drawer with a form
-    clickActionId: openDrawer-action-id # <- this needs to match the id of an action declared below in spec.actions
-    actions: 
-      openDrawer:
-        - id: openDrawer-action-id 
-          resourceRefId: form-id # <- this needs to match the id of a resource declared below in spec.resourcesRefs
-          type: openDrawer
-          title: Composition form
-          size: large
-  resourcesRefs:
-    items:
-      - id: form-id
-        apiVersion: widgets.templates.krateo.io/v1beta1
-        name: simple-guide-form
-        namespace: simple-guide
-        resource: forms
-        verb: GET
-EOF
+kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/frontend/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/action-button/guide-action-button.yaml
 ```
+
+After refreshing the UI, click the button. You should see a drawer opening and displaying the content of a `Paragraph` widget, which is referenced in the `resourcesRefs` section of the `Button` widget.
+
+![Drawer with paragraph](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/action-button/images/drawer-paragraph.png?raw=true)
+
+## Adding a `Form` Widget to the Drawer
+
+Next, we will introduce a new widget: the `Form` widget. A `Form` widget can be used to collect user input and trigger actions such as creating new resources in the cluster.
+
+Apply the following widget definition:
 
 ```sh
-kubectl apply -f - <<'YAML'
-kind: Form
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-form
-  namespace: simple-guide
-spec:
-  widgetData:
-    stringSchema: |
-      {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Pod Name",
-            "description": "The name of your Nginx pod"
-          }
-        },
-        "required": ["name"]
-      }
-    submitActionId: submit-action-id
-    actions:
-      rest:
-        - id: submit-action-id
-          resourceRefId: resource-ref-1
-          type: rest
-          headers:
-          - "Content-Type: application/json"
-          payloadToOverride:
-            - name: metadata.name
-              value: '${ .json.name }'
-          payload:
-            apiVersion: v1
-            kind: Pod
-            spec:
-              containers:
-                - image: 'nginx:latest'
-                  name: nginx
-                  ports:
-                    - containerPort: 80
-  resourcesRefs:
-    items:
-      - id: resource-ref-1
-        apiVersion: v1
-        resource: pods
-        name: my-pod-name
-        namespace: krateo-system
-        verb: POST
-YAML
+kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/frontend/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/action-button/guide-action-button-form.yaml
 ```
 
-NB: this is a different file that the previous one that uses the same `Button` widget but with a different widget referenced in the action, so it will overwrite the previous one.
+Now, clicking the `Button` widget will open a drawer containing the `Form` widget. Fill in the form fields and click **Submit**. As a result, a new Pod should be created in the Kubernetes cluster.
 
-Clicking the button should open a drawer with a form, fill the form and click submit, you should see a new pod created in the cluster.
+![Drawer with form](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/action-button/images/drawer-form.png?raw=true)
 
-![drawer-form](/img/action-button-guide/02_drawer_form.png)
+## How It Works
 
-### how it works
+The `Form` widget defines its fields using a static JSON schema and is associated with a `rest` action. This action sends an HTTP request to the Kubernetes API to create a new Pod.
 
-The `Form` rest action is used to create a new resource in the cluster, in this example it uses a static stringSchema, usually this schema or a resource is retrieved from the cluster using a restAction.
+The `payloadToOverride` property is used to merge the values submitted through the form into the payload of the `rest` action, allowing user input to dynamically influence the request sent to the API.
 
-The `payloadToOverride` is used to override the payload of the `rest` action with the value from the form.
-The `payloadKey` section is used to specify the key of the payload to override, in this case `spec`
+This pattern demonstrates how widgets, actions, and APIs can be combined to build interactive and data-driven user experiences in the Krateo Composable Portal.

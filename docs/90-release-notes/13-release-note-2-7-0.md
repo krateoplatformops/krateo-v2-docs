@@ -29,8 +29,7 @@ This release introduces a revamped reconciliation engine, advanced capabilities 
   * **Charts:** Fixed dimension issues in Bar and Line charts when nested in Pages/Panels.
   * **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
   * **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
-
-
+* **Updated Documentation:** Enhanced widget documentation with more examples and clearer explanations.
 
 **Snowplow**
 

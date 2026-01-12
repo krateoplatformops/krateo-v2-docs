@@ -25,10 +25,10 @@ This release introduces a revamped reconciliation engine, advanced capabilities 
 
 * **New Example Portal:** Added a portal example to test and display widget YAML documentation.
 * **Widget Enhancements:**
-* **Forms:** Improved handling of sliders, autocomplete labels, enums, and array fields.
-* **Charts:** Fixed dimension issues in Bar and Line charts when nested in Pages/Panels.
-* **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
-* **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
+  * **Forms:** Improved handling of sliders, autocomplete labels, enums, and array fields.
+  * **Charts:** Fixed dimension issues in Bar and Line charts when nested in Pages/Panels.
+  * **ButtonGroup:** `InlineGroup` has been renamed to `ButtonGroup` with specific scoping.
+  * **Table & Filters:** Improved empty state logic, color palettes, and filtering for number/boolean/date fields.
 
 
 
@@ -47,6 +47,14 @@ This release introduces a revamped reconciliation engine, advanced capabilities 
 * **Proactive Storage Management:** We introduced the **Sweeper** component (v0.2.0) to explicitly address issues related to **etcd pressure and reaching quota limits**.
 * **Functionality:** Sweeper is a lightweight Go service that monitors etcd storage usage and automatically triggers cleanup or maintenance actions before the database reaches its configured quota limit.
 * **Requirements:** Sweeper strictly requires an etcd setup that exposes the **Maintenance API**. It is included by default in Krateo 2.7.0 and is pre-configured to work with the new Krateo etcd chart.
+
+**🤖 Autopilot (Subscription Only)**
+
+> *Note: These features are available exclusively to customers with an active subscription.*
+
+* **Enhanced Generation Quality:** Significant improvements in the quality of generated output, including more robust RESTActions, precise frontend widgets, and optimized blueprints.
+* **Advanced Blueprint Integration:** Improved integration with installed blueprints, allowing for deeper and more specific customization of compositions directly through Autopilot.
+* **A2A Connectivity:** Added support for **Agent-to-Agent (A2A)** protocol integration, expanding the capabilities for autonomous agent interaction within the platform.
 
 ---
 
@@ -70,8 +78,6 @@ headers: - "${ \"Authorization: Bearer \" + .token }"
 * **Component Removal:** The `Finopspolicies` component has been removed from the Krateo Installer.
 * *Migration Note:* If you have existing policies defined in ConfigMaps, these are now deprecated. You must migrate your policies to OCI images to ensure functionality with v2.7.0+.
 
-
-
 **Frontend**
 
 * **Button:** The `color` property is deprecated; use `backgroundColor` instead.
@@ -82,8 +88,7 @@ headers: - "${ \"Authorization: Bearer \" + .token }"
 
 * **Chart Migration (Bitnami to Krateo):** We have replaced the Bitnami etcd chart (used in versions prior to 2.7.0) with a new custom chart: [`krateoplatformops/etcd-chart`](https://www.google.com/search?q=%5Bhttps://github.com/krateoplatformops/etcd-chart%5D(https://github.com/krateoplatformops/etcd-chart)).
 * **Reason:** The Bitnami chart does not allow configuring etcd to expose the **Maintenance API**, which is a strict requirement for the **Sweeper** component to perform storage cleanups.
-  * **Impact on Data:** This internal Etcd instance is used exclusively by Krateo internal components (eventsse and eventrouter) to store transient event data. Consequently, deleting this instance will not impact user configuration or business data. The only effect is the loss of historical internal event logs.
-
+* **Impact on Data:** This internal Etcd instance is used exclusively by Krateo internal components (eventsse and eventrouter) to store transient event data. Consequently, deleting this instance will not impact user configuration or business data. The only effect is the loss of historical internal event logs.
 
 ---
 

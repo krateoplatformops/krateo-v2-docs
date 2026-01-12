@@ -45,7 +45,7 @@ launch a new one.
 
 Wait for Krateo PlatformOps to be up&running:
 ```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
+kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=800s
 ```
 
 At the end of this process:

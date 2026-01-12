@@ -5,214 +5,109 @@ sidebar_label: Simple Page Guide
 
 # Simple Page Guide
 
-By following this guide you'll learn how to:
+This guide walks you through the creation of a very simple page in the Krateo Composable Portal. By the end of the guide, you will have:
 
-- create a Button widget
-- Create a page widget that show the Button
-- Create a link in the sidebar to navigate the page
+- a `Button` widget
+- a `Page` widget that acts as a container for the `Button` widget
+- a navigation entry in the sidebar that links to the `Page` widget
 
-## Prerequisites
+> [!NOTE]
+> To follow this guide, you need to run the Krateo frontend locally. This requires:
+> - a running Kubernetes cluster (for example, a local `kind` cluster),
+> - the Krateo frontend codebase,
+> - the ability to create and edit Kubernetes resources as YAML files.
+>
+> Refer to the [installation guide](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/README.md#running-locally) in the repository README for setup instructions.
 
-### A cluster running krateo v2.5.1+
+## Creating a `Button` Widget
 
-For testing/demo purposed a new cluster can be crated using kind ([more info](https://docs.krateo.io/quickstart)) by running:
+To create a `Button` widget, you need to define it as a Kubernetes resource using a YAML file that follows the widget schema described in the [Widgets API Reference](../../20-key-concepts/20-kcp/11-frontend-widget-api-reference.md). Applying the resource will both create the widget and validate its configuration.
 
-```sh
-curl -L https://github.com/krateoplatformops/krateo-v2-docs/releases/latest/download/kind.sh | sh
-```
-
-Launch this command to wait the Krateo platform to initialize
-
-```sh
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=500s
-```
-
-When ready it will print:
+As a starting point, create a pre-defined `Button` widget by running:
 
 ```sh
-krateoplatformops.krateo.io/krateo condition met
+kubectl apply -f docs/guides/simple-page/guide-simple-button.yaml
 ```
 
-From now on you should be able to reach the Krateo's frontend at `http://localhost:30080`
-
-#### Login
-
-The credential to login this test cluster are
-username: `admin`
-password: created during init, retrievable running `kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d` (beware of trailing `%` symbol in the terminal, it is not part of the password)
-
-![login-page](/img/quickstart/01_login.png)
-
-#### The Krateo UI
-
-After logging in you will be presented the Krateo's starter UI
-![dashboard-page](/img/quickstart/04_dashboard_1blueprint_true.png)
-
-### Create a namespace for our widgets.
+To verify that the widget has been created successfully, run:
 
 ```sh
-kubectl create ns simple-guide
+kubectl get button -n simple-guide
 ```
 
-## Creating a Button widget.
+## Showing the `Button` Inside a `Page` Widget
 
-The creation of a Button widget is as simple as applying a yaml a kind of type Button with the required properties inside `spec.widgetData`. (widgetData validation is run when doing an apply to make sure required properties are present)
+At this point, the `Button` widget exists in the cluster, but it is not yet visible in the UI. Widgets become visible only when they are rendered by another visible widget.
+
+To display the button, we will create a `Page` widget and reference the `Button` widget from it:
 
 ```sh
-cat <<EOF | kubectl apply -f -
-kind: Button
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-button
-  namespace: simple-guide
-spec:
-  widgetData:
-    icon: fa-sun
-    label: My Custom Button
-    clickActionId: none
-    actions: {}
-EOF
+kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/frontend/6021fda511c9ee19db6cc694fbc9cc3d15c7da3c/docs/guides/simple-page/guide-simple-page.yaml
 ```
 
-To verify the widget has been correctly created, run
+By inspecting the [`Page` widget definition](https://raw.githubusercontent.com/krateoplatformops/frontend/6021fda511c9ee19db6cc694fbc9cc3d15c7da3c/docs/guides/simple-page/guide-simple-page.yaml), you can see that the `Button` widget is referenced by name inside `spec.resourcesRefs` and assigned an identifier (`simple-button-id`).
+
+Declaring resources in `spec.resourcesRefs` is how Krateo knows which widgets to load. References can be defined statically, as in this example, or generated dynamically using `resourcesRefsTemplate` (see the related section in the [documentation](../../20-key-concepts/20-kcp/10-frontend.md) for more details).
+
+This referencing mechanism applies to all widgets and is the foundation of widget composition in Krateo.
+
+
+## Making the Page Reachable
+
+Even though the `Page` widget has been created, it is not yet accessible from the UI. Pages must be linked from the navigation menu to be reachable.
+
+### Creating a Sidebar Link
+
+To expose the page, create a `NavMenuItem` widget:
 
 ```sh
-kubectl get button -n  simple-guide
+kubectl apply -f docs/guides/simple-page/guide-simple-navmenuitem.yaml
 ```
 
-## Showing the Button widget in a new Page
+The frontend logic will automatically create a sidebar entry to the newly created `Page` widget, which will be visible after refreshing the UI.
 
-The Button widget is correctly created in the cluster, but in order for it to be visible is needs to be references by another visible widget.
+![Sidebar item](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/simple-page/images/sidebar-item.png?raw=true)
 
-We will insert the `Button` in a new `Page` widget.
 
-```sh
-cat <<EOF | kubectl apply -f -
-kind: Page
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-page
-  namespace: simple-guide
-spec:
-  widgetData:
-    allowedResources:
-      - buttons
-    items:
-      - resourceRefId: simple-button-id # <- this need to match the id of and item in spec.resourcesRefs
-  resourcesRefs:
-    items:
-      - id: simple-button-id
-        apiVersion: widgets.templates.krateo.io/v1beta1
-        name: simple-guide-button # <- matches metadata.name of the button widgetw e created
-        namespace: simple-guide
-        resource: buttons
-        verb: GET
-EOF
-```
+### Visiting the Page
 
-by examining the previous yaml we can see that we referenced our Button by name in `spec.resourcesRefs.items[0]` and added an id (`simple-button-id`).
+Clicking the new sidebar item navigates to the path defined in the `NavMenuItem` widget, which in turn references the `Page` widget. You should now see the `Button` rendered on the page. For mocking purposes, clicking on the `Button` widget should redirect you to the current page.
 
-Declaring resurces in `spec.resourcesRefs` is the way Krateo knows to load these widgets, they can be declare manually like in our case or dynamically (see `resourcesRefsTemplate` section in [docs](../../20-key-concepts/20-kcp/10-frontend.md) for more info.) This concept is generic to any widget and is used to load other resources.
+![Simple guide page](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/simple-page/images/simple-guide-page.png?raw=true)
 
-## Where is the Page?
-
-We have created a `Button` and a `Page` that references the `Button` but nothing is yet visible in the UI.
-
-### Creating a new link in the sidebar
-
-We need a way to navigato to this page, to do so we will create a `NavMenuItem` that point reference the newly created page by running
-
-```sh
-cat <<EOF | kubectl apply -f -
-kind: NavMenuItem
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-nav-menu-item
-  namespace: simple-guide
-spec:
-  widgetData:
-    allowedResources:
-      - pages
-    resourceRefId: page-id # <- reference the id of a widget declared below in spec.resourcesRefs
-    label: Guide New Page
-    icon: fa-sun
-    path: /simple-guide
-    order: 90 # <- this is used to order the item in the menu, anything with a lower order will be placed before this one
-  resourcesRefs:
-    items:
-      - id: page-id
-        apiVersion: widgets.templates.krateo.io/v1beta1
-        name: simple-guide-page # <- matches metadata.name of the page widget we created in the previous step
-        namespace: simple-guide
-        resource: pages
-        verb: GET
-EOF
-```
-
-Now refreshing the page will show the newly navigation item in the sidebar
-![sidebar-item](/img/simple-page-guide/01_sidebar_item.png)
-
-### Visiting the new page
-
-Clicking to the new sidebar menu will navigate to the path declared in the `NavMenuItem` `spec.widgetData.path` property and finally display our `Button` widget!
-
-![simple-guide-page](/img/simple-page-guide/02_simple_guide_page.png)
 
 ## Recap
 
-We created a hierarchy or widget declaratively
-`NavMenuItem` -> `Page` -> `Button`
+In this guide, we declaratively created the following widget hierarchy:
 
-- Widgets load other widgets via by referencing them inside `spec.resourcesRefs` and display them by using referencing the `resourcesRef` id inside `spec.widgetData`
-
-## Testing the declarative nature of widgets
-
-Try editing the `spec.label` prop of the yaml file in `guide-simple-button.yaml` or `guide-simple-navmenuitem.yaml` and apply the changes.
-
-```sh
-cat <<EOF | kubectl apply -f -
-kind: Button
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-button
-  namespace: simple-guide
-spec:
-  widgetData:
-    icon: fa-sun
-    label: I was updated
-    clickActionId: none
-    actions: {}
----
-kind: NavMenuItem
-apiVersion: widgets.templates.krateo.io/v1beta1
-metadata:
-  name: simple-guide-nav-menu-item
-  namespace: simple-guide
-spec:
-  widgetData:
-    allowedResources:
-      - pages
-    resourceRefId: page-id # <- reference the id of a widget declared below in spec.resourcesRefs
-    label: Updated link
-    icon: fa-sun
-    path: /simple-guide
-    order: 90 # <- this is used to order the item in the menu, anything with a lower order will be placed before this one
-  resourcesRefs:
-    items:
-      - id: page-id
-        apiVersion: widgets.templates.krateo.io/v1beta1
-        name: simple-guide-page # <- matches metadata.name of the page widget we created in the previous step
-        namespace: simple-guide
-        resource: pages
-        verb: GET
-EOF
+```
+NavMenuItem → Page → Button
 ```
 
-After a refresh of the page you'll be able to see the changes reflected in the UI
+Widgets reference other widgets using `spec.resourcesRefs` and render them by referring to the corresponding IDs inside `spec.widgetData`.
 
-![simple-guide-page-updated](/img/simple-page-guide/03_simple_guide_page_updated.png)
+This composition model allows complex UIs to be built from small, reusable building blocks.
 
-## Next steps
+
+## Testing the Declarative Nature of Widgets
+
+To see the declarative model in action, try editing the `spec.widgetData.label` field in either `guide-simple-button.yaml` or `guide-simple-navmenuitem.yaml`, then re-apply the resources:
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/frontend/6021fda511c9ee19db6cc694fbc9cc3d15c7da3c/docs/guides/simple-page/guide-simple-navmenuitem.yaml
+kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/frontend/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/simple-page/guide-simple-button.yaml
+```
+
+After refreshing the UI, the changes will be immediately reflected.
+
+![Updated simple guide page](https://raw.githubusercontent.com/krateoplatformops/frontend/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/simple-page/images/simple-guide-page-updated.png)
+
+
+## Next Steps
+
+A `Button` widget that does nothing is not very useful. In the next guide, you will learn how to configure a `Button` widget to trigger an action when clicked.
+
+**Next:** [Action Button](./11-action-button-guide.md)
 
 A `Button` that does nothing is not very useful, in the next guide we will see how to update the `Button` to trigger an action on click.
 

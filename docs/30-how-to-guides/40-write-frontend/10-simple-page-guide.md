@@ -21,7 +21,7 @@ This guide walks you through the creation of a very simple page in the Krateo Co
 
 ## Creating a `Button` Widget
 
-To create a `Button` widget, you need to define it as a Kubernetes resource using a YAML file that follows the widget schema described in the [Widgets API Reference](../../widgets-api-reference.md). Applying the resource will both create the widget and validate its configuration.
+To create a `Button` widget, you need to define it as a Kubernetes resource using a YAML file that follows the widget schema described in the [Widgets API Reference](../../20-key-concepts/20-kcp/11-frontend-widget-api-reference.md). Applying the resource will both create the widget and validate its configuration.
 
 As a starting point, create a pre-defined `Button` widget by running:
 

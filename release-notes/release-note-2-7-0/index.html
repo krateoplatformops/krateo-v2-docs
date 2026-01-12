@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.1.1">
 <title data-rh="true">Krateo 2.7.0 – Core Stability, Advanced REST Capabilities, and Enhanced FinOps | Krateo PlatformOps Docs</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://docs.krateo.io/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://docs.krateo.io/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://docs.krateo.io/release-notes/release-note-2-7-0"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Krateo 2.7.0 – Core Stability, Advanced REST Capabilities, and Enhanced FinOps | Krateo PlatformOps Docs"><meta data-rh="true" name="description" content="Krateo 2.7.0 represents a significant step forward in platform stability and flexibility. In this release, we deliberately chose to focus on stability over new features and to introduce a formal deprecation policy to ensure smoother handling of breaking changes in the future."><meta data-rh="true" property="og:description" content="Krateo 2.7.0 represents a significant step forward in platform stability and flexibility. In this release, we deliberately chose to focus on stability over new features and to introduce a formal deprecation policy to ensure smoother handling of breaking changes in the future."><link data-rh="true" rel="icon" href="/img/favicon_io/favicon.ico"><link data-rh="true" rel="canonical" href="https://docs.krateo.io/release-notes/release-note-2-7-0"><link data-rh="true" rel="alternate" href="https://docs.krateo.io/release-notes/release-note-2-7-0" hreflang="en"><link data-rh="true" rel="alternate" href="https://docs.krateo.io/release-notes/release-note-2-7-0" hreflang="x-default"><link rel="stylesheet" href="/assets/css/styles.6738e5fb.css">
-<script src="/assets/js/runtime~main.bf18a293.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.21d95197.js" defer="defer"></script>
 <script src="/assets/js/main.4a9e9b93.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -30,11 +30,14 @@
 <p><strong>Frontend</strong></p>
 <ul>
 <li><strong>New Example Portal:</strong> Added a portal example to test and display widget YAML documentation.</li>
-<li><strong>Widget Enhancements:</strong></li>
+<li><strong>Widget Enhancements:</strong>
+<ul>
 <li><strong>Forms:</strong> Improved handling of sliders, autocomplete labels, enums, and array fields.</li>
 <li><strong>Charts:</strong> Fixed dimension issues in Bar and Line charts when nested in Pages/Panels.</li>
 <li><strong>ButtonGroup:</strong> <code>InlineGroup</code> has been renamed to <code>ButtonGroup</code> with specific scoping.</li>
 <li><strong>Table &amp; Filters:</strong> Improved empty state logic, color palettes, and filtering for number/boolean/date fields.</li>
+</ul>
+</li>
 </ul>
 <p><strong>Snowplow</strong></p>
 <ul>
@@ -51,6 +54,15 @@
 <li><strong>Proactive Storage Management:</strong> We introduced the <strong>Sweeper</strong> component (v0.2.0) to explicitly address issues related to <strong>etcd pressure and reaching quota limits</strong>.</li>
 <li><strong>Functionality:</strong> Sweeper is a lightweight Go service that monitors etcd storage usage and automatically triggers cleanup or maintenance actions before the database reaches its configured quota limit.</li>
 <li><strong>Requirements:</strong> Sweeper strictly requires an etcd setup that exposes the <strong>Maintenance API</strong>. It is included by default in Krateo 2.7.0 and is pre-configured to work with the new Krateo etcd chart.</li>
+</ul>
+<p><strong>🤖 Autopilot (Subscription Only)</strong></p>
+<blockquote>
+<p><em>Note: These features are available exclusively to customers with an active subscription.</em></p>
+</blockquote>
+<ul>
+<li><strong>Enhanced Generation Quality:</strong> Significant improvements in the quality of generated output, including more robust RESTActions, precise frontend widgets, and optimized blueprints.</li>
+<li><strong>Advanced Blueprint Integration:</strong> Improved integration with installed blueprints, allowing for deeper and more specific customization of compositions directly through Autopilot.</li>
+<li><strong>A2A Connectivity:</strong> Added support for <strong>Agent-to-Agent (A2A)</strong> protocol integration, expanding the capabilities for autonomous agent interaction within the platform.</li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="️-deprecations-and-a-few-breaking-changes">⚠️ Deprecations and a few Breaking Changes<a href="#️-deprecations-and-a-few-breaking-changes" class="hash-link" aria-label="Direct link to ⚠️ Deprecations and a few Breaking Changes" title="Direct link to ⚠️ Deprecations and a few Breaking Changes">​</a></h2>
@@ -75,11 +87,8 @@
 <p><strong>Etcd</strong></p>
 <ul>
 <li><strong>Chart Migration (Bitnami to Krateo):</strong> We have replaced the Bitnami etcd chart (used in versions prior to 2.7.0) with a new custom chart: <a href="https://www.google.com/search?q=%5Bhttps://github.com/krateoplatformops/etcd-chart%5D(https://github.com/krateoplatformops/etcd-chart)" target="_blank" rel="noopener noreferrer"><code>krateoplatformops/etcd-chart</code></a>.</li>
-<li><strong>Reason:</strong> The Bitnami chart does not allow configuring etcd to expose the <strong>Maintenance API</strong>, which is a strict requirement for the <strong>Sweeper</strong> component to perform storage cleanups.<!-- -->
-<ul>
+<li><strong>Reason:</strong> The Bitnami chart does not allow configuring etcd to expose the <strong>Maintenance API</strong>, which is a strict requirement for the <strong>Sweeper</strong> component to perform storage cleanups.</li>
 <li><strong>Impact on Data:</strong> This internal Etcd instance is used exclusively by Krateo internal components (eventsse and eventrouter) to store transient event data. Consequently, deleting this instance will not impact user configuration or business data. The only effect is the loss of historical internal event logs.</li>
-</ul>
-</li>
 </ul>
 <hr>
 <h2 class="anchor anchorWithStickyNavbar_LWe7" id="-marketplace">🧩 Marketplace<a href="#-marketplace" class="hash-link" aria-label="Direct link to 🧩 Marketplace" title="Direct link to 🧩 Marketplace">​</a></h2>

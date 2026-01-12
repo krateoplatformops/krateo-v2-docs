@@ -17,7 +17,7 @@ This guide walks you through the creation of a very simple page in the Krateo Co
 > - the Krateo frontend codebase,
 > - the ability to create and edit Kubernetes resources as YAML files.
 >
-> Refer to the [installation guide](../../../README.md#running-locally) in the repository README for setup instructions.
+> Refer to the [installation guide](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/README.md#running-locally) in the repository README for setup instructions.
 
 ## Creating a `Button` Widget
 
@@ -66,14 +66,14 @@ kubectl apply -f docs/guides/simple-page/guide-simple-navmenuitem.yaml
 
 The frontend logic will automatically create a sidebar entry to the newly created `Page` widget, which will be visible after refreshing the UI.
 
-![Sidebar item](./images/sidebar-item.png)
+![Sidebar item](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/simple-page/images/sidebar-item.png?raw=true)
 
 
 ### Visiting the Page
 
 Clicking the new sidebar item navigates to the path defined in the `NavMenuItem` widget, which in turn references the `Page` widget. You should now see the `Button` rendered on the page. For mocking purposes, clicking on the `Button` widget should redirect you to the current page.
 
-![Simple guide page](./images/simple-guide-page.png)
+![Simple guide page](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/docs/guides/simple-page/images/simple-guide-page.png?raw=true)
 
 
 ## Recap

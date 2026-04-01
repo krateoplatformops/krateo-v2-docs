@@ -457,7 +457,7 @@ spec:
 
 ### After
 
-The new `EventList` widget delegates all normalization to `events-presenter`. The `widgetDataTemplate` expression becomes a direct passthrough, and the SSE endpoint no longer has a trailing slash:
+The new `EventList` widget delegates all normalization to `events-presenter`. The `widgetDataTemplate` expression becomes a direct passthrough, and the SSE endpoint takes the `composition_id` as a query string parameter:
 
 ```yaml
 kind: EventList
@@ -468,8 +468,8 @@ metadata:
 spec:
   widgetData:
     events: []
-    sseEndpoint: "/notifications"
-    sseTopic: "{{ .Values.global.compositionId }}"
+    sseEndpoint: "/notifications?composition_id={{ .Values.global.compositionId }}"
+    sseTopic: "krateo"
   widgetDataTemplate:
     - forPath: events
       expression: "${ .list }"
@@ -482,7 +482,8 @@ spec:
 
 | Aspect | Before | After |
 |---|---|---|
-| **`sseEndpoint`** | `/notifications/` (trailing slash) | `/notifications` (no trailing slash) |
+| **`sseEndpoint`** | `/notifications/` | `/notifications?composition_id={{ .Values.global.compositionId }}` |
+| **`sseTopic`** | `{{ .Values.global.compositionId }}` | `krateo` |
 | **`widgetDataTemplate` expression** | Large JQ block normalizing every event field | `"${ .list }"` for direct passthrough |
 
 ---

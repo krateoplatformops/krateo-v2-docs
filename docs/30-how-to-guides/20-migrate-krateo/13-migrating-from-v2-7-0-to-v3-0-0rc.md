@@ -5,8 +5,8 @@ sidebar_label: Migrating Krateo PlatformOps from v2.7.0 to v3.0.0rc
 
 # Migrating Krateo PlatformOps from v2.7.0 to v3.0.0rc
 
-1. [RESTAction Migration Guide: Client-Side to Server-Side Pagination](#restaction-migration-guide-client-side-to-server-side-pagination)
-2. [EventList Migration Guide: eventsse / eventrouter to events-presenter](#eventlist-migration-guide-eventsse--eventrouter-to-events-presenter)
+1. [RESTAction Migration Guide: Client-Side to Server-Side Pagination](#overview)
+2. [EventList Migration Guide: eventsse / eventrouter to events-presenter](#overview-1)
 
 # RESTAction Migration Guide: Client-Side to Server-Side Pagination
 

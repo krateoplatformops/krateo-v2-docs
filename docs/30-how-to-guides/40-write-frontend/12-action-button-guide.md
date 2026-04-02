@@ -5,7 +5,7 @@ sidebar_label: Action Button Guide
 
 # Action Button Guide
 
-Before starting this guide, make sure you have completed the [Simple Page Guide](./10-simple-page-guide.md).
+Before starting this guide, make sure you have completed the [Simple Page Guide](./simple-page-guide).
 
 In the previous guide, you created:
 

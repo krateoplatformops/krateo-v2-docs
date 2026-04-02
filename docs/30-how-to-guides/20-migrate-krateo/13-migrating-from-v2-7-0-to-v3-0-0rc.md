@@ -20,7 +20,7 @@ sidebar_label: Migrating Krateo PlatformOps from v2.7.0 to v3.0.0rc
 
 Both commands are designed for Krateo 2.7.0 installations managed by the installer controller.
 
-If you are looking for the regular install or upgrade workflow, see [Install and Upgrade](../installing-krateo/installing-krateo).
+If you are looking for the regular install or upgrade workflow, see [Install and Upgrade](../install-krateo/installing-krateo).
 
 Secrets are managed separately from the migration workflow. Use Vault or create the required Kubernetes Secrets manually, then follow the [Secrets Spec](../install-krateo/secrets).
 

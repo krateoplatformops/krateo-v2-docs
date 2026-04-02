@@ -68,8 +68,6 @@ nodes:
     hostPort: 30085
   - containerPort: 30086 # Krateo FireworksApp Frontend
     hostPort: 30086
-  - containerPort: 30088 # Krateo Smithery
-    hostPort: 30088
 networking:
   # By default the API server listens on a random open port.
   # You may choose a specific port but probably don't need to in most cases.

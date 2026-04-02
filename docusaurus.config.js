@@ -40,9 +40,19 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: './sidebars.js',
-          sidebarCollapsible: true,
-          routeBasePath: '/', // Serve the docs at the site's roo
+          sidebarPath: require.resolve('./sidebars.js'),
+          lastVersion: '2.7.0',
+          includeCurrentVersion: true,
+          versions: {
+            current: {
+              label: '3.0.0-rc1',
+              path: '3.0.0-rc1',
+            },
+            '2.7.0': {
+              label: '2.7.0',
+              banner: 'none',
+            },
+          },
         },
         blog: false,
         pages: false,
@@ -88,6 +98,11 @@ const config = {
             href: 'https://killercoda.com/krateoplatformops/',
             label: 'Krateo Free Self-Service Labs',
             position: 'right',
+          },
+          {
+            type: 'docsVersionDropdown',
+            position: 'right',
+            dropdownActiveClassDisabled: true,
           },
         ],
       },

@@ -79,7 +79,7 @@ const config = {
           alt: 'Krateo PlatformOps Logo',
           src: 'img/black-horizontal.svg',
           srcDark: 'img/white-horizontal.svg',
-          href: '/',
+          href: '/docs',
           target: '_self',
         },
         items: [

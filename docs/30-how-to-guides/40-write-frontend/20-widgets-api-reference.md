@@ -3,8 +3,6 @@ description: Api Reference
 sidebar_label: Api Reference
 ---
 
-
-
 ## Widgets
 
 List of implemented widgets:
@@ -25,7 +23,7 @@ BarChart express quantities through a bar's length, using a common baseline. Bar
 | data[].bars[].color | no | Color of the bar | `blue` \| `darkBlue` \| `orange` \| `gray` \| `red` \| `green` \| `violet` |
 
 
-[Examples](../src/examples/widgets/BarChart/BarChart.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/BarChart/BarChart.example.yaml)
 
 ---
 
@@ -98,7 +96,7 @@ Button represents an interactive component which, when clicked, triggers a speci
 | clickActionId | yes | the id of the action to be executed when the button is clicked | string |
 
 
-[Examples](../src/examples/widgets/Button/Button.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Button/Button.example.yaml)
 
 ---
 
@@ -117,7 +115,7 @@ name of the k8s Custom Resource
 | items[].resourceRefId | yes |  | string |
 
 
-[Examples](../src/examples/widgets/ButtonGroup/ButtonGroup.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/ButtonGroup/ButtonGroup.example.yaml)
 
 ---
 
@@ -135,7 +133,7 @@ Column is a layout component that arranges its children in a vertical stack, ali
 | size | no | the number of cells that the column will occupy, from 0 (not displayed) to 24 (occupies all space) | integer |
 
 
-[Examples](../src/examples/widgets/Column/Column.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Column/Column.example.yaml)
 
 ---
 
@@ -163,7 +161,7 @@ DataGrid is a layout component that renders its children as a responsive list or
 | prefix | no | it's the filters prefix to get right values | string |
 
 
-[Examples](../src/examples/widgets/DataGrid/DataGrid.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/DataGrid/DataGrid.example.yaml)
 
 ---
 
@@ -193,7 +191,7 @@ EventList renders data coming from a Kubernetes cluster or Server Sent Events as
 | sseTopic | no | subscription topic for server sent events | string |
 
 
-[Examples](../src/examples/widgets/EventList/EventList.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/EventList/EventList.example.yaml)
 
 ---
 
@@ -214,7 +212,7 @@ EventList renders data coming from a Kubernetes cluster or Server Sent Events as
 | fields[].options | no | they're the options for select or radio, the type must be 'string' | array |
 
 
-[Examples](../src/examples/widgets/Filters/Filters.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Filters/Filters.example.yaml)
 
 
 > For additional information about the `Filters` configuration, please visit [this page](./filters).
@@ -264,7 +262,7 @@ FlowChart represents a Kubernetes composition as a directed graph. Each node rep
 | data[].version | yes | api version of the resource | string |
 
 
-[Examples](../src/examples/widgets/FlowChart/FlowChart.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/FlowChart/FlowChart.example.yaml)
 
 ---
 
@@ -357,7 +355,7 @@ name of the k8s Custom Resource
 | displayMenu | no | Displays a side menu with clickable anchor links for each field, allowing users to scroll to the selected field. If not specified, the menu is displayed by default. | boolean |
 
 
-[Examples](../src/examples/widgets/Form/Form.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Form/Form.example.yaml)
 
 
 > For additional information about the `autocomplete` and `dependencies` properties configuration, please visit [this page](./autocomplete).
@@ -386,7 +384,7 @@ LineChart displays a customizable line chart based on time series or numerical d
 | yAxisName | no | label for the y axis | string |
 
 
-[Examples](../src/examples/widgets/LineChart/LineChart.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/LineChart/LineChart.example.yaml)
 
 ---
 
@@ -404,7 +402,7 @@ Markdown receives markdown in string format and renders it gracefully
 | markdown | yes | markdown string to be displayed | string |
 
 
-[Examples](../src/examples/widgets/Markdown/Markdown.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Markdown/Markdown.example.yaml)
 
 ---
 
@@ -528,7 +526,7 @@ Panel is a container to display information
 | tooltip | no | optional tooltip text shown on the top right side of the card to provide additional context | string |
 
 
-[Examples](../src/examples/widgets/Panel/Panel.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Panel/Panel.example.yaml)
 
 ---
 
@@ -543,7 +541,7 @@ Paragraph is a simple component used to display a block of text
 | text | yes | the content of the paragraph to be displayed | string |
 
 
-[Examples](../src/examples/widgets/Paragraph/Paragraph.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Paragraph/Paragraph.example.yaml)
 
 ---
 
@@ -565,7 +563,7 @@ PieChart is a visual component used to display categorical data as segments of a
 | series.data[].label | yes | label for the segment | string |
 
 
-[Examples](../src/examples/widgets/PieChart/PieChart.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/PieChart/PieChart.example.yaml)
 
 ---
 
@@ -610,7 +608,7 @@ Row is a layout component that arranges its children horizontally with spacing b
 | items[].alignment | no | the alignment of the element inside the cell. Default is 'left' | `center` \| `left` \| `right` |
 
 
-[Examples](../src/examples/widgets/Row/Row.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Row/Row.example.yaml)
 
 ---
 
@@ -693,7 +691,7 @@ Table displays structured data with customizable columns and pagination
 | tableActions[].clickActionId | no | the id of the action to be executed when the button is clicked | string |
 
 
-[Examples](../src/examples/widgets/Table/Table.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Table/Table.example.yaml)
 
 
 > For additional information about the `tableActions` property configuration, please visit [this page](./table-actions).
@@ -715,7 +713,7 @@ TabList display a set of tab items for navigation or content grouping
 | items[].title | no | optional title to be displayed inside the tab | string |
 
 
-[Examples](../src/examples/widgets/TabList/TabList.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/TabList/TabList.example.yaml)
 
 ---
 
@@ -735,7 +733,7 @@ Theme is a widget that allows to define an UI theme for the entire application.
 | token | no | Defines customization for specific style tokens | object |
 
 
-[Examples](../src/examples/widgets/Theme/Theme.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/Theme/Theme.example.yaml)
 
 ---
 
@@ -750,4 +748,4 @@ YamlViewer receives a JSON string as input and renders its equivalent YAML repre
 | json | yes | json string to be converted and displayed as yaml | string |
 
 
-[Examples](../src/examples/widgets/YamlViewer/YamlViewer.example.yaml)
+[Examples](https://github.com/krateoplatformops/frontend/blob/main/src/examples/widgets/YamlViewer/YamlViewer.example.yaml)

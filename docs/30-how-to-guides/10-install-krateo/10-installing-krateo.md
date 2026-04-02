@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 **Secrets must be managed separately.**
 `krateoctl` does not bootstrap production secrets. Use Vault or create the required Kubernetes Secrets manually before running install or upgrade commands.
 
-See the [Secrets Spec](secrets.md) for the required names, keys, and namespace rules.
+See the [Secrets Spec](./secrets) for the required names, keys, and namespace rules.
 :::
 
 ## Table Of Contents
@@ -95,7 +95,7 @@ The snapshot gives `krateoctl` a durable record of what was last computed and ap
 
 Secrets are managed separately from the install workflow. The recommended approach is to store them in Vault and sync them into Kubernetes.
 
-See the full [Secrets Spec](secrets.md) for the required names, keys, and namespace rules.
+See the full [Secrets Spec](./secrets) for the required names, keys, and namespace rules.
 
 ## Plan Command
 

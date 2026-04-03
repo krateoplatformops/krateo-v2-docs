@@ -62,4 +62,6 @@ networking:
   apiServerPort: 6443
 EOF
 
-krateoctl install apply --type nodeport --namespace krateo-system --init-secrets
+kubectl create namespace krateo-system
+
+krateoctl install apply --type nodeport --namespace krateo-system --init-secrets --version 3.0.0-rc1

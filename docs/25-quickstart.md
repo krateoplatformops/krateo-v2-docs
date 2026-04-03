@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 
 This guide presents a basic introduction to Krateo PlatformOps. Together, we will:
 
-* Install Krateo PlatformOps 2.6.0 into a local cluster.
+* Install Krateo PlatformOps 3.0.0-rc1 into a local cluster.
 * Deploy the `github-scaffolding-with-composition-page` Blueprint
 * Deploy a Composition leveraging the `github-scaffolding-with-composition-page` Blueprint
 * Destroy the cluster
@@ -33,7 +33,7 @@ just for this quickstart using
 [kind](https://kind.sigs.k8s.io/#installation-and-usage).
 
 ```shell
-curl -L https://github.com/krateoplatformops/krateo-v2-docs/releases/latest/download/kind.sh | sh
+curl -L https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/refs/heads/main/scripts/kind.sh | sh
 ```
 
 :::info

@@ -49,14 +49,12 @@ nodes:
     hostPort: 30081
   - containerPort: 30082 # Krateo AuthN Service
     hostPort: 30082
-  - containerPort: 30083 # Krateo EventSSE
+  - containerPort: 30083 # Krateo events-presenter
     hostPort: 30083
   - containerPort: 30085 # Krateo Sweeper
     hostPort: 30085
   - containerPort: 30086 # Krateo FireworksApp Frontend
     hostPort: 30086
-  - containerPort: 30088 # Krateo Smithery
-    hostPort: 30088
 networking:
   # By default the API server listens on a random open port.
   # You may choose a specific port but probably don't need to in most cases.
@@ -64,18 +62,4 @@ networking:
   apiServerPort: 6443
 EOF
 
-helm upgrade installer-crd installer-crd \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  --install \
-  --version 2.7.0 \
-  --wait
-
-helm upgrade installer installer \
-  --repo https://charts.krateo.io \
-  --namespace krateo-system \
-  --create-namespace \
-  --install \
-  --version 2.7.0 \
-  --wait
+krateoctl install apply --type nodeport --namespace krateo-system

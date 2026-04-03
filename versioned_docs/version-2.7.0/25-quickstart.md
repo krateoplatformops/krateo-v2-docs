@@ -33,7 +33,7 @@ just for this quickstart using
 [kind](https://kind.sigs.k8s.io/#installation-and-usage).
 
 ```shell
-curl -L https://github.com/krateoplatformops/krateo-v2-docs/releases/latest/download/kind.sh | sh
+curl -L https://github.com/krateoplatformops/krateo-v2-docs/releases/download/2.7.0/kind.sh | sh
 ```
 
 :::info

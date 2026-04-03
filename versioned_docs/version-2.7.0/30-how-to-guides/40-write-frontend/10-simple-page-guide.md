@@ -11,14 +11,14 @@ This guide walks you through the creation of a very simple page in the Krateo Co
 - a `Page` widget that acts as a container for the `Button` widget
 - a navigation entry in the sidebar that links to the `Page` widget
 
-> [!NOTE]
-> To follow this guide, you need to run the Krateo frontend locally. This requires:
-> - a running Kubernetes cluster (for example, a local `kind` cluster),
-> - the Krateo frontend codebase,
-> - the ability to create and edit Kubernetes resources as YAML files.
->
-> Refer to the [installation guide](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/README.md#running-locally) in the repository README for setup instructions.
+:::note
+To follow this guide, you need to run the Krateo frontend locally. This requires:
+- a running Kubernetes cluster (for example, a local `kind` cluster),
+- the Krateo frontend codebase,
+- the ability to create and edit Kubernetes resources as YAML files.
 
+Refer to the [installation guide](https://github.com/krateoplatformops/frontend/blob/c52804d57a35ed7989d41d71461917b6d2898b43/README.md#running-locally) in the repository README for setup instructions.
+:::
 ## Creating a `Button` Widget
 
 To create a `Button` widget, you need to define it as a Kubernetes resource using a YAML file that follows the widget schema described in the [Widgets API Reference](../../20-key-concepts/20-kcp/11-frontend-widget-api-reference.md). Applying the resource will both create the widget and validate its configuration.

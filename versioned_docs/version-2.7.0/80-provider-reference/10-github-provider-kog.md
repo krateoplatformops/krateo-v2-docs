@@ -12,9 +12,9 @@ sidebar_label: github-provider-kog
 This is a [Helm Chart](https://helm.sh/docs/topics/charts/) that deploys the Krateo GitHub Provider leveraging the [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider) and using [OpenAPI Specifications (OAS) of the GitHub REST API](https://github.com/github/rest-api-description/blob/main/descriptions/api.github.com/api.github.com.2022-11-28.yaml).
 This provider allows you to manage GitHub resources such as repositories, collaborators, and workflow runs using the Krateo platform.
 
-> [!NOTE]  
-> This chart is going to replace the [original Krateo github-provider](https://github.com/krateoplatformops/github-provider) in the future. 
-
+:::note
+This chart is going to replace the [original Krateo github-provider](https://github.com/krateoplatformops/github-provider) in the future. 
+:::
 ## Summary
 
 - [Summary](#summary)
@@ -49,9 +49,9 @@ helm repo update krateo
 helm install github-provider krateo/github-provider-kog
 ```
 
-> [!NOTE]
-> Due to the nature of the providers leveraging the [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider), this chart will install a set of RestDefinitions that will in turn trigger the deployment of controllers in the cluster. These controllers need to be up and running before you can create or manage resources using the Custom Resources (CRs) defined by this provider. This may take a few minutes after the chart is installed.
-
+:::note
+Due to the nature of the providers leveraging the [Krateo OASGen Provider](https://github.com/krateoplatformops/oasgen-provider), this chart will install a set of RestDefinitions that will in turn trigger the deployment of controllers in the cluster. These controllers need to be up and running before you can create or manage resources using the Custom Resources (CRs) defined by this provider. This may take a few minutes after the chart is installed.
+:::
 You can check the status of the controllers by running:
 ```sh
 until kubectl get deployment github-provider-<RESOURCE>-controller -n <YOUR_NAMESPACE> &>/dev/null; do
@@ -75,9 +75,9 @@ This chart supports the following resources and operations:
 | Workflow     | 🚫 Not applicable   | ✅     | 🚫 Not applicable    | 🚫 Not applicable     |
 | RunnerGroup     | ✅   | ✅     | ✅     | ✅     |
 
-> [!NOTE]  
-> 🚫 *"Not applicable"* indicates that the operation is not supported by this provider because it probably does not make sense for the resource type.  For example, GitHub Workflow runs are typically not updated or deleted directly; they are triggered and if a new run is needed, a new workflow run is created.
-
+:::note
+🚫 *"Not applicable"* indicates that the operation is not supported by this provider because it probably does not make sense for the resource type.  For example, GitHub Workflow runs are typically not updated or deleted directly; they are triggered and if a new run is needed, a new workflow run is created.
+:::
 The resources listed above are Custom Resources (CRs) defined in the `github.krateo.io` API group. They are used to manage GitHub resources in a Kubernetes-native way, allowing you to create, update, and delete GitHub resources using Kubernetes manifests.
 
 ### Resource details

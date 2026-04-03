@@ -21,7 +21,7 @@ It handles on-demand resolution of the `RESTAction` custom resource and all Krat
 ### User Guide
 
 - [`Endpoint` reference](./snowplow-endpoints)
-- [`RESTAction` reference](./snowplow-restaction)
+- [`RESTAction` reference](./snowplow-RESTAction)
 - [Understanding the `Widget` Custom Resource](./snowplow-widgets)
 - [Installing `snowplow` on Kind](https://github.com/krateoplatformops/snowplow/blob/main/howto/install.md)
 

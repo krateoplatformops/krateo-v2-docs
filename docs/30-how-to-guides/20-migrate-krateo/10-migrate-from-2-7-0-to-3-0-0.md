@@ -177,7 +177,7 @@ This will:
 
 #### Deprecated Components Removed During Application
 
-The pre-upgrade cleanup job automatically removes 2.7.0 components that are replaced in 3.0.0. See the [pre-upgrade cleanup script](../../releases/pre-upgrade.yaml) for details. Components removed:
+The pre-upgrade cleanup job automatically removes 2.7.0 components that are replaced in 3.0.0. See the [pre-upgrade cleanup script](https://github.com/krateoplatformops/releases/blob/main/pre-upgrade.yaml) for details. Components removed:
 
 | Removed Component | Replacement | Reason |
 | --- | --- | --- |

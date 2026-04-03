@@ -1,3 +1,8 @@
+---
+description: RESTAction reference
+sidebar_label: RESTAction reference
+---
+
 # `RESTAction`
 
 **API Group:** `templates.krateo.io`  

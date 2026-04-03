@@ -1,3 +1,8 @@
+---
+description: Endpoint reference
+sidebar_label: Endpoint reference
+---
+
 # `Endpoint`
 
 ## Overview

@@ -12,25 +12,24 @@ description: Find out more about Krateo - a self-service platform for multi-clou
 Krateo allows for:
 
 - **Creating any kind of resources within and outside the Kubernetes cluster it runs on**: whilst Krateo runs as a Deployment in a Kubernetes cluster, it can also create resources _outside_ the cluster. You can use Krateo to create anything from new Kubernetes clusters, Logstash pipelines, Docker registries, API gateways, and many others.
-- **Focusing on the management of services**: Krateo frees the user from most of the burden of cluster management, giving them the ability to entirely focus on the services that must be run. This results a phenomenal user experience that drastically reduces wastes of time.
-- **Single-handedly monitoring and controlling resources**: Krateo also acts as a centralized control plane, letting users monitor anything ranging from CI/CD pipelines to pod statuses and open tickets on your JIRA. All the information you need is present on a single page -- you'll never have to guess the correct dashboard ever again.
+- **Focusing on the management of services**: Krateo frees the user from most of the burden of cluster management, giving them the ability to entirely focus on the services that must be run. This produces a phenomenal user experience that drastically reduces wasted time.
+- **Single-handedly monitoring and controlling resources**: Krateo also acts as a centralized control plane, letting users monitor anything ranging from CI/CD pipelines to pod statuses and open tickets on your JIRA. All the information you need is present on a single page: you'll never have to guess the correct dashboard ever again.
 
 ## Architecture
 
 Architecture is based on these principles:
 * Any component of Krateo must be configured declaratively
-* The only APIs that implement business logic are those exposed by the Kubernetes api server
 * Any operation carried out via the portal must also be possible from the Kubernetes CLI (_kubectl_)
-* Authentication is completely delegated to the Kubernetes server API
+* Authentication is completely delegated to the Kubernetes API Server
 * Authorization is completely delegated to the Kubernetes RBAC
 
-![Architecture](/img/krateo-v2-6-0-architecture.png)
+![Architecture](/img/krateo-v3-0-0-architecture.png)
 
 ## Requirements
 
 * A certified Kubernetes distribution with version >= v1.31.x
 * Kubernetes minimal requirements:
-  * 6vCPUs and 12GiB RAM
+  * 12vCPUs and 16GiB RAM (GKE E2-based machines or AKS 3x D4ds_v5)
   * StorageClass available
   * Networking requirements
     * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io

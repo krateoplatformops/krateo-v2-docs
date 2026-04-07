@@ -10,7 +10,8 @@ import TabItem from '@theme/TabItem';
 
 This guide presents a basic introduction to Krateo PlatformOps. Together, we will:
 
-* Install Krateo PlatformOps 3.0.0-rc1 into a local cluster.
+* Install `krateoctl`
+* Install Krateo PlatformOps 3.0.0-rc1 into a local cluster
 * Deploy the `github-scaffolding-with-composition-page` Blueprint
 * Deploy a Composition leveraging the `github-scaffolding-with-composition-page` Blueprint
 * Destroy the cluster
@@ -18,6 +19,54 @@ This guide presents a basic introduction to Krateo PlatformOps. Together, we wil
 ## Requirements
 
 The `github-scaffolding-with-composition-page` Blueprint will create a new public GitHub repository in your organization. Fill the form according to the organization name.
+
+Install `krateoctl` with:
+
+<Tabs groupId="operating-systems">
+  <TabItem value="macos" label="macOS">
+
+Install `krateoctl` via Homebrew:
+```sh
+brew tap krateoplatformops/krateoctl
+brew install krateoctl
+```
+
+Or use the automatic install script:
+```sh
+curl -sL https://raw.githubusercontent.com/krateoplatformops/krateoctl/main/install.sh | bash
+```
+
+  </TabItem>
+  <TabItem value="linux" label="Linux">
+
+Run the automatic install script in your terminal:
+```sh
+curl -sL https://raw.githubusercontent.com/krateoplatformops/krateoctl/main/install.sh | bash
+```
+
+The script will:
+
+<ul>
+  <li>Detect your architecture</li>
+  <li>Download the latest release binary</li>
+  <li>Install it to <code>/usr/local/bin</code> (requires sudo), or fall back to <code>$HOME/.local/bin</code></li>
+  <li>Ensure the install directory is in your <code>PATH</code></li>
+</ul>
+
+  </TabItem>
+  <TabItem value="windows" label="Windows">
+
+Manual installation steps:
+
+<ol>
+  <li>Go to the <a href="https://github.com/krateoplatformops/krateoctl/releases">Releases page</a>.</li>
+  <li>Download the archive for your architecture (e.g. <code>windows_amd64.zip</code>).</li>
+  <li>Extract the binary from the archive.</li>
+  <li>Add the folder containing the binary to your system <code>PATH</code>.</li>
+</ol>
+
+  </TabItem>
+</Tabs>
 
 ## Deploy Krateo PlatformOps on a local cluster (kind)
 

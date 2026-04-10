@@ -25,7 +25,6 @@ Kubernetes Events → events-ingester → PostgreSQL → deviser → events-pres
 
 It ensures that historical event data is properly managed without manual intervention.
 
-
 ## Features
 
 - **Daily Partition Management** – Automatically creates partitions for the next N days
@@ -53,14 +52,12 @@ It ensures that historical event data is properly managed without manual interve
 | `TargetRatio` | Target fraction after cleanup (e.g., 0.60) |
 | `DryRun` | If true, cleanup actions are logged but not executed |
 
-
 ## Requirements
 
 - Kubernetes cluster (optional; service can run outside of cluster)
 - PostgreSQL database
 - Network connectivity to the database
 - Appropriate database privileges for partition creation and table management
-
 
 ## Configuration
 
@@ -131,7 +128,6 @@ Notes:
 - If `OTEL_ENABLED=false`, no metrics are exported.
 - This service does not expose a Prometheus `/metrics` endpoint directly; metrics are exported via OTLP.
 
-
 ## How It Works
 
 1. On startup, waits for PostgreSQL to be ready
@@ -149,7 +145,6 @@ Notes:
    - Closes DB connections
    - Exits cleanly
 
-
 ## Health Probes
 
 | Endpoint | Purpose |
@@ -159,7 +154,6 @@ Notes:
 
 > These endpoints are suitable for Kubernetes `livenessProbe` and `readinessProbe`.
 
-
 ## Deployment Notes
 
 - Store database credentials in Kubernetes Secrets
@@ -167,7 +161,6 @@ Notes:
 - Enable dry-run mode first to validate partition logic
 - Adjust `DB_PARTITIONS_DAYS`, `PM_RETENTION_DAYS`, and quota parameters according to cluster size and database capacity
 - Recommended to run alongside `events-ingester` and `events-presenter` for full event pipeline
-
 
 ## Example Partition Flow
 

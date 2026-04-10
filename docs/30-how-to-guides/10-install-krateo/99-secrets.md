@@ -34,22 +34,28 @@ This secret is used by the platform JWT-related components.
 - type: `Opaque`
 - secret keys:
   - `DB_USER`: `krateo-db-user`
-  - `DB_PASS`: shared database password
+  - `DB_PASS`: database password
 
-This secret is used by the stack components that need database access.
+This secret is used by the components that need database access: `deviser`, `resources-ingester`, `resources-presenter`, `events-ingester` and `events-presenter`.
+
+**Note**: this secret is always required, even if you are using your own PostgreSQL instance.
 
 ### `krateo-db-user`
 
 - type: `Opaque`
 - secret keys:
   - `username`: `krateo-db-user`
-  - `password`: shared database password
+  - `password`: database password
 
-This secret is used by the CNPG/database side of the stack.
+This secret is used by the CNPG during installation to create the database user.
+
+Note the different key names compared to `krateo-db` but the **same values for username and password**.
+
+**Note**: if you are using your own PostgreSQL instance, this secret is not required as it is only used by the default CNPG installation by Krateo.
 
 ## Consistency Rules
 
-- `krateo-db` and `krateo-db-user` must use the same password value.
+- `krateo-db` and `krateo-db-user` must use the same username and password values.
 - The `jwt-sign-key` should be generated once and kept stable across upgrades.
 - All secrets must be created in the same namespace that `install apply` uses.
 

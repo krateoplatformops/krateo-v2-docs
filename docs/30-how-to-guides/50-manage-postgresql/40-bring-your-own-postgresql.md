@@ -97,7 +97,11 @@ components:
 ```
 
 :::note
-The `resources-presenter` component is the only one that can be configured with a connection string for **read-only connections**, if your database has different endpoints for read-write and read-only connections. In that case, you can specify the read-only connection details in the `DB_HOST` and `DB_PORT` fields under `install-resources-presenter`. All the other components need to point to the read-write connection string of your database.
+The connection string is formed by the `DB_HOST`, `DB_PORT`, `DB_NAME` and `DB_PARAMS` fields. The `DB_PARAMS` field is optional and can be used to specify **additional parameters** for the connection string, such as SSL settings or connection timeouts. Therefore, if your database requires specific parameters for the connection, you can add them in the `DB_PARAMS` field in the format of a query string, for example: `sslmode=require&connect_timeout=10`.
+:::
+
+:::note
+The `resources-presenter` component is the only one that can be configured with a connection string for **read-only connections**, if your database provides different endpoints for read-write and read-only connections. In that case, you can specify the read-only connection details in the `DB_HOST` and `DB_PORT` fields under `install-resources-presenter`. All the other components need to use a read-write connection string of your database.
 :::
 
 ### 4. Install Krateo without the default CNPG component and pointing to your existing PostgreSQL instance

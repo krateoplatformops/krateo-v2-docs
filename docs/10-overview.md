@@ -7,7 +7,7 @@ description: Find out more about Krateo - a self-service platform for multi-clou
 
 # What is Krateo PlatformOps?
 
-**Krateo Platformops** is an open source platform that gives users the capability to create any desired resource on basically any infrastructure they'd like. Be it a K8s cluster, microservice, application, pipeline, database or anything else, Krateo has got your back. The only requirement is for the resource to be descriptible via a YAML file representing the resource's _desired state_ (rings a bell? 😉).
+**Krateo PlatformOps** is an open source platform that gives users the capability to create any desired resource on basically any infrastructure they'd like. Be it a K8s cluster, microservice, application, pipeline, database or anything else, Krateo has got your back. The only requirement is for the resource to be descriptible via a YAML file representing the resource's _desired state_ (rings a bell? 😉).
 
 Krateo allows for:
 
@@ -32,7 +32,7 @@ Architecture is based on these principles:
   * 12vCPUs and 16GiB RAM (GKE E2-based machines or AKS 3x D4ds_v5)
   * StorageClass available
   * Networking requirements
-    * Ability to reach https://github.com , https://charts.krateo.io , ghcr.io, docker.io
+    * Ability to reach https://github.com, https://charts.krateo.io, https://marketplace.krateo.io, ghcr.io, docker.io
 
 If the Kubernetes version is minor than v1.31.x or it the distribution is EKS, Krateo PlatformOps can be deployed via ephemeral clusters like vCluster.
 

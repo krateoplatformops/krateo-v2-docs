@@ -17,7 +17,7 @@ To use your own PostgreSQL instance, you need to:
 
 ### 1. Create a database and user for Krateo in your existing PostgreSQL instance
 
-You need to create a database and user for Krateo in your existing PostgreSQL instance. 
+You need to create a **database** and a **user** for Krateo in your existing PostgreSQL instance. 
 This can be done using the following SQL commands:
 
 ```sql
@@ -25,6 +25,8 @@ CREATE DATABASE krateo-db;
 CREATE USER krateo-db-user WITH ENCRYPTED PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE krateo-db TO krateo-db-user;
 ```
+
+The database will be used by Krateo to store Krateo resources and Kubernetes events, and the user will be used by the Krateo components to connect to the database.
 
 ### 2. Create a Kubernetes Secret with the connection details for your existing database
 
@@ -97,7 +99,11 @@ components:
 ```
 
 :::note
-The `resources-presenter` component is the only one that can be configured with a connection string for **read-only connections**, if your database has different endpoints for read-write and read-only connections. In that case, you can specify the read-only connection details in the `DB_HOST` and `DB_PORT` fields under `install-resources-presenter`. All the other components need to point to the read-write connection string of your database.
+The connection string is formed by the `DB_HOST`, `DB_PORT`, `DB_NAME` and `DB_PARAMS` fields. The `DB_PARAMS` field is optional and can be used to specify **additional parameters** for the connection string, such as SSL settings or connection timeouts. Therefore, if your database requires specific parameters for the connection, you can add them in the `DB_PARAMS` field in the format of a query string, for example: `sslmode=require&connect_timeout=10`.
+:::
+
+:::note
+The `resources-presenter` component is the only one that can be configured with a connection string for **read-only connections**, if your database provides different endpoints for read-write and read-only connections. In that case, you can specify the read-only connection details in the `DB_HOST` and `DB_PORT` fields under `install-resources-presenter`. All the other components need to use a read-write connection string of your database.
 :::
 
 ### 4. Install Krateo without the default CNPG component and pointing to your existing PostgreSQL instance

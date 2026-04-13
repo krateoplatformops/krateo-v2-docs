@@ -17,7 +17,7 @@ To use your own PostgreSQL instance, you need to:
 
 ### 1. Create a database and user for Krateo in your existing PostgreSQL instance
 
-You need to create a database and user for Krateo in your existing PostgreSQL instance. 
+You need to create a **database** and a **user** for Krateo in your existing PostgreSQL instance. 
 This can be done using the following SQL commands:
 
 ```sql
@@ -25,6 +25,8 @@ CREATE DATABASE krateo-db;
 CREATE USER krateo-db-user WITH ENCRYPTED PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE krateo-db TO krateo-db-user;
 ```
+
+The database will be used by Krateo to store Krateo resources and Kubernetes events, and the user will be used by the Krateo components to connect to the database.
 
 ### 2. Create a Kubernetes Secret with the connection details for your existing database
 

@@ -17,7 +17,7 @@ Before configuring OpenTelemetry in Krateo, make sure you have the following pre
 The setup and configuration of the OpenTelemetry Collector and your observability backend are outside the scope of this guide. Please refer to the [**official documentation of OpenTelemetry**](https://opentelemetry.io/docs/) and your chosen observability backend for detailed instructions on how to set them up.
 :::
 
-You can find an example of a basic configuration (**non-production**) of a observability stack with OpenTelemetry Collector and Prometheus in a guide [here](https://github.com/krateoplatformops/krateo-sanity/blob/main/monitoring/monitoring.md). 
+You can find an example of a basic (**non-production**) configuration of a observability stack with OpenTelemetry Collector and Prometheus in a guide [here](https://github.com/krateoplatformops/krateo-sanity/blob/main/monitoring/monitoring.md). 
 
 This simple guide is available also in the form of a bash script that you can run in your cluster to quickly set up monitoring stack on a **development environment**. You need the full script suite [`krateo-sanity`](https://github.com/krateoplatformops/krateo-sanity) and refer to the [deploy_monitoring_stack.sh](https://github.com/krateoplatformops/krateo-sanity/blob/main/monitoring/deploy_monitoring_stack.sh) script.
 
@@ -72,7 +72,7 @@ components:
 
 ## Using the `monitoring` profile during installation
 
-You can leverage the `monitoring` profile during the installation of Krateo to automatically configure the components to expose OpenTelemetry metrics.
+You can leverage the [`monitoring` profile](https://github.com/krateoplatformops/releases/blob/main/krateo-overrides.monitoring.yaml) during the installation of Krateo to automatically configure the components to expose OpenTelemetry metrics.
 
 :::note
 The `monitoring` profile is thought to be used in **development environments** for quick setup. Indeed, the `OTEL_EXPORTER_OTLP_ENDPOINT` is set to "http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318", which is the endpoint of the OpenTelemetry Collector in the example monitoring stack provided in the `krateo-sanity` repository. If you are using a different setup for your OpenTelemetry Collector, you can create a custom config based on the `monitoring` profile and change the endpoint accordingly as explained in the previous section.

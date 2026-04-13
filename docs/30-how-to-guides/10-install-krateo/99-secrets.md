@@ -1,4 +1,4 @@
-# Secrets Spec
+# Secrets configuration
 
 :::warning
 `krateoctl` does not bootstrap production secrets.
@@ -8,14 +8,14 @@ Manage them in Vault or create them manually before you run install or migration
 
 Recommended approach:
 
-- store the secret material in Vault
-- sync the Vault data into Kubernetes with your preferred secret management tool
+- store the secrets in a system like Vault
+- sync the Vault data (or similar) into Kubernetes with your preferred secret management tool
 
 Manual creation is also supported.
 
 ## Scope
 
-The secrets in this spec should exist in the install namespace before you run `krateoctl install apply` or `krateoctl install migrate-full`.
+The secrets in this configuration should exist **in the installation namespace** before you run `krateoctl install apply` or `krateoctl install migrate-full`.
 
 The default install namespace is `krateo-system`, unless you override it.
 
@@ -38,7 +38,7 @@ This secret is used by the platform JWT-related components.
 
 This secret is used by the components that need database access: `deviser`, `resources-ingester`, `resources-presenter`, `events-ingester` and `events-presenter`.
 
-**Note**: this secret is always required, even if you are using your own PostgreSQL instance.
+**Note**: this secret is always required, even if you are using [your own PostgreSQL instance](../50-manage-postgresql/40-bring-your-own-postgresql.md).
 
 ### `krateo-db-user`
 

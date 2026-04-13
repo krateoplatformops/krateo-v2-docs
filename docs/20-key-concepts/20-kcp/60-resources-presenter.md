@@ -1,6 +1,6 @@
 ---
-description: Resources Stack
-sidebar_label: Resources Stack
+description: Resources Presenter
+sidebar_label: Resources Presenter
 ---
 
 # `resources-presenter`

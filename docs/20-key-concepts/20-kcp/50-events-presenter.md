@@ -1,6 +1,6 @@
 ---
-description: Events Stack
-sidebar_label: Events Stack
+description: Events Presenter
+sidebar_label: Events Presenter
 ---
 
 # events-presenter

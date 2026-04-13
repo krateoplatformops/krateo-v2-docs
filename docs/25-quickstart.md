@@ -73,13 +73,18 @@ Manual installation steps:
 Any of the following approaches require [Helm](https://helm.sh/docs/) v3.13.1 or
 greater to be installed.
 
+You can check whether you have Helm installed and its version with the following command:
+```sh
+helm version
+```
+
 <Tabs groupId="local-cluster-start">
 <TabItem value="kind" label="kind">
 
 If you have any Docker-compatible container runtime installed (including native
 Docker, Docker Desktop, or OrbStack), you can easily launch a disposable cluster
 just for this quickstart using
-[kind](https://kind.sigs.k8s.io/#installation-and-usage).
+[kind](https://kind.sigs.k8s.io/#installation-and-usage) (Kubernetes IN Docker).
 
 ```shell
 curl -L https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/refs/heads/main/scripts/kind.sh | sh
@@ -87,15 +92,14 @@ curl -L https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/refs/
 
 :::info
 While this option is a bit more complex than using Docker Desktop or OrbStack
-directly, it offers the advantage of being fully-disposable. If your cluster
+directly, it offers the advantage of being fully-disposable. If your K8s cluster
 reaches a state you are dissatisfied with, you can simply destroy it and
 launch a new one.
 :::
 
-Wait for Krateo PlatformOps to be up&running:
-```shell
-kubectl wait krateoplatformops krateo --for condition=Ready=True --namespace krateo-system --timeout=800s
-```
+The script above will:
+- Create a new kind cluster named `krateo-quickstart`
+- Install Krateo using the `krateoctl install` command
 
 At the end of this process:
 
@@ -155,7 +159,7 @@ Let's move back to the `Compositions` menu:
 
 ![Compositions](/img/quickstart/12_compositions_1composition_true.png)
 
-Let's click on the *krateo-demo* composition panel.
+Let's click on the *krateo-demo* composition panel and check each of the tabs:
 
 ### Events
 
@@ -168,6 +172,8 @@ Let's click on the *krateo-demo* composition panel.
 ### Values
 
 ![Composition-Values](/img/quickstart/11_compositions_1composition_values.png)
+
+At this point, the Composition is correctly deployed.
 
 ## Destroy the cluster
 

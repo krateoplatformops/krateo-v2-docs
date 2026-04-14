@@ -41,13 +41,13 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          lastVersion: 'current',
           includeCurrentVersion: true,
           routeBasePath: '/',
+          lastVersion: 'current',
           versions: {
             current: {
-              label: '3.0.0',
-              path: '/',
+              label: 'Next 🚧',
+              path: 'next',
             },
             '2.7.0': {
               label: '2.7.0',

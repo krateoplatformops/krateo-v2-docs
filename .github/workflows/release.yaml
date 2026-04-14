@@ -1,41 +1,101 @@
-name: release
+name: Release
 
 on:
   push:
-    tags: ["[0-9]+.[0-9]+.[0-9]+"]
-    branches:
-      - main
+    tags: [ '[0-9]+.[0-9]+.[0-9]+', '[0-9]+.[0-9]+.[0-9]+-*' ] 
+
+permissions:
+  contents: write
 
 jobs:
   release:
+    name: Version, publish and release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
     steps:
-      # Step 1: Checkout the code from your repository
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          # Full history needed so peaceiris can push to gh-pages correctly.
+          fetch-depth: 0
+          # Use a token with write access so the version commit can be pushed
+          # back to main without hitting the branch-protection push restriction
+          # that GITHUB_TOKEN has on the default branch.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 2: Create a Release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Strip the leading 'v' if present (e.g. v3.1.0 → 3.1.0).
+      - name: Extract version from tag and create releases table
+        id: version
+        run: |
+          RAW="${{ github.ref_name }}"
+          VERSION="${RAW#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+
+          git clone https://github.com/krateoplatformops/releases --depth 1 --single-branch --branch $VERSION
+          cd releases
+          yq -r --prettyPrint -j krateo.nodeport.yaml | jq '[.steps | map(select(.type == "chart")) | .[] | {name: .with.repo, version: .with.version}] | (to_entries | map("|\(.value.name)|\(.value.version)|") | join("\n"))' | tr -d '"' > versions.md
+          echo -e "# Compatibility Matrix\n|Name|Version|\n|----|----|\n$(cat versions.md)" > 20-matrix.md
+          cp 20-matrix.md ../docs/90-release-notes/20-matrix.md
+
+      # Cut a Docusaurus version snapshot from the current docs/ folder.
+      # This writes versioned_docs/version-X.Y.Z/ and updates versions.json.
+      - name: Create Docusaurus version snapshot
+        run: npm run docusaurus docs:version "${{ steps.version.outputs.VERSION }}"
+
+      # Update docusaurus.config.js so that lastVersion points to the new tag,
+      # making it the default version visitors land on at docs.krateo.io.
+      - name: Set lastVersion in docusaurus.config.js
+        run: node scripts/set-last-version.js "${{ steps.version.outputs.VERSION }}"
+
+      # Commit the version snapshot + config change back to main so that the
+      # versioned_docs folder and docusaurus.config.js stay in sync with the repo.
+      - name: Commit versioned docs back to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add versioned_docs/ versioned_sidebars/ versions.json docusaurus.config.js
+          git commit -m "chore: version docs for release ${{ steps.version.outputs.VERSION }} [skip ci]"
+          git push origin HEAD:main
+
+      # Build the site after versioning so the published output includes the
+      # new frozen version and has it set as the default.
+      - name: Build website
+        run: npm run build
+
+      # Publish to GitHub Pages (same as the push pipeline).
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+
+      # Create a GitHub Release and attach kind.sh as before.
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ steps.version.outputs.VERSION }}
           draft: false
           prerelease: false
 
-      # Step 3: Upload the script to the Release
-      - name: Upload Script to Release
+      - name: Upload kind.sh to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./scripts/kind.sh  # Adjust this path
-          asset_name: kind.sh  # This is how it will appear in the release
+          asset_path: ./scripts/kind.sh
+          asset_name: kind.sh
           asset_content_type: application/octet-stream

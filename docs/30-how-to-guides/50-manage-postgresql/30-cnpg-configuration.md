@@ -1,9 +1,9 @@
 ---
-description: CNPG Configuration
-sidebar_label: CNPG Configuration
+description: CNPG configuration
+sidebar_label: CNPG configuration
 ---
 
-# CNPG Configuration
+# CNPG configuration
 
 The CNPG cluster creation step in the installation process can be customized based on the needs of your environment.
 

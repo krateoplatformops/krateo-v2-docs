@@ -1,9 +1,9 @@
 ---
-description: Architecture Overview
-sidebar_label: Architecture Overview
+description: Architecture overview
+sidebar_label: Architecture overview
 ---
 
-# Architecture Overview: Presenter/Ingester Pipeline
+# Architecture overview: Presenter/Ingester Pipeline
 
 Krateo's resource and event data pipelines follow the following unified pattern:
 
@@ -33,6 +33,6 @@ Deviser creates:
 For what concerns partitioned tables, it automatically creates daily partitions in advance, dropping partitions that exceed the configured retention window, and enforcing total storage quotas, triggering cleanup when partition size crosses a configurable threshold and trimming back to a target ratio. This keeps the `k8s_events` table performant at scale without any manual database administration, and is fully configurable via environment variables for retention days, size limits, and dry-run mode.
 
 By default, Krateo installs **CNPG** (CloudNativePG) with **PostgreSQL 18** to back all of these services out of the box. 
-You can find more details about CNPG configuration in the related section of the documentation: [CNPG Configuration](./30-cnpg-configuration.md).
+You can find more details about CNPG configuration in the related section of the documentation: [CNPG Configuration](./cnpg-configuration).
 
-If you desire to use your own existing PostgreSQL instance, you can follow the instructions in the [Bring Your Own PostgreSQL](./40-bring-your-own-postgresql.md) guide to skip CNPG installation and connect the Krateo services to your own PostgreSQL database.
+If you desire to use your own existing PostgreSQL instance, you can follow the instructions in the [Bring Your Own PostgreSQL](./bring-your-own-postgresql) guide to skip CNPG installation and connect the Krateo services to your own PostgreSQL database.

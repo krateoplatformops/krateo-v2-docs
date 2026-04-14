@@ -117,4 +117,4 @@ krateoctl install apply --profile no-cnpg --config <path-to-your-config-file>
 ## What happens to your own PostgreSQL instance?
 
 When you choose to bring your own PostgreSQL instance, a Krateo component called `deviser` will connect to your database and create the necessary tables and partitions for Krateo to operate.
-You can find more details about `deviser` operations in the [related section of the documentation](./20-deviser.md).
+You can find more details about `deviser` operations in the [related section of the documentation](./deviser).

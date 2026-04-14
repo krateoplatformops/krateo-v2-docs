@@ -34,7 +34,7 @@ Architecture is based on these principles:
   * Networking requirements
     * Ability to reach https://github.com, https://charts.krateo.io, https://marketplace.krateo.io, ghcr.io, docker.io
 
-If the Kubernetes version is minor than v1.31.x or it the distribution is EKS, Krateo PlatformOps can be deployed via ephemeral clusters like vCluster.
+If the Kubernetes version is minor than v1.31.x or it the distribution is EKS, Krateo PlatformOps can be deployed via ephemeral clusters like vCluster. You can find more details about this in the [related section of the documentation](./how-to-guides/install-krateo/faq).
 
 ## Next Steps
 

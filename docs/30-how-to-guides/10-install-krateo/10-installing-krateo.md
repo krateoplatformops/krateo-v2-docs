@@ -14,6 +14,14 @@ import TabItem from '@theme/TabItem';
 - `apply` executes the workflow against the cluster.
 
 :::info
+If you are looking for a quick installation on a local cluster, check out the [Quickstart guide](../../quickstart).
+:::
+
+:::note
+This guide is intended to be performed on a properly configured cluster. Please be sure to comply with the [cluster requirements](../../#requirements) before proceeding.
+:::
+
+:::note
 **Secrets must be managed separately.**
 `krateoctl` does not bootstrap production secrets. Use a system like Vault or create the required Kubernetes Secrets manually before running install or upgrade commands.
 
@@ -22,6 +30,7 @@ See the [Secrets configuration](./secrets) for the required names, keys, and nam
 
 ## Table Of Contents
 
+- [When to use the `krateoctl install` commands](#when-to-use-the-krateoctl-install-commands)
 - [Release Source](#release-source)
 - [Installation Snapshot](#installation-snapshot)
 - [Secrets](#secrets)
@@ -30,7 +39,7 @@ See the [Secrets configuration](./secrets) for the required names, keys, and nam
 - [Upgrade Flow](#upgrade-flow)
 - [Notes](#notes)
 
-## When To Use Them
+## When to use the `krateoctl install` commands
 
 Use these commands when you want to:
 

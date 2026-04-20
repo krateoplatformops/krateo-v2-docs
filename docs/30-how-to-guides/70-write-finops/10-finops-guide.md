@@ -53,7 +53,7 @@ spec:
 Now, the resources created through this composition definition will have the composition id reported in the billing report inside the tags column, allowing the Krateo Composable FinOps to retrieve costs for your Azure components.
 
 ### Usage Metrics
-The usage metrics are collected separetly from the billing/cost metrics. They rely on the same exporter/scraper flow, but instead of targeting a service account, they target the management REST API. The following [custom resource](./chart/templates/exporterscraperconfig.yaml) gathers CPU usage for the virtual machine in the example composition, and is somewhat specific to Azure. Let's analyze it line by line.
+The usage metrics are collected separetly from the billing/cost metrics. They rely on the same exporter/scraper flow, but instead of targeting a service account, they target the management REST API. The following [custom resource](https://github.com/krateoplatformops-blueprints/azure-vm-finops/blob/main/blueprint/templates/exporterscraperconfig.yaml) gathers CPU usage for the virtual machine in the example composition, and is somewhat specific to Azure. Let's analyze it line by line.
 ```yaml
 {{- $vm := lookup "compute.azure.com/v1api20220301" "VirtualMachine" .Release.Namespace .Values.name }}
 ```
@@ -201,7 +201,7 @@ For the moving window optimization (provided by [this microservice](https://gith
 The first field, `optimization`, will be patched by the policy with the proposed optimization. 
 The field `policyAdditionalValues.optimizationServiceEndpointRef` has to contain the reference to the service of the [microservice](https://github.com/krateoplatformops/finops-moving-window-microservice). Finally, the `policyAdditionalValues.cronJobSchedule` is how often the optimization should be triggered.
 
-We trigger the optimization with a `CronJob` that updates the composition resource with a label that contains the timestamp of the last optimization request. This, in turn, triggers the webhook, activating our policies. You can find all the resources for the `CronJob` [here](./chart/templates/cronjob.yaml). Aside from the templating names (i.e., `vm-azure.xxxxx`), the `CronJob` can be copied into any other composition.
+We trigger the optimization with a `CronJob` that updates the composition resource with a label that contains the timestamp of the last optimization request. This, in turn, triggers the webhook, activating our policies. You can find all the resources for the `CronJob` [here](https://github.com/krateoplatformops-blueprints/azure-vm-finops/blob/main/blueprint/templates/cronjob.yaml). Aside from the templating names (i.e., `vm-azure.xxxxx`), the `CronJob` can be copied into any other composition.
 
 </details>
 

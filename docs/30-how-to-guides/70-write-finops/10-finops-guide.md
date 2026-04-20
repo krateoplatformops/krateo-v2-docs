@@ -129,7 +129,7 @@ appVersion: APP_VERSION
 +  repository: "https://charts.krateo.io"
 +  alias: webhook
 ```
-The [finops-webhook-template](github.com/krateoplatformops/finops-webhook-template-chart/) automatically configures a webhook for the specific composition resource, utilizing the OPA certificates installed with the Krateo installer.
+The [finops-webhook-template](https://github.com/krateoplatformops/finops-webhook-template-chart/) automatically configures a webhook for the specific composition resource, utilizing the OPA certificates installed with the Krateo installer.
 :::note
 If you manually install OPA or modify the installation, you need to check the certificates
 :::

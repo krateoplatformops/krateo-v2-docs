@@ -64,4 +64,4 @@ EOF
 
 kubectl create namespace krateo-system
 
-krateoctl install apply --type nodeport --namespace krateo-system --init-secrets --version 3.0.0-rc1
+krateoctl install apply --type nodeport --namespace krateo-system --init-secrets --version 3.0.0

@@ -1,4 +1,4 @@
-# finops-operator-focus
+# FinOps Operator FOCUS
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and manages custom costs in the FOCUS format.
 
 ## Summary
@@ -91,6 +91,12 @@ spec:
 The Composable FinOps can be used to display pricing in the Krateo Composable Portal cards through a dedicated composition. You can find out more here: [krateo-v2-template-finops-example-pricing-vm-azure](https://github.com/krateoplatformops/krateo-v2-template-finops-example-pricing-vm-azure).
 
 ## Configuration
+
+### Environment variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| — | — | — | No environment variables are documented for this component |
 
 ### Prerequisites
 - Access to a Kubernetes v1.30.0+ cluster: Kubernetes must have the `CustomResourceFieldSelectors` feature gate enabled.

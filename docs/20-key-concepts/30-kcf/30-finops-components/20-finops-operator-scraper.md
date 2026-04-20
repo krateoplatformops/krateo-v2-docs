@@ -1,4 +1,4 @@
-# finops-operator-scraper
+# FinOps Operator Scraper
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and manages the creation of the scrapers reading the FOCUS cost reports from the Prometheus Exporters.
 
 ## Summary
@@ -53,6 +53,18 @@ The Composable FinOps can be used to display pricing, costs and optimizations in
 - [azure-compute-optimization-toolkit](https://github.com/krateoplatformops-blueprints/azure-compute-optimization-toolkit)
 
 ## Configuration
+
+### Environment variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `POLLING_INTERVAL` | No | `300` | Polling interval of the operator in seconds |
+| `MAX_RECONCILE_RATE` | No | `1` | Number of workers for the operator |
+| `REGISTRY` | No | `ghcr.io/krateoplatformops` | Registry to pull the exporter image from |
+| `REGISTRY_CREDENTIALS` | No | `registry-credentials` | Name of the secret holding registry credentials |
+| `SCRAPER_VERSION` | No | `0.5.0` | Version of the exporter image |
+| `SCRAPER_NAME` | No | `finops-prometheus-exporter` | Name of the exporter image |
+| `URL_DB_WEBSERVICE` | No | http://finops-database-handler.finops:8088 | URL for the finops-database-handler service |
 
 ### Dependencies
 You need to install CrateDB in the cluster and configure the [finops-database-handler](https://github.com/krateoplatformops/finops-database-handler). This is done automatically if installed with the Krateo Installer.

@@ -1,4 +1,4 @@
-# finops-prometheus-exporter-generic
+# FinOps Prometheus Exporter
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and exports the API endpoints of FOCUS cost reports in the Prometheus format.
 
 ## Summary

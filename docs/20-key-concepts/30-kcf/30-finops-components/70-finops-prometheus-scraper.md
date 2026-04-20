@@ -1,4 +1,4 @@
-# finops-prometheus-scraper-generic
+# FinOps Prometheus Scraper
 This repository is part of the wider exporting architecture for the Krateo Composable FinOps and scrapes Prometheus exporters to then upload the data to CrateDB through the [finops-database-handler](https://github.com/krateoplatformops/finops-database-handler).
 
 ## Summary

@@ -47,11 +47,7 @@ const config = {
           versions: {
             current: {
               label: 'Next 🚧',
-              path: 'next',
-            },
-            '2.7.0': {
-              label: '2.7.0',
-              banner: 'none',
+              path: '/',
             },
             '3.0.0-rc1': {
               label: '3.0.0-rc1',

@@ -47,7 +47,8 @@ krateo-v2-docs/
 │   │   │   └── 60-resources-presenter.md
 │   │   ├── 30-kcf/                              # Krateo Composable FinOps
 │   │   │   ├── 10-finops-introduction.md
-│   │   │   └── 20-finops-components/
+│   │   │   ├── 20-how-it-works.md
+│   │   │   └── 30-finops-components/
 │   │   │       ├── 10-finops-operator-exporter.md
 │   │   │       ├── 20-finops-operator-scraper.md
 │   │   │       ├── 30-finops-operator-focus.md
@@ -84,9 +85,11 @@ krateo-v2-docs/
 │   │   │   ├── 20-deviser.md
 │   │   │   ├── 30-cnpg-configuration.md
 │   │   │   └── 40-bring-your-own-postgresql.md
-│   │   └── 60-otel-configuration/
-│   │       ├── 10-supported-components.md
-│   │       └── 20-otel-configuration.md
+│   │   ├── 60-otel-configuration/
+│   │   │   ├── 10-supported-components.md
+│   │   │   └── 20-otel-configuration.md
+│   │   └── 70-write-finops/
+│   │       └── 10-finops-guide.md
 │   ├── 60-core-crd-reference/
 │   │   ├── 10-core-provider-crd.md
 │   │   ├── 20-authn-crd.md

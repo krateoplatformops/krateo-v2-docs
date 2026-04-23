@@ -87,7 +87,7 @@ just for this quickstart using
 [kind](https://kind.sigs.k8s.io/#installation-and-usage) (Kubernetes IN Docker).
 
 ```shell
-curl -L https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/refs/heads/main/scripts/kind.sh | sh
+curl -L https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/refs/heads/main/scripts/kind-quickstart.sh | bash
 ```
 
 :::info

@@ -1,31 +1,54 @@
-#!/bin/sh
+#!/bin/bash
 
-set -x
+# ==============================================================================
+# kind.sh - Create a KIND cluster with Krateo-specific configuration
+# Port mappings align with krateo 3.0.0 nodeport deployment
+# ==============================================================================
 
-# Check requirements
-if ! kubectl >/dev/null 2>&1 ; then
-  echo "Missing Kubectl binary, please install it from https://kubernetes.io/docs/tasks/tools/"
-  exit 1
+set -e
+
+CLUSTER_NAME="${1:-krateo-quickstart}"
+CLUSTER_IMAGE="${2:-kindest/node:v1.33.4}"
+WAIT_TIME="120s"
+
+log_info() {
+    echo "[INFO] $1"
+}
+
+log_success() {
+    echo "[SUCCESS] $1"
+}
+
+error_exit() {
+    echo "[ERROR] $1" >&2
+    exit 1
+}
+
+# Check prerequisites
+log_info "Checking prerequisites..."
+
+if ! command -v kubectl &> /dev/null; then
+    error_exit "kubectl not found. Install from https://kubernetes.io/docs/tasks/tools/"
 fi
 
-if ! kind --version >/dev/null 2>&1 ; then
-  echo "Missing Kind binary, please install it from https://github.com/kubernetes-sigs/kind"
-  exit 1
+if ! command -v kind &> /dev/null; then
+    error_exit "kind not found. Install from https://github.com/kubernetes-sigs/kind"
 fi
 
-if ! helm version >/dev/null 2>&1 ; then
-  echo "Missing Helm binary, please install it from https://github.com/helm/helm#install"
-  exit 1
-fi
+log_success "All prerequisites found"
 
-helm repo add krateo https://charts.krateo.io
+# Create KIND cluster with Krateo-specific port mappings
+log_info "Creating KIND cluster: $CLUSTER_NAME"
+log_info "Image: $CLUSTER_IMAGE"
+log_info "Waiting up to $WAIT_TIME for cluster to be ready"
 
-helm repo update krateo
-
-kind create cluster --wait 120s --image kindest/node:v1.33.4 --config - <<EOF
+kind create cluster \
+    --wait "$WAIT_TIME" \
+    --image "$CLUSTER_IMAGE" \
+    --name "$CLUSTER_NAME" \
+    --config - <<'KINDCONFIG'
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-name: krateo-quickstart
 nodes:
 - role: control-plane
   kubeadmConfigPatches:
@@ -43,25 +66,60 @@ nodes:
     protocol: TCP
 - role: worker
   extraPortMappings:
-  - containerPort: 30080 # Krateo Portal
+  # Krateo platform services on NodePort
+  - containerPort: 30080
     hostPort: 30080
-  - containerPort: 30081 # Krateo Snowplow
+    protocol: TCP
+    # Krateo Frontend Portal UI
+  - containerPort: 30081
     hostPort: 30081
-  - containerPort: 30082 # Krateo AuthN Service
+    protocol: TCP
+    # Krateo Snowplow (analytics)
+  - containerPort: 30082
     hostPort: 30082
-  - containerPort: 30083 # Krateo events-presenter
+    protocol: TCP
+    # Krateo AuthN (authentication)
+  - containerPort: 30083
     hostPort: 30083
-  - containerPort: 30085 # Krateo Sweeper
-    hostPort: 30085
-  - containerPort: 30086 # Krateo FireworksApp Frontend
+    protocol: TCP
+    # Krateo Events Presenter
+  - containerPort: 30086
     hostPort: 30086
+    protocol: TCP
+    # Krateo FinOps Database Handler
 networking:
-  # By default the API server listens on a random open port.
-  # You may choose a specific port but probably don't need to in most cases.
-  # Using a random port makes it easier to spin up multiple clusters.
   apiServerPort: 6443
-EOF
+KINDCONFIG
 
-kubectl create namespace krateo-system
+if [ $? -eq 0 ]; then
+    log_success "KIND cluster '$CLUSTER_NAME' created successfully"
+else
+    error_exit "Failed to create KIND cluster"
+fi
 
-krateoctl install apply --type nodeport --namespace krateo-system --init-secrets --version 3.0.0
+# Create krateo-system namespace
+log_info "Creating krateo-system namespace..."
+kubectl create namespace krateo-system || true
+log_success "Namespace created"
+
+# Next steps
+echo ""
+echo "======================================================================"
+echo "KIND cluster is ready. Next steps:"
+echo "======================================================================"
+echo ""
+echo "1. Create secrets (required before installation):"
+echo "   See: https://docs.krateo.io/docs/20-key-concepts/50-krateoctl/secrets"
+echo ""
+echo "2. Install Krateo with NodePort:"
+echo "   krateoctl install plan --version 3.0.0 --type nodeport"
+echo "   krateoctl install apply --version 3.0.0 --type nodeport"
+echo ""
+echo "3. Access Krateo:"
+echo "   http://localhost:30080"
+echo ""
+echo "For a quickstart with automatic secrets, run:"
+echo "   bash scripts/kind-quickstart.sh"
+echo ""
+echo "======================================================================"
+

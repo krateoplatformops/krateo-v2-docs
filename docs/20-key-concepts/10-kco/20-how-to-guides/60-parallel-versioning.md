@@ -122,10 +122,26 @@ EOF
 
 ### Step 1: Export the current manifest
 
+Using `krateoctl`:
+
+```bash
+krateoctl get compositions lifecycle-composition-1 -n cheatsheet-system -o yaml > composition.yaml
+```
+
+Or for a specific kind:
+
+```bash
+krateoctl get githubscaffoldinglifecycles lifecycle-composition-1 -n cheatsheet-system -o yaml > composition.yaml
+```
+
+Or using `kubectl` with the explicit version:
+
 ```bash
 kubectl get githubscaffoldinglifecycles.v0-0-1.composition.krateo.io lifecycle-composition-1 \
   -n cheatsheet-system -o yaml > composition.yaml
 ```
+
+`krateoctl` automatically resolves the correct API version from the `krateo.io/composition-version` label.
 
 ### Step 2: Edit the manifest
 
@@ -143,6 +159,8 @@ In `composition.yaml`, make three changes:
    ```
 
 3. Adapt `spec` for any breaking schema changes introduced in `0.0.2`.
+
+If you do not want to hardcode the version, you can also use `krateoctl get compositions` or `krateoctl get githubscaffoldinglifecycles` to inspect the stored label and resolve the correct version. `krateoctl` looks for `krateo.io/composition-version:` and then requests the matching version from the apiserver automatically.
 
 ### Step 3: Apply
 

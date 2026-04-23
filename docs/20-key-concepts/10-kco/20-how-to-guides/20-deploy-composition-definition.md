@@ -2,14 +2,14 @@
 
 > **Concepts:** [CompositionDefinition](../11-concepts.md#glossary) · [Chart Requirements](../11-concepts.md#chart-requirements) · [Lifecycle Workflow](../11-concepts.md#lifecycle-workflow)
 
-A CompositionDefinition registers a Helm chart as a versioned Kubernetes API. This guide covers creating one, all supported chart sources, and authenticating against private registries.
+A CompositionDefinition registers a Helm chart as a versioned Kubernetes API. This guide walks through deploying the **GitHub Scaffolding Lifecycle** chart from the Krateo Marketplace, which is used throughout these how-to guides.
 
 ---
 
 ## Prerequisites
 
 - Krateo platform installed — see [Install](10-install.md)
-- A Helm chart with a `values.schema.json` at its root — see [Chart Requirements](../11-concepts.md#chart-requirements)
+- The chart has a `values.schema.json` at its root — see [Chart Requirements](../11-concepts.md#chart-requirements)
 
 ---
 
@@ -22,10 +22,6 @@ kubectl create namespace cheatsheet-system
 ---
 
 ## 2. Deploy the CompositionDefinition
-
-Choose the appropriate source format for your chart.
-
-### Helm Repository
 
 ```bash
 cat <<EOF | kubectl apply -f -
@@ -42,9 +38,36 @@ spec:
 EOF
 ```
 
-See also the [PostgreSQL Helm repo example](https://github.com/krateoplatformops/krateoctl/blob/main/testdata/examples/compositiondefinition-postgresql-repo.yaml).
+---
+
+## 3. Wait for it to become ready
+
+```bash
+kubectl wait compositiondefinition lifecycleapp-cd-v1 \
+  --for condition=Ready=True \
+  --namespace cheatsheet-system \
+  --timeout=600s
+```
+
+**What happens:** The Core Provider downloads the chart from the Krateo Marketplace, validates `values.schema.json`, generates the CRD, creates RBAC resources, and deploys the CDC. Once all steps complete, the condition flips to `Ready=True`.
+
+---
+
+## Verify the CompositionDefinition
+
+```bash
+kubectl get compositiondefinition -n cheatsheet-system
+```
+
+You should see `lifecycleapp-cd-v1` with `Ready=True`.
+
+---
+
+## Advanced: Alternative Chart Sources
 
 ### OCI Registry
+
+To deploy from an OCI registry instead of a Helm repository:
 
 ```bash
 cat <<EOF | kubectl apply -f -
@@ -64,6 +87,8 @@ Examples: [OCI with repo field](https://github.com/krateoplatformops/krateoctl/b
 
 ### TGZ Archive (direct URL)
 
+To deploy from a direct TGZ archive URL:
+
 ```bash
 cat <<EOF | kubectl apply -f -
 apiVersion: core.krateo.io/v1alpha1
@@ -82,30 +107,21 @@ Example: [TGZ archive example](https://github.com/krateoplatformops/krateoctl/bl
 
 ---
 
-## 3. Wait for it to become ready
-
-```bash
-kubectl wait compositiondefinition lifecycleapp-cd-v1 \
-  --for condition=Ready=True \
-  --namespace cheatsheet-system \
-  --timeout=600s
-```
-
-**What happens:** The Core Provider downloads the chart, validates `values.schema.json`, generates the CRD, creates RBAC resources, and deploys the CDC. Once all steps complete, the condition flips to `Ready=True`.
-
----
-
-## Authentication
+## Advanced: Authentication for Private Registries
 
 If your chart source is private, add a `credentials` block to `spec.chart`.
 
 ### OCI Registry
+
+Create the secret first:
 
 ```bash
 kubectl create secret generic my-registry-secret \
   --from-literal=token=YOUR_TOKEN \
   -n cheatsheet-system
 ```
+
+Then add credentials to the CompositionDefinition:
 
 ```yaml
 spec:
@@ -129,6 +145,8 @@ kubectl create secret generic gcp-sa-secret -n cheatsheet-system \
   --from-file=secret-access-credentials=/path/to/krateoregistry-key.json
 ```
 
+Then configure the CompositionDefinition:
+
 ```yaml
 spec:
   chart:
@@ -146,11 +164,15 @@ spec:
 
 ### Helm Repository
 
+Create the secret:
+
 ```bash
 kubectl create secret generic helm-repo-secret \
   --from-literal=token=YOUR_TOKEN \
   -n cheatsheet-system
 ```
+
+Then add credentials:
 
 ```yaml
 spec:
@@ -170,4 +192,5 @@ spec:
 
 ## Next steps
 
-- [Create a Composition](30-create-composition.md)
+- [Create a Composition](30-create-composition.md) instance from this CompositionDefinition
+- [Explore the CompositionDefinition CRD](../../../60-core-crd-reference/10-core-provider-crd.md) for detailed specification

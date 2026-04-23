@@ -45,6 +45,14 @@ kubectl rollout status deployment/githubscaffoldinglifecycles-v0-0-2-controller 
 
 ## 3. Verify all Compositions are on the new version
 
+Using `krateoctl`:
+
+```bash
+krateoctl get compositions -A
+```
+
+Or using `kubectl` with custom-columns to view the version label:
+
 ```bash
 kubectl get githubscaffoldinglifecycles -A \
   -o custom-columns=\

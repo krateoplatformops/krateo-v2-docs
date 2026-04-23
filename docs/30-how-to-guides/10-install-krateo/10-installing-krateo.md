@@ -14,7 +14,7 @@ This guide walks through installing Krateo 3.0.0 on Kubernetes, with specific in
 
 ## Prerequisites
 
-- A Kubernetes cluster (v1.28+)
+- A Kubernetes cluster (v1.30+)
 - `kubectl` configured to access your cluster
 - `krateoctl` installed — see [krateoctl installation guide](../../20-key-concepts/50-krateoctl/10-krateoctl-overview.md)
 

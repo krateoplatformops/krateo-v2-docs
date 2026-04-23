@@ -43,7 +43,15 @@ kubectl wait compositiondefinition lifecycleapp-cd-v2 \
 
 ## 2. Inspect current version assignments
 
-Query the `krateo.io/composition-version` label directly to see which version each Composition is on:
+Query the `krateo.io/composition-version` label to see which version each Composition is on.
+
+Using `krateoctl`:
+
+```bash
+krateoctl get compositions -A
+```
+
+Or using `kubectl` with custom-columns:
 
 ```bash
 kubectl get githubscaffoldinglifecycles -A \

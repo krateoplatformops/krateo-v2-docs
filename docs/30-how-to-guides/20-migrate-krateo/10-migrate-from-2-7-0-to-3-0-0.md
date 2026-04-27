@@ -1,7 +1,10 @@
 ---
-description: Migrating Krateo PlatformOps from v2.7.0 to v3.0.0rc
-sidebar_label: Migrating Krateo PlatformOps from v2.7.0 to v3.0.0rc
+description: Migrating Krateo PlatformOps from v2.7.0 to v3.0.0
+sidebar_label: Migrating Krateo PlatformOps from v2.7.0 to v3.0.0
 ---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Krateo 2.7.0 to 3.0.0 Migration Guide
 
@@ -9,71 +12,22 @@ Krateo 3.0.0 introduces a major architectural shift from a cluster-resident cont
 
 ## Table of Contents
 
-- [What's Changed in 3.0.0](#whats-changed-in-30)
 - [Prerequisites](#prerequisites)
-- [Migration Steps](#migration-steps)
+- [Before You Start](#before-you-start)
 - [Secrets Configuration](#secrets-configuration)
 - [Migration for Different Environments](#migration-for-different-environments)
 - [Fresh Installations or Future Updates](#fresh-installations-or-future-updates)
-- [About Pre-Upgrade Cleanup and Deployment Profiles](#about-pre-upgrade-cleanup-and-deployment-profiles)
+- [Verify Migration Success](#verify-migration-success)
+- [About Pre-Upgrade Cleanup](#about-pre-upgrade-cleanup)
+- [Configuration Reference](#configuration-reference)
 - [Getting Help](#getting-help)
 
-## What's Changed in 3.0.0
+## Key Changes in 3.0.0
 
-### Infrastructure Updates
-
-#### Database Layer
-- **CNPG (CloudNativePG):** Production-grade PostgreSQL on Kubernetes, replacing dedicated etcd
-  - Kubernetes events now persisted in PostgreSQL
-  - Subset of Krateo resources stored for frontend consumption
-  - Improved query performance and scalability
-
-- **Deviser:** New component for PostgreSQL database preparation, maintenance, and lifecycle management tasks
-
-### Component Upgrades
-
-#### Events Stack (Completely Rewritten)
-- **Old:** eventsse and eventrouter components
-- **New:** Ingester + Presenter architecture
-  - Ingester: Collects and processes Kubernetes events
-  - Presenter: Exposes events to frontend
-  - OpenTelemetry metrics now available for observability
-  - Transparent replacement with improved performance
-
-#### Resources Stack (New)
-- **Ingester + Presenter model:** Mirrors Events Stack pattern
-- **Storage:** Stores defined Krateo resources in PostgreSQL
-- **Performance:** Serves resources to frontend at significantly higher speed
-- **UX Impact:** More responsive frontend, smoother user experience
-
-#### Core Provider
-- Enhanced certificate management with periodic reconciliation and retry logic
-- Ensures consistent CA bundle propagation before composition definitions go ready
-- Improved error handling and panic detection in composition operations
-- Fixed race conditions in certificate synchronization
-- Integrated optimized shared Helm library
-
-#### Composition Dynamic Controller
-- Safe release name option to disable random Helm suffix (configurable per composition)
-- Refactored package structure for maintainability
-- Improved event recorder throttling to reduce noise
-- Integrated optimized shared Helm library
-
-#### OASGen Provider
-- Generated controllers emit fewer Kubernetes events through improved throttling
-- Better event aggregation reduces cluster noise
-
-#### Autopilot (Enhanced)
-- Context caching and compression for improved agent precision and speed
-- Multi-version support: now handles Krateo 2.6, 2.7, and 3.0
-- Improved agent instructions and descriptions for higher-quality generated resources
-
-#### Frontend (Significant Updates)
-- Row-level actions inside Table widgets for direct resource manipulation
-- Updated EventList and Notifications to new events format
-- Cursor-based pagination for improved performance on large datasets
-- Theme and logo customization support
-- Fixed UI and logical issues: notifications display, login flows, form redirects, event logging
+- **CLI-based management:** Installation and upgrades now managed through `krateoctl` instead of an in-cluster controller, giving you explicit control via `plan` and `apply` workflows.
+- **Database migration:** PostgreSQL (via CNPG) replaces etcd, with events and resources now persisted in PostgreSQL for better scalability.
+- **Rewritten event and resource stacks:** New Ingester + Presenter architecture with improved performance and OpenTelemetry metrics support.
+- **Enhanced components:** Updated Core Provider, Composition Dynamic Controller, OASGen Provider, Autopilot, and frontend with performance improvements and new capabilities.
 
 ## Prerequisites
 
@@ -85,13 +39,14 @@ Krateo 3.0.0 introduces a major architectural shift from a cluster-resident cont
 :::note
 These migration steps are **only for existing Krateo 2.7.0 installations** managed by the installer controller. For fresh Krateo 3.0.0 installations on a new cluster, use `krateoctl install apply` directly with your `krateo.yaml` configuration file instead of the migration commands.
 :::
-## Migration Steps
+## Before You Start
 
 :::important
 These steps apply **only when migrating from an existing Krateo 2.7.0 installation** with the installer controller running in your cluster.
 
 For **fresh Krateo 3.0.0 installations** on a new cluster, see [Install and Upgrade](../install-krateo/installing-krateo) and use `krateoctl install apply` directly with your `krateo.yaml` file.
 :::
+
 ### 1. Prepare Your Environment
 
 Ensure your current installation is running smoothly:
@@ -107,104 +62,6 @@ Export your legacy configuration for reference:
 
 ```bash
 kubectl get krateoplatformops krateo -n krateo-system -o yaml > krateo-2.7.0-backup.yaml
-```
-
-### 3. Generate Migration Plan
-
-Preview what will be migrated before applying:
-
-```bash
-krateoctl install migrate --namespace krateo-system --output krateo.yaml
-```
-
-This generates a new `krateo.yaml` file with your configuration converted to the new format. Review it carefully:
-
-```bash
-cat krateo.yaml
-```
-
-### 4. Understand the Layered Configuration
-
-In 3.0.0, configuration follows this precedence (highest to lowest):
-
-1. CLI flags (`--set`, `--type`, shortcuts like `--openshift`)
-2. `krateo-overrides.yaml` (optional user overrides)
-3. `krateo.yaml` (base release profile)
-4. Hardcoded defaults
-
-If you need to customize the installation, create `krateo-overrides.yaml` instead of modifying `krateo.yaml` directly.
-
-### 5. Generate the Full Migration Plan
-
-Generate the complete migration configuration for your infrastructure type. If using OpenShift, add the `--profile openshift` flag:
-
-```bash
-krateoctl install migrate-full \
-  --type <nodeport|loadbalancer|ingress> \
-  --namespace krateo-system \
-  --output krateo.yaml
-
-# For OpenShift:
-krateoctl install migrate-full \
-  --type loadbalancer \
-  --profile openshift \
-  --namespace krateo-system \
-  --output krateo.yaml
-```
-
-This generates the new `krateo.yaml` with all 3.0.0 components and configurations. Review the generated file:
-
-```bash
-cat krateo.yaml
-# Make any customizations by creating krateo-overrides.yaml
-```
-
-### 6. Apply the Migration
-
-Once you've reviewed the plan, apply the migration to your cluster:
-
-```bash
-krateoctl install apply \
-  --namespace krateo-system
-```
-
-This will:
-- Run the pre-upgrade cleanup job to remove deprecated 2.7.0 components
-- Delete the legacy `KrateoPlatformOps` resource
-- Uninstall old Helm releases and persistent volumes (e.g., etcd storage)
-- Install all 3.0.0 components in correct dependency order
-- Create the `Installation` resource snapshot
-
-#### Deprecated Components Removed During Application
-
-The pre-upgrade cleanup job automatically removes 2.7.0 components that are replaced in 3.0.0. See the [pre-upgrade cleanup script](https://github.com/krateoplatformops/releases/blob/main/pre-upgrade.yaml) for details. Components removed:
-
-| Removed Component | Replacement | Reason |
-| --- | --- | --- |
-| **eventsse** | Events Stack Ingester/Presenter | Rewritten for better performance and OpenTelemetry support |
-| **eventrouter** | Events Stack Ingester/Presenter | Merged into new events system architecture |
-| **eventsse-etcd** | CNPG PostgreSQL | Dedicated etcd replaced with managed PostgreSQL database |
-| **sweeper** | Database maintenance (Deviser) | Rolled into new database lifecycle management |
-| **finops-composition-definition-parser** | (Reimplemented) | Refactored as part of FinOps stack redesign |
-
-The cleanup job also removes persistent volumes (e.g., `etcd-data-eventsse-etcd-0`) to ensure a clean migration path.
-
-### 7. Verify Migration Success
-
-Check that the migration completed successfully:
-
-```bash
-# Verify new Installation snapshot exists
-kubectl get installation -n krateo-system
-
-# Verify Krateo components are running
-kubectl get pods -n krateo-system
-
-# Verify no legacy resources remain
-kubectl get krateoplatformops -n krateo-system || echo "Legacy resources cleaned up"
-
-# Check the installation state snapshot
-kubectl get installation krateoctl -n krateo-system -o yaml
 ```
 
 ## Secrets Configuration
@@ -264,7 +121,9 @@ This section shows how to **migrate from Krateo 2.7.0 to 3.0.0** with different 
 
 For **fresh Krateo 3.0.0 installations** (not migration), see [Install and Upgrade](../install-krateo/installing-krateo).
 :::
-The `--type` flag during migration determines the deployment profile and networking configuration for your Krateo installation. Choose based on your infrastructure:
+
+<Tabs groupId="migration-type">
+  <TabItem value="nodeport" label="NodePort (Kind, Local)" default>
 
 ### NodePort (Kind, Local Development, Air-Gapped Clusters)
 
@@ -275,7 +134,10 @@ The `--type` flag during migration determines the deployment profile and network
 - No external load balancer required
 - Direct node IP access needed
 
-**Installation:**
+**Migration Steps:**
+
+See [`krateoctl install migrate-full`](../../20-key-concepts/50-krateoctl/30-installation-migration.md#automated-migration) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command) for detailed command documentation.
+
 ```bash
 # Step 1: Migrate from controller-based 2.7.0 to CLI-based management
 krateoctl install migrate-full \
@@ -291,21 +153,16 @@ krateoctl install apply \
 ```
 
 **Access Krateo after upgrade completes:**
-```bash
-# Get the node IP and service port
-NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
-SERVICE_PORT=$(kubectl get svc krateo-frontend -n krateo-system -o jsonpath='{.spec.ports[0].nodePort}')
 
-# Access via: http://$NODE_IP:$SERVICE_PORT
-echo "Access Krateo at: http://$NODE_IP:$SERVICE_PORT"
+The Kind cluster is configured to expose Krateo ports directly to localhost. Simply access:
+
+```
+http://localhost:30080
 ```
 
-**For Kind clusters:**
-```bash
-# If using Kind, port-forward for local access
-kubectl port-forward -n krateo-system svc/krateo-frontend 8080:80 &
-# Access at: http://localhost:8080
-```
+  </TabItem>
+
+  <TabItem value="loadbalancer" label="LoadBalancer (Cloud)">
 
 ### LoadBalancer (Cloud Providers: AWS, GCP, Azure)
 
@@ -316,7 +173,10 @@ kubectl port-forward -n krateo-system svc/krateo-frontend 8080:80 &
 - Cloud provider handles load balancing and routing
 - No domain required (use cloud provider's assigned hostname)
 
-**Installation:**
+**Migration Steps:**
+
+See [`krateoctl install migrate-full`](../../20-key-concepts/50-krateoctl/30-installation-migration.md#automated-migration) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command) for detailed command documentation.
+
 ```bash
 # Step 1: Migrate from controller-based 2.7.0 to CLI-based management
 krateoctl install migrate-full \
@@ -331,6 +191,23 @@ krateoctl install apply \
   --namespace krateo-system
 ```
 
+**For AWS:** AWS LoadBalancers expose a hostname instead of an IP address. Use the `--profile lb-hostname` flag to configure Krateo for hostname-based service discovery:
+
+```bash
+# For AWS migrations, add the lb-hostname profile
+krateoctl install migrate-full \
+  --type loadbalancer \
+  --profile lb-hostname \
+  --namespace krateo-system \
+  --output krateo.yaml
+
+krateoctl install apply \
+  --version 3.0.0 \
+  --type loadbalancer \
+  --profile lb-hostname \
+  --namespace krateo-system
+```
+
 **Access Krateo:**
 ```bash
 # Get the external LoadBalancer IP/hostname
@@ -342,10 +219,18 @@ kubectl get svc krateo-frontend -n krateo-system
 
 **Example outputs:**
 ```
-# AWS/GCP/Azure
+# GCP/Azure (IP-based)
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP
+krateo-frontend   LoadBalancer   10.0.0.100       34.123.45.67
+
+# AWS (hostname-based)
 NAME              TYPE           CLUSTER-IP       EXTERNAL-IP
 krateo-frontend   LoadBalancer   10.0.0.100       a1b2c3d4-123456789.elb.amazonaws.com
 ```
+
+  </TabItem>
+
+  <TabItem value="ingress" label="Ingress (Production)">
 
 ### Ingress (Cloud Providers with Custom Domains)
 
@@ -357,7 +242,10 @@ krateo-frontend   LoadBalancer   10.0.0.100       a1b2c3d4-123456789.elb.amazona
 - Requires Ingress Controller (nginx-ingress, traefik, etc.)
 - More control over routing and SSL/TLS
 
-**Installation:**
+**Migration Steps:**
+
+See [`krateoctl install migrate-full`](../../20-key-concepts/50-krateoctl/30-installation-migration.md#automated-migration) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command) for detailed command documentation.
+
 ```bash
 # Step 1: Migrate from controller-based 2.7.0 to CLI-based management
 krateoctl install migrate-full \
@@ -374,21 +262,25 @@ krateoctl install apply \
 
 **Configure your domain:**
 
-#### Option 1: Local Environment (without domain registration)
+For production deployments, configure your DNS to point to your Ingress controller's IP address. See the [Install and Upgrade](../install-krateo/installing-krateo) guide for detailed domain configuration steps.
 
-#### Option 2: Production/Cloud Environment (with domain registration)
+  </TabItem>
+
+  <TabItem value="openshift" label="OpenShift">
 
 ### OpenShift (with OpenShift Profile)
 
 **Best for:** OpenShift Container Platform with native security, RBAC, and route management.
 
-**Installation:**
-OpenShift requires combining a `--type` with the `--profile openshift` flag:
+**Migration Steps:**
+
+OpenShift requires combining a `--type` with the `--profile openshift` flag. See [`krateoctl install migrate-full`](../../20-key-concepts/50-krateoctl/30-installation-migration.md#automated-migration) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command) for detailed command documentation.
 
 ```bash
 # Step 1: Migrate from controller-based 2.7.0 to CLI-based management
 krateoctl install migrate-full \
   --type loadbalancer \
+  --profile openshift \
   --namespace krateo-system \
   --output krateo.yaml
 
@@ -400,15 +292,31 @@ krateoctl install apply \
   --namespace krateo-system
 ```
 
-This applies the OpenShift-specific profile which includes:
-- Restricted security context for pod security policies
-- OpenShift RBAC configurations
-- Routes for service exposure (handles networking automatically)
-- OpenShift-native networking and security
+**For OpenShift on AWS:** If your OpenShift cluster runs on AWS, add the `lb-hostname` profile since AWS LoadBalancers expose hostname instead of IP:
+
+```bash
+# For OpenShift on AWS, combine both profiles
+krateoctl install migrate-full \
+  --type loadbalancer \
+  --profile openshift,lb-hostname \
+  --namespace krateo-system \
+  --output krateo.yaml
+
+krateoctl install apply \
+  --version 3.0.0 \
+  --type loadbalancer \
+  --profile openshift,lb-hostname \
+  --namespace krateo-system
+```
+
+This applies the OpenShift-specific profile which includes: **restricted security context** for pod security policies, **OpenShift RBAC** configurations, **Routes** for service exposure (handles networking automatically), and **OpenShift-native networking and security**. When combined with `lb-hostname`, it also configures hostname-based LoadBalancer service discovery for AWS environments.
+
+  </TabItem>
+</Tabs>
 
 ## Fresh Installations or Future Updates
 
-After successful migration, upgrading to future 3.x versions is straightforward:
+After successful migration, upgrading to future 3.x versions is straightforward using [`krateoctl install plan`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#plan-command) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command):
 
 ```bash
 # Preview the upgrade
@@ -420,7 +328,42 @@ krateoctl install apply --version 3.0.0 --namespace krateo-system --type <nodepo
 
 See [Install and Upgrade](../install-krateo/installing-krateo) for detailed instructions.
 
-## About Pre-Upgrade Cleanup and Deployment Profiles
+## Verify Migration Success
+
+After completing the migration steps for your environment (one of: NodePort, LoadBalancer, Ingress, or OpenShift), verify that the migration was successful:
+
+```bash
+# Verify new Installation snapshot exists
+kubectl get installation -n krateo-system
+
+# Verify Krateo components are running
+kubectl get pods -n krateo-system
+
+# Verify no legacy resources remain
+kubectl get krateoplatformops -n krateo-system || echo "Legacy resources cleaned up"
+
+# Check the installation state snapshot
+kubectl get installation krateoctl -n krateo-system -o yaml
+```
+
+**Expected outcomes:**
+
+- `kubectl get installation` should show the `krateoctl` Installation resource
+- `kubectl get pods` should show all Krateo 3.0.0 components running (eventsse, core-provider, composition-dynamic-controller, etc.)
+- `kubectl get krateoplatformops` should return no resources (legacy controller cleaned up)
+- The Installation snapshot contains the resolved components definition and installation version
+
+If any of these checks fails, review the logs:
+
+```bash
+# Check krateoctl migration logs
+kubectl logs -n krateo-system -l app=krateoctl --tail=50
+
+# Check component status
+kubectl get events -n krateo-system --sort-by='.lastTimestamp'
+```
+
+## About Pre-Upgrade Cleanup
 
 The migration process uses standardized deployment configurations that handle both initial installations and version upgrades. These configurations are maintained in the [Krateo releases repository](https://github.com/krateoplatformops/releases).
 
@@ -444,37 +387,27 @@ kubectl apply -f pre-upgrade.yaml
 kubectl wait --for=condition=complete job/uninstall-old-components -n krateo-system
 ```
 
-### Deployment Configuration Profiles and Types
+## Configuration Reference
 
-The 3.0.0 installation uses two separate configuration mechanisms:
+### Deprecated Components Removed During Migration
 
-**Type (`--type`)** determines the networking/service exposure method:
-- **LoadBalancer**: For cloud environments (GCP, AWS, Azure) using external LoadBalancer services
-- **NodePort**: For local development and air-gapped environments
-- **Ingress**: For production with custom domains and Ingress Controllers
+The pre-upgrade cleanup job automatically removes 2.7.0 components that are replaced in 3.0.0. See the [pre-upgrade cleanup script](https://github.com/krateoplatformops/releases/blob/main/pre-upgrade.yaml) for details. Components removed:
 
-**Profile (`--profile`)** applies environment-specific configurations and overrides:
-- **openshift**: Enables OpenShift-specific security contexts, RBAC, Routes, and pod security policies. Use with any `--type`.
-- **monitoring**: Adds enhanced observability and metrics collection (optional)
-- **debug**: Enables verbose logging and debugging output (optional)
+| Removed Component | Replacement | Reason |
+| --- | --- | --- |
+| **eventsse** | Events Stack Ingester/Presenter | Rewritten for better performance and OpenTelemetry support |
+| **eventrouter** | Events Stack Ingester/Presenter | Merged into new events system architecture |
+| **eventsse-etcd** | CNPG PostgreSQL | Dedicated etcd replaced with managed PostgreSQL database |
+| **sweeper** | Database maintenance (Deviser) | Rolled into new database lifecycle management |
+| **finops-composition-definition-parser** | (Reimplemented) | Refactored as part of FinOps stack redesign |
 
-Example usage:
-```bash
-# Standard cloud deployment
-krateoctl install migrate-full --type loadbalancer ...
-
-# OpenShift deployment
-krateoctl install migrate-full --type loadbalancer --profile openshift ...
-
-# Local development with monitoring
-krateoctl install migrate-full --type nodeport --profile monitoring ...
-```
-
-Each combination specifies the complete `KrateoPlatformOps` manifest with all 20+ components, their versions, and environment-specific settings. See the [releases repository](https://github.com/krateoplatformops/releases) for available profiles and detailed documentation.
+The cleanup job also removes persistent volumes (e.g., `etcd-data-eventsse-etcd-0`) to ensure a clean migration path.
 
 ## Getting Help
 
-- Review existing [migration documentation](./installation-migration)
-- Check [install and upgrade guide](../install-krateo/installing-krateo)
-- Consult [secrets configuration](../install-krateo/secrets)
-- Enable debug logging: `KRATEOCTL_DEBUG=1 krateoctl install migrate-full`
+If you encounter issues during migration:
+
+- Review the [krateoctl installation and migration documentation](../../20-key-concepts/50-krateoctl/30-installation-migration.md)
+- Check the [Secrets Spec](../install-krateo/secrets) for configuration requirements
+- Enable debug logging with `KRATEOCTL_DEBUG=1 krateoctl install migrate-full` for detailed troubleshooting
+- Consult the [Install and Upgrade guide](../install-krateo/installing-krateo) for post-migration setup

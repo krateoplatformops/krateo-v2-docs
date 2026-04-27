@@ -64,3 +64,4 @@ Full CRD configuration: [doc.crds.dev/github.com/krateoplatformops/core-provider
 | `URL_PLURALS` | **DEPRECATED** (≥ 0.24.2) — URL to krateo pluraliser service | `http://snowplow.krateo-system.svc.cluster.local:8081/api-info/names` | String |
 | `OTEL_ENABLED`                        | Enables OTLP metrics export for provider-runtime telemetry | `false`      | Use `--metrics-enabled` flag |
 | `OTEL_EXPORT_INTERVAL`                | Interval used to export OTLP metrics | `30s`        | Duration |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`        | OTLP endpoint for metrics export | `` | OTLP endpoint URL (e.g., `http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318`) |

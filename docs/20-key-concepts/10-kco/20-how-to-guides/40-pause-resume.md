@@ -49,6 +49,6 @@ Available from `composition-dynamic-controller` ≥ 0.19.3 (released with `core-
 
 A graceful pause first pauses **all resources managed by the Composition** before pausing the Composition itself. This prevents child resources from being reconciled independently during the pause window.
 
-To use this feature, your Helm chart must be updated to support it. See the [`composition-dynamic-controller` documentation](https://github.com/krateoplatformops/composition-dynamic-controller?tab=readme-ov-file#about-the-gracefullypaused-value) for the required chart changes.
+To use this feature, your Helm chart must be updated to support it. See the [Composition Dynamic Controller documentation](../20-composition-dynamic-controller.md#about-the-gracefullypaused-value) for the required chart changes.
 
 > This feature is not backward compatible with charts that haven't been updated.

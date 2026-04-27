@@ -50,6 +50,16 @@ This repository is used as a versioned source of installation assets. `krateoctl
 
 If you maintain your own release repository, you can point `--repository` at a GitHub repo with the same layout.
 
+### Profile Resolution
+
+When you specify `--profile` (e.g., `--profile dev` or `--profile dev,aws-lb-hostname`):
+
+- **In remote mode** (`--version` set): krateoctl searches for `krateo-overrides.<profile>.yaml` in the remote repository first, then falls back to local files if not found.
+- **In local mode** (no `--version`): krateoctl searches for `krateo-overrides.<profile>.yaml` in local files only.
+- **If the profile is not found** in either location (or both), krateoctl returns an error and stops execution.
+
+This allows profiles to be overridden locally even when using a remote release, but requires at least one source to contain the profile file.
+
 ## Installation Snapshot
 
 `krateoctl` saves the resolved installation state as an `Installation` custom resource in the `krateo.io/v1` API group.
@@ -116,6 +126,9 @@ krateoctl install plan [FLAGS]
 
 1. Loads the main config from `krateo.yaml` or from the releases repository when `--version` is set.
 2. Applies `krateo-overrides.yaml` and profile-specific overrides if present.
+   - When `--profile` is used (e.g., `--profile dev,test`), krateoctl looks for `krateo-overrides.<profile>.yaml` files.
+   - **In remote mode** (`--version` set): searches the releases repository first, then falls back to local files if not found.
+   - **In local mode** (no `--version`): searches only local files.
 3. Selects type-specific files first, then falls back to the generic ones.
 4. Computes the workflow steps.
 5. Optionally compares the plan against the last saved installation snapshot.
@@ -145,6 +158,21 @@ krateoctl install plan --version 3.0.0 --diff-installed
 ```sh
 # Show a step-by-step diff summary in a table
 krateoctl install plan --diff-format table
+```
+
+```sh
+# Preview with a profile from local files
+krateoctl install plan --profile dev
+```
+
+```sh
+# Preview with a profile from a release version (searches repository first, then local)
+krateoctl install plan --version 3.0.0 --profile dev
+```
+
+```sh
+# Preview with multiple profiles (all profiles use remote-first, local-fallback)
+krateoctl install plan --version 3.0.0 --profile dev,aws-lb-hostname
 ```
 
 ## Apply Command

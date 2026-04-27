@@ -114,6 +114,12 @@ You can finally install Krateo without the default CNPG component and pointing t
 krateoctl install apply --profile no-cnpg --config <path-to-your-config-file>
 ```
 
+:::warning
+The `--profile no-cnpg` persists across upgrades. Omitting it later will install CNPG and may conflict with your setup. Always include it in future upgrades.
+
+See [Profile Configuration](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#profile-resolution) for details.
+:::
+
 ## What happens to your own PostgreSQL instance?
 
 When you choose to bring your own PostgreSQL instance, a Krateo component called `deviser` will connect to your database and create the necessary tables and partitions for Krateo to operate.

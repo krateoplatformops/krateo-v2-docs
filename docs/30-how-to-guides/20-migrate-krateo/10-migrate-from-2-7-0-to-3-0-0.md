@@ -220,6 +220,14 @@ krateoctl install apply \
   --namespace krateo-system
 ```
 
+:::tip
+The `--profile lb-hostname` configures AWS-specific hostname handling. This profile persists in your cluster, so always include it in future upgrades or configuration changes:
+```bash
+krateoctl install apply --version 3.x.x --type loadbalancer --profile lb-hostname
+```
+If you omit `--profile lb-hostname` in a later apply, the configuration will revert to IP-based service discovery and may cause connection issues.
+:::
+
 **Access Krateo:**
 ```bash
 # Get the external LoadBalancer IP/hostname
@@ -303,6 +311,12 @@ krateoctl install apply \
   --namespace krateo-system
 ```
 
+:::warning
+The `--profile openshift` persists. Include it in future upgrades or configuration reverts to standard Kubernetes.
+
+See [Profile Configuration](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#profile-resolution) for details.
+:::
+
 **For OpenShift on AWS:** If your OpenShift cluster runs on AWS, add the `lb-hostname` profile since AWS LoadBalancers expose hostname instead of IP:
 
 ```bash
@@ -318,6 +332,12 @@ krateoctl install apply \
   --profile openshift,lb-hostname \
   --namespace krateo-system
 ```
+
+:::warning
+Both profiles persist. Always include `--profile openshift,lb-hostname` in future upgrades.
+
+See [Profile Configuration](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#profile-resolution) for details.
+:::
 
 This applies the OpenShift-specific profile which includes: **restricted security context** for pod security policies, **OpenShift RBAC** configurations, **Routes** for service exposure (handles networking automatically), and **OpenShift-native networking and security**. When combined with `lb-hostname`, it also configures hostname-based LoadBalancer service discovery for AWS environments.
 

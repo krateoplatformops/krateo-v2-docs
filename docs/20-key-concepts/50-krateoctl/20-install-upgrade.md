@@ -60,6 +60,10 @@ When you specify `--profile` (e.g., `--profile dev` or `--profile dev,aws-lb-hos
 
 This allows profiles to be overridden locally even when using a remote release, but requires at least one source to contain the profile file.
 
+:::warning
+**Profiles persist across upgrades** — Changing replaces values, omitting reverts to defaults. Always include your profiles in both `plan` and `apply`. Use `plan --diff-installed` before `apply` to verify changes.
+:::
+
 ## Installation Snapshot
 
 `krateoctl` saves the resolved installation state as an `Installation` custom resource in the `krateo.io/v1` API group.
@@ -102,6 +106,10 @@ See the full [Secrets Spec](50-secrets.md) for the required names, keys, and nam
 
 `krateoctl install plan` is the command that loads the configuration, computes the workflow, and prints the result as multi-document YAML or as a diff summary.
 
+:::tip
+**Always run `plan` before `apply`** to inspect the changes and avoid unexpected configuration modifications.
+:::
+
 ### Usage
 
 ```sh
@@ -133,6 +141,18 @@ krateoctl install plan [FLAGS]
 4. Computes the workflow steps.
 5. Optionally compares the plan against the last saved installation snapshot.
 
+### Understanding --diff-installed
+
+The `--diff-installed` flag controls what `plan` compares against:
+
+- **With `--diff-installed`**: Compares the newly computed plan against the **stored installation snapshot** (last state applied to the cluster)
+  - Use this to see what changed since the last `apply`
+  - Useful for understanding the upgrade impact on the cluster
+
+- **Without `--diff-installed`**: Compares the newly computed plan against the **krateo.yaml file** (local or remote)
+  - Use this to see what the configuration file would produce
+  - Useful for previewing configuration changes before applying
+
 ### Examples
 
 ```sh
@@ -151,7 +171,7 @@ krateoctl install plan --version 3.0.0 --repository https://github.com/myorg/kra
 ```
 
 ```sh
-# Compare the plan against the stored snapshot
+# Compare the plan against the stored snapshot (what changed since last apply)
 krateoctl install plan --version 3.0.0 --diff-installed
 ```
 
@@ -178,6 +198,19 @@ krateoctl install plan --version 3.0.0 --profile dev,aws-lb-hostname
 ## Apply Command
 
 `krateoctl install apply` is the command that executes the computed workflow against the cluster.
+
+:::warning
+**Profiles and Versions Affect Your Configuration**
+
+When you run `apply`, the combination of `--version`, `--type`, and `--profile` flags directly determines which configuration values are applied:
+
+1. **Changing profiles or versions replaces values** — If you used `--profile dark-theme` in one apply and `--profile light-theme` in the next apply, all values from the previous `dark-theme` profile will be replaced with `light-theme` values.
+
+2. **Omitting a profile removes its configuration** — If you used `--profile dark-theme` initially and then run `apply` without it, the dark-theme configuration is lost and reverts to defaults.
+
+3. **Always use `plan` to inspect changes** — Always run `krateoctl install plan` (with the same flags you'll use for `apply`) before actually running `apply`, so you can review the changes and confirm they are expected.
+
+:::
 
 ### Usage
 
@@ -227,16 +260,46 @@ krateoctl install apply --version 3.0.0 --repository https://github.com/myorg/kr
 krateoctl install apply --config ./krateo.yaml --type ingress
 ```
 
+```sh
+# Apply with a profile (preview first with: krateoctl install plan --version 3.0.0 --profile dark-theme)
+krateoctl install apply --version 3.0.0 --profile dark-theme
+```
+
 ## Upgrade Flow
 
-For a normal upgrade, the recommended sequence is:
+For a safe upgrade workflow, always follow this sequence:
+
+:::tip
+**Recommended Safe Upgrade Workflow**
 
 1. Run `krateoctl install plan --version <tag> --diff-installed` to compare the target release with the stored installation snapshot.
-2. Review the diff and confirm the upgrade path looks correct.
-3. Run `krateoctl install apply --version <tag>` to perform the upgrade.
-4. Keep `--repository` pointed at `https://github.com/krateoplatformops/releases` unless you mirror the release assets elsewhere.
-5. Use `--type` to match the target environment layout, such as `nodeport`, `loadbalancer`, or `ingress`.
-6. Use `--diff-installed` when you want to compare the computed plan against the stored snapshot before applying.
+   - This shows you exactly what changed since your last `apply`
+   - Review the diff carefully before proceeding
+
+2. Verify your `--profile` and `--type` flags are correct
+   - If you previously used `--profile`, include it again or the profile configuration will be lost
+   - If you're changing profiles, understand that existing values will be replaced
+
+3. Run `krateoctl install apply --version <tag>` with the same flags you used in `plan`
+   - This ensures the configuration matches what you previewed
+
+4. Verify the upgrade succeeded
+   - Check pod status and events in your namespace
+:::
+
+**General Upgrade Guidelines:**
+
+- Keep `--repository` pointed at `https://github.com/krateoplatformops/releases` unless you mirror the release assets elsewhere
+- Use `--type` to match the target environment layout, such as `nodeport`, `loadbalancer`, or `ingress`
+- Use `--diff-installed` when you want to compare against the stored snapshot (what changed since last apply)
+- Omit `--diff-installed` if you want to see the diff against the configuration file instead
+
+**Profile Best Practices:**
+
+- Document which profiles you are using in your environment
+- Always include `--profile` in both `plan` and `apply` commands if you're using profiles
+- Never omit a profile in `apply` if it was used in previous applies, or the configuration will revert to defaults
+- When changing profiles, use `plan --diff-installed` to see the full impact before applying
 
 ## Notes
 

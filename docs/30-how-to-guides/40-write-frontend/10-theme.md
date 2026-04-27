@@ -188,4 +188,10 @@ The `--profile dark-theme` flag tells `krateoctl` to look for `krateo-overrides.
 
 If a profile exists in both locations, the remote version takes precedence, but you can override it with a local file. This is useful for local development or testing before committing changes to the releases repository.
 
-For more details on profiles, local overrides, and the `krateoctl` installation workflow, refer to the [krateoctl install and upgrade guide](../../20-key-concepts/50-krateoctl/20-install-upgrade.md).
+:::warning
+The `--profile dark-theme` persists across upgrades. Include it in future upgrades or it reverts to defaults. Use `plan` before `apply` to preview changes.
+
+See [Profile Configuration](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#profile-resolution) for full details.
+:::
+
+For more on local overrides and the `krateoctl` installation workflow, refer to the [krateoctl install and upgrade guide](../../20-key-concepts/50-krateoctl/20-install-upgrade.md).

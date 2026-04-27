@@ -22,6 +22,18 @@ Krateo 3.0.0 introduces a major architectural shift from a cluster-resident cont
 - [Configuration Reference](#configuration-reference)
 - [Getting Help](#getting-help)
 
+## Important: Two-Step Migration Process
+
+:::warning
+**`krateoctl install migrate-full` migrates management only — it does NOT upgrade to Krateo 3.0.0.**
+
+`migrate-full` converts your Krateo 2.7.0 installation from **installer-managed** to **krateoctl-managed**, keeping you on Krateo 2.7.0. To upgrade to Krateo 3.0.0, you must run `krateoctl install apply --version 3.0.0` after the migration completes.
+
+**Migration workflow:**
+1. `krateoctl install migrate-full` — converts 2.7.0 from installer-managed to krateoctl-managed
+2. `krateoctl install apply --version 3.0.0` — upgrades to 3.0.0
+:::
+
 ## Key Changes in 3.0.0
 
 - **CLI-based management:** Installation and upgrades now managed through `krateoctl` instead of an in-cluster controller, giving you explicit control via `plan` and `apply` workflows.
@@ -191,16 +203,16 @@ krateoctl install apply \
   --namespace krateo-system
 ```
 
-**For AWS:** AWS LoadBalancers expose a hostname instead of an IP address. Use the `--profile lb-hostname` flag to configure Krateo for hostname-based service discovery:
+**For AWS:** AWS LoadBalancers expose a hostname instead of an IP address. Use the `--profile lb-hostname` flag during the `install apply` step to configure Krateo for hostname-based service discovery:
 
 ```bash
-# For AWS migrations, add the lb-hostname profile
+# For AWS migrations, first run the migration
 krateoctl install migrate-full \
   --type loadbalancer \
-  --profile lb-hostname \
   --namespace krateo-system \
   --output krateo.yaml
 
+# Then apply with the lb-hostname profile for AWS
 krateoctl install apply \
   --version 3.0.0 \
   --type loadbalancer \
@@ -274,17 +286,16 @@ For production deployments, configure your DNS to point to your Ingress controll
 
 **Migration Steps:**
 
-OpenShift requires combining a `--type` with the `--profile openshift` flag. See [`krateoctl install migrate-full`](../../20-key-concepts/50-krateoctl/30-installation-migration.md#automated-migration) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command) for detailed command documentation.
+OpenShift requires combining a `--type` with the `--profile openshift` flag during the `install apply` step. See [`krateoctl install migrate-full`](../../20-key-concepts/50-krateoctl/30-installation-migration.md#automated-migration) and [`krateoctl install apply`](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#apply-command) for detailed command documentation.
 
 ```bash
 # Step 1: Migrate from controller-based 2.7.0 to CLI-based management
 krateoctl install migrate-full \
   --type loadbalancer \
-  --profile openshift \
   --namespace krateo-system \
   --output krateo.yaml
 
-# Step 2: Apply to upgrade from 2.7.0 to 3.0.0
+# Step 2: Apply with OpenShift profile to upgrade from 2.7.0 to 3.0.0
 krateoctl install apply \
   --version 3.0.0 \
   --type loadbalancer \
@@ -295,10 +306,9 @@ krateoctl install apply \
 **For OpenShift on AWS:** If your OpenShift cluster runs on AWS, add the `lb-hostname` profile since AWS LoadBalancers expose hostname instead of IP:
 
 ```bash
-# For OpenShift on AWS, combine both profiles
+# For OpenShift on AWS, combine both profiles in apply command
 krateoctl install migrate-full \
   --type loadbalancer \
-  --profile openshift,lb-hostname \
   --namespace krateo-system \
   --output krateo.yaml
 

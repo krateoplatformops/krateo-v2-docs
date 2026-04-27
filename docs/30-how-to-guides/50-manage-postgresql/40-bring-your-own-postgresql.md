@@ -30,7 +30,7 @@ The database will be used by Krateo to store Krateo resources and Kubernetes eve
 
 ### 2. Create a Kubernetes Secret with the connection details for your existing database
 
-You need to create a Kubernetes Secret with the connection details for your existing database as described at: [Secrets Spec](../install-krateo/secrets#krateo-db).
+You need to create a Kubernetes Secret with the connection details for your existing database as described at: [Secrets Spec](../../key-concepts/krateoctl/secrets).
 This secret is used by the Krateo components that need database access: `deviser`, `resources-ingester`, `resources-presenter`, `events-ingester` and `events-presenter`.
 
 ### 3. Create a custom config file for `krateoctl` to point to your existing PostgreSQL instance

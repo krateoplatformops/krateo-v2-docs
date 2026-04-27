@@ -22,7 +22,7 @@ For other environments (LoadBalancer, Ingress, OpenShift), refer to the [compreh
 
 - A Kubernetes cluster (v1.30+)
 - `kubectl` configured to access your cluster
-- `krateoctl` installed — see [krateoctl overview](../50-krateoctl/10-krateoctl-overview.md)
+- `krateoctl` installed — see [krateoctl overview](../../../key-concepts/krateoctl/krateoctl-overview)
 
 ---
 
@@ -30,4 +30,4 @@ For other environments (LoadBalancer, Ingress, OpenShift), refer to the [compreh
 
 - [Deploy a CompositionDefinition](20-deploy-composition-definition.md)
 - [Create a Composition](30-create-composition.md)
-- [Explore krateoctl commands](../50-krateoctl/10-krateoctl-overview.md)
+- [Explore krateoctl commands](../../../key-concepts/krateoctl/krateoctl-overview)

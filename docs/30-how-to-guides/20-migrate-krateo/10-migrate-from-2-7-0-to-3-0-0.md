@@ -78,7 +78,7 @@ kubectl get krateoplatformops krateo -n krateo-system -o yaml > krateo-2.7.0-bac
 
 ## Secrets Configuration
 
-Krateo 3.0.0 does not bootstrap production secrets. Secrets must be created and managed separately before or during the migration. See the full [Secrets Spec](../install-krateo/secrets) for detailed requirements and architecture.
+Krateo 3.0.0 does not bootstrap production secrets. Secrets must be created and managed separately before or during the migration. See the full [Secrets Spec](../../key-concepts/krateoctl/secrets) for detailed requirements and architecture.
 
 ### Creating Required Secrets
 
@@ -124,7 +124,7 @@ The three required secrets are:
 2. **krateo-db** - Database credentials for stack components (DB_USER, DB_PASS)
 3. **krateo-db-user** - Database credentials for CNPG/database (username, password)
 
-Refer to [Secrets Spec](../install-krateo/secrets) for complete details on secret structure, naming, and management best practices.
+Refer to [Secrets Spec](../../key-concepts/krateoctl/secrets) for complete details on secret structure, naming, and management best practices.
 
 ## Migration for Different Environments
 
@@ -418,6 +418,6 @@ The cleanup job also removes persistent volumes (e.g., `etcd-data-eventsse-etcd-
 If you encounter issues during migration:
 
 - Review the [krateoctl installation and migration documentation](../../20-key-concepts/50-krateoctl/30-installation-migration.md)
-- Check the [Secrets Spec](../install-krateo/secrets) for configuration requirements
+- Check the [Secrets Spec](../../key-concepts/krateoctl/secrets) for configuration requirements
 - Enable debug logging with `KRATEOCTL_DEBUG=1 krateoctl install migrate-full` for detailed troubleshooting
 - Consult the [Install and Upgrade guide](../install-krateo/installing-krateo) for post-migration setup

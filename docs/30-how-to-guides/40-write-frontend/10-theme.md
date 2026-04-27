@@ -160,20 +160,32 @@ If the `THEME` variable is defined and points to a valid `Theme` widget, the app
 
 If the fetch fails or the resource is invalid, the system safely falls back to the default Krateo theme.
 
-### Updating the Helm chart values
+### Using a Profile Override
 
-Alternatively, the `Theme` resource can be configured directly inside the [`values.yaml`](https://github.com/krateoplatformops/installer/blob/main/installer-chart/values.yaml) file of the Krateo's [`installer`](https://github.com/krateoplatformops/installer) Helm chart.
+In Krateo 3.0.0, themes are configured during installation using `krateoctl` with profile overrides. Create a `krateo-overrides.dark-theme.yaml` file with the theme configuration:
 
-Within this file, the `config` section defines the frontend configuration and can be updated.
-
-Example:
 ```yaml
-config:
-  AUTHN_API_BASE_URL: "" # should be mapped to authn service
-  SNOWPLOW_API_BASE_URL: "" # should be mapped to snowplow service
-  EVENTS_PUSH_API_BASE_URL: "" # should be mapped to eventsse service
-  EVENTS_API_BASE_URL: "" # should be mapped to eventsse service
-  ROUTES_LOADER: ""
-  INIT: ""
-  THEME: "/call?resource=themes&apiVersion=widgets.templates.krateo.io/v1beta1&name=dark-theme&namespace=krateo-system"
+components:
+  frontend:
+    stepConfig:
+      install-frontend:
+        with:
+          values:
+            config:
+              THEME: "/call?resource=themes&apiVersion=widgets.templates.krateo.io/v1beta1&name=dark-theme&namespace=krateo-system"
 ```
+
+Then apply the profile during installation with `krateoctl install apply`:
+
+```bash
+krateoctl install apply --version 3.0.0 --type loadbalancer --profile dark-theme
+```
+
+The `--profile dark-theme` flag tells `krateoctl` to look for `krateo-overrides.dark-theme.yaml`. When using `krateoctl`, profiles can be:
+
+- **Remote** (from the releases repository) — profiles defined in the remote repository
+- **Local** (from your filesystem) — profiles stored in your local directory, useful for custom or environment-specific configurations
+
+If a profile exists in both locations, the remote version takes precedence, but you can override it with a local file. This is useful for local development or testing before committing changes to the releases repository.
+
+For more details on profiles, local overrides, and the `krateoctl` installation workflow, refer to the [krateoctl install and upgrade guide](../../20-key-concepts/50-krateoctl/20-install-upgrade.md).

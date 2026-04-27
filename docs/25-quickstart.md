@@ -108,6 +108,10 @@ At the end of this process:
 ```shell
 kubectl get secret admin-password  -n krateo-system -o jsonpath="{.data.password}" | base64 -d
 ```
+
+:::tip
+For additional user credentials (e.g., the `cyberjoker` test account for multi-tenant scenarios) and detailed credential management, see [Getting Started Credentials](./how-to-guides/install-krateo/installing-krateo#getting-started-credentials) in the full installation guide.
+:::
 </TabItem>
 </Tabs>
 

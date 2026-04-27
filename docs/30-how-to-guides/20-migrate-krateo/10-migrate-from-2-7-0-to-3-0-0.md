@@ -373,6 +373,16 @@ kubectl logs -n krateo-system -l app=krateoctl --tail=50
 kubectl get events -n krateo-system --sort-by='.lastTimestamp'
 ```
 
+### Access Krateo After Migration
+
+After successful migration and upgrade to 3.0.0, Krateo will be accessible at the appropriate URL based on your infrastructure type:
+
+- **NodePort (Kind):** `http://localhost:30080`
+- **LoadBalancer (Cloud):** `http://<EXTERNAL-IP-or-HOSTNAME>`
+- **Ingress (Production):** `http://<your-domain>`
+
+For user credentials (admin and test accounts), see [Getting Started Credentials](../install-krateo/installing-krateo#getting-started-credentials) in the installation guide.
+
 ## About Pre-Upgrade Cleanup
 
 The migration process uses standardized deployment configurations that handle both initial installations and version upgrades. These configurations are maintained in the [Krateo releases repository](https://github.com/krateoplatformops/releases).

@@ -226,6 +226,44 @@ http://<ingress-host>:8080
 
 ---
 
+## Getting Started Credentials
+
+After successful installation, Krateo creates two default user accounts with auto-generated passwords stored as Kubernetes Secrets in the `krateo-system` namespace.
+
+### Admin User
+
+The **admin** account is the primary administrative user with full platform access.
+
+Retrieve the admin password:
+
+```bash
+kubectl get secret admin-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
+```
+
+**Login credentials:**
+- **Username:** `admin`
+- **Password:** (retrieved from the secret above)
+
+### Cyberjoker User
+
+The **cyberjoker** account is a test user useful for validating multi-tenancy features and testing different user permissions.
+
+Retrieve the cyberjoker password:
+
+```bash
+kubectl get secret cyberjoker-password -n krateo-system -o jsonpath="{.data.password}" | base64 -d
+```
+
+**Login credentials:**
+- **Username:** `cyberjoker`
+- **Password:** (retrieved from the secret above)
+
+:::tip
+Use the cyberjoker account to test multi-tenant scenarios and verify that role-based access control (RBAC) is working correctly across different user contexts.
+:::
+
+---
+
 ## Troubleshooting
 
 ### Secrets not found

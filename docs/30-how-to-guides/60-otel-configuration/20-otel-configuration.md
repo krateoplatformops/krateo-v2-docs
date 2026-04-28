@@ -10,21 +10,81 @@ This guide provides instructions on how to configure OpenTelemetry in Krateo to 
 ## Prerequisites
 
 Before configuring OpenTelemetry in Krateo, make sure you have the following prerequisites in place:
-- An **[OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)** configured in your Kubernetes cluster.
-- A **compatible observability backend** (e.g., Prometheus) set up to receive metrics from the OpenTelemetry Collector.
+1. Run your Krateo components with OpenTelemetry enabled (see [Enabling Metrics](#enabling-metrics-in-components)).
+2. An **[OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)** configured in your Kubernetes cluster.
+3. A **compatible observability backend** (e.g., Prometheus) set up to receive metrics from the OpenTelemetry Collector.
+4. **Grafana** connected to your observability backend as a data source.
 
-:::note
-The setup and configuration of the OpenTelemetry Collector and your observability backend are outside the scope of this guide. Please refer to the [**official documentation of OpenTelemetry**](https://opentelemetry.io/docs/) and your chosen observability backend for detailed instructions on how to set them up.
-:::
+## Deploying OpenTelemetry Collector (Helm)
 
-You can find an example of a basic (**non-production**) configuration of a observability stack with OpenTelemetry Collector and Prometheus in a guide [here](https://github.com/krateoplatformops/krateo-sanity/blob/main/monitoring/monitoring.md). 
+You can deploy a shared Collector in-cluster using the official Helm chart. This example configuration sets up an OTLP HTTP receiver and a Prometheus exporter.
 
-This simple guide is available also in the form of a bash script that you can run in your cluster to quickly set up monitoring stack on a **development environment**. You need the full script suite [`krateo-sanity`](https://github.com/krateoplatformops/krateo-sanity) and refer to the [deploy_monitoring_stack.sh](https://github.com/krateoplatformops/krateo-sanity/blob/main/monitoring/deploy_monitoring_stack.sh) script.
+1. Add the Helm repository:
 
-## Creating a custom config file for `krateoctl` to enable OpenTelemetry metrics
+```bash
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
+```
 
-You can create a custom config file for `krateoctl` to enable OpenTelemetry metrics and set the necessary configurations.
-For instance, you can create a file called `otel-config.yaml` with the following content:
+2. Create a `otelcol-values.yaml` file with the following content:
+
+```yaml
+mode: deployment
+presets:
+  kubernetesAttributes:
+    enabled: true
+config:
+  receivers:
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318
+  exporters:
+    prometheus:
+      endpoint: 0.0.0.0:9464
+  service:
+    pipelines:
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [prometheus]
+ports:
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    protocol: TCP
+  prom-metrics:
+    enabled: true
+    containerPort: 9464
+    servicePort: 9464
+    protocol: TCP
+```
+
+3. Install the Collector:
+
+```bash
+helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
+	-n monitoring --create-namespace \
+	-f otelcol-values.yaml
+```
+
+4. The chart creates the ServiceMonitor automatically, so Prometheus can scrape the Collector metrics endpoint at `:9464`.
+
+## Enabling Metrics in Components
+
+To enable OpenTelemetry metrics in Krateo components, you need to set the following environment variables:
+
+```yaml
+OTEL_ENABLED: "true"
+OTEL_EXPORT_INTERVAL: "30s"
+OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318"
+```
+
+### Using `krateoctl`
+
+You can create a custom config file for `krateoctl` to enable OpenTelemetry metrics.
+For instance, `otel-config.yaml`:
 ```yaml
 components:
   db-maintenance:
@@ -34,53 +94,39 @@ components:
           values:
             config:
               OTEL_ENABLED: "true"
-              OTEL_EXPORT_INTERVAL: "30s" # Change the export interval as needed
-              OTEL_EXPORTER_OTLP_ENDPOINT: <your-otel-collector-endpoint>
-  resources-stack:
-    stepConfig:
-      install-resources-ingester:
-        with:
-          values:
-            config:
-              OTEL_ENABLED: "true"
-              OTEL_EXPORT_INTERVAL: "30s" # Change the export interval as needed
-              OTEL_EXPORTER_OTLP_ENDPOINT: <your-otel-collector-endpoint>
-      install-resources-presenter:
-        with:
-          values:
-            config:
-              OTEL_ENABLED: "true"
-              OTEL_EXPORT_INTERVAL: "30s" # Change the export interval as needed
-              OTEL_EXPORTER_OTLP_ENDPOINT: <your-otel-collector-endpoint>
-  events-stack:
-    stepConfig:
-      install-events-ingester:
-        with:
-          values:
-            config:
-              OTEL_ENABLED: "true"
-              OTEL_EXPORT_INTERVAL: "30s" # Change the export interval as needed
-              OTEL_EXPORTER_OTLP_ENDPOINT: <your-otel-collector-endpoint>
-      install-events-presenter:
-        with:
-          values:
-            config:
-              OTEL_ENABLED: "true"
-              OTEL_EXPORT_INTERVAL: "30s" # Change the export interval as needed
-              OTEL_EXPORTER_OTLP_ENDPOINT: <your-otel-collector-endpoint>
+              OTEL_EXPORT_INTERVAL: "30s"
+              OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318
+  # ... other components
 ```
 
-## Using the `monitoring` profile during installation
+### Using the `monitoring` profile
 
-You can leverage the [`monitoring` profile](https://github.com/krateoplatformops/releases/blob/main/krateo-overrides.monitoring.yaml) during the installation of Krateo to automatically configure the components to expose OpenTelemetry metrics.
-
-:::note
-The `monitoring` profile is thought to be used in **development environments** for quick setup. Indeed, the `OTEL_EXPORTER_OTLP_ENDPOINT` is set to "http://otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:4318", which is the endpoint of the OpenTelemetry Collector in the example monitoring stack provided in the `krateo-sanity` repository. If you are using a different setup for your OpenTelemetry Collector, you can create a custom config based on the `monitoring` profile and change the endpoint accordingly as explained in the previous section.
-:::
-
-To use the `monitoring` profile during installation, you can add the `--profile monitoring` flag to your `krateoctl install apply` command, like this:
+For development environments, you can use the `--profile monitoring` flag during installation:
 ```sh
-krateoctl install apply --profile monitoring[,other-profiles-you-want-to-enable]
+krateoctl install apply --profile monitoring
 ```
 
-This profile will configure all the supported components to expose OpenTelemetry metrics, by setting the necessary environment variables for each componentfor a development environment.
+## Importing Dashboards
+
+Krateo provides ready-to-use Grafana dashboards for various components.
+
+1. Open Grafana.
+2. Go to **Dashboards** -> **New** -> **Import**.
+3. Upload the `.dashboard.json` file provided with the component.
+4. Select your **Prometheus** data source.
+5. Save.
+
+## Metric Naming and Normalization
+
+When metrics flow from OpenTelemetry to Prometheus, they are normalized:
+- Metric names in code use dots (`.`), which Prometheus converts to underscores (`_`).
+- **Counters**: Usually appear with a `_total` suffix (e.g., `provider_runtime.startup.success` becomes `provider_runtime_startup_success_total`).
+- **Histograms**: Expose `_bucket` (cumulative count), `_sum`, and `_count` series.
+- **Average Latency**: Use the `_sum / _count` series for average duration instead of `_bucket` quantiles for more accurate averages.
+
+## Troubleshooting
+
+- **Check collector logs**: `kubectl logs -n monitoring deployment/otel-collector`
+- **Verify Prometheus scrape**: Check `http://<collector-service>:9464/metrics`
+- **Check controller logs**: Look for `OpenTelemetry metrics initialized` messages.
+- **Empty Panels**: Some metrics (like webhooks) are only emitted during active traffic. Panels will remain empty until real requests are processed.

@@ -1,4 +1,4 @@
-# Krateo Core Provider — Concepts
+# Architecture and Concepts
 
 This document explains the foundational concepts behind the Krateo Core Provider. Read this before consulting the how-to guides.
 

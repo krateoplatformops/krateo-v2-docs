@@ -30,7 +30,7 @@ helm install krateo-core-provider krateo/core-provider --namespace krateo-system
 
 | Document | Purpose |
 |:---------|:--------|
-| [Concepts](11-concepts.md) | Architecture, glossary, version management model, security design |
+| [Concepts](11-architecture.md) | Architecture, glossary, version management model, security design |
 | [Install the platform](20-how-to-guides/10-install.md) | Set up Krateo and required providers from scratch |
 | [Deploy a CompositionDefinition](20-how-to-guides/20-deploy-composition-definition.md) | Register a Helm chart as a Kubernetes API, including chart sources and authentication |
 | [Create a Composition](20-how-to-guides/30-create-composition.md) | Instantiate and monitor a deployed service |

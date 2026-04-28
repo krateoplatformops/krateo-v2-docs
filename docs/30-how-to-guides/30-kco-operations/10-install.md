@@ -13,7 +13,7 @@ For comprehensive Krateo 3.0.0 installation instructions covering **kind (NodePo
 - `helm` v3.x CLI
 - `kubectl` CLI
 - For other environments (LoadBalancer, Ingress, OpenShift), refer to the [comprehensive installation guide](../10-install-krateo/10-installing-krateo.md).
-- `krateoctl` installed — see [krateoctl overview](../../20-key-concepts/50-krateoctl/10-krateoctl-overview.md)
+- `krateoctl` installed — see [krateoctl overview](../../20-key-concepts/50-krateoctl/10-overview.md)
 
 ## Installation Steps
 
@@ -37,4 +37,4 @@ For comprehensive Krateo 3.0.0 installation instructions covering **kind (NodePo
 
 ## Next Steps
 - [Deploy your first CompositionDefinition](./20-deploy-composition-definition.md)
-- [Explore krateoctl commands](../../20-key-concepts/50-krateoctl/10-krateoctl-overview.md)
+- [Explore krateoctl commands](../../20-key-concepts/50-krateoctl/10-overview.md)

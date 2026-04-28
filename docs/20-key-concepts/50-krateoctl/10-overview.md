@@ -1,4 +1,9 @@
-# krateoctl
+---
+description: Krateoctl Overview
+sidebar_label: Overview
+---
+
+# Krateoctl
 
 `krateoctl` is the CLI for Krateo install, upgrade, migration, and version-aware composition operations.
 

@@ -16,7 +16,7 @@ This guide walks through installing Krateo 3.0.0 on Kubernetes, with specific in
 
 - A Kubernetes cluster (v1.30+)
 - `kubectl` configured to access your cluster
-- `krateoctl` installed — see [krateoctl installation guide](../../20-key-concepts/50-krateoctl/10-krateoctl-overview.md)
+- `krateoctl` installed — see [krateoctl installation guide](../../20-key-concepts/50-krateoctl/10-overview.md)
 
 :::warning
 **Secrets must be created before installation.** Krateo requires three Kubernetes Secrets in the `krateo-system` namespace:
@@ -301,4 +301,4 @@ kubectl get installation krateoctl -n krateo-system -o yaml
 
 - Deploy a [CompositionDefinition](../30-kco-operations/20-deploy-composition-definition.md)
 - Create a [Composition](../30-kco-operations/30-create-composition.md)
-- Explore [krateoctl commands](../../20-key-concepts/50-krateoctl/10-krateoctl-overview.md)
+- Explore [krateoctl commands](../../20-key-concepts/50-krateoctl/10-overview.md)

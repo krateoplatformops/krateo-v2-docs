@@ -15,6 +15,29 @@ Before configuring OpenTelemetry in Krateo, make sure you have the following pre
 3. A **compatible observability backend** (e.g., Prometheus) set up to receive metrics from the OpenTelemetry Collector.
 4. **Grafana** connected to your observability backend as a data source.
 
+## Quick Install: Prometheus & Grafana (Example)
+
+:::tip Note
+The following steps are provided as an **example** for setting up a monitoring stack. For production environments, follow your organization's standard practices for deploying and managing observability tools.
+:::
+
+If you don't have a monitoring stack yet, one way to get started is by installing the `kube-prometheus-stack`. It includes Prometheus, Grafana, and the Prometheus Operator.
+
+1. Add the Prometheus community Helm repository:
+   ```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo update
+   ```
+
+2. Install the stack in the `monitoring` namespace:
+   ```bash
+   helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+     -n monitoring --create-namespace \
+     --set grafana.adminPassword=admin
+   ```
+
+3. Once the pods are ready, you can proceed with the Collector deployment.
+
 ## Deploying OpenTelemetry Collector (Helm)
 
 You can deploy a shared Collector in-cluster using the official Helm chart. This example configuration sets up an OTLP HTTP receiver and a Prometheus exporter.
@@ -108,6 +131,22 @@ For development environments, you can use the `--profile monitoring` flag during
 ```sh
 krateoctl install apply --profile monitoring
 ```
+
+## Accessing Grafana
+
+If you are running Grafana inside your Kubernetes cluster (for example, as part of the `kube-prometheus-stack`), you can access it using `kubectl port-forward`.
+
+1. Find the Grafana service name:
+   ```bash
+   kubectl get svc -n monitoring | grep grafana
+   ```
+
+2. Port-forward to the service (replace `grafana-service-name` with the actual name):
+   ```bash
+   kubectl port-forward -n monitoring svc/grafana-service-name 3000:80
+   ```
+
+3. Open your browser at [http://localhost:3000](http://localhost:3000).
 
 ## Importing Dashboards
 

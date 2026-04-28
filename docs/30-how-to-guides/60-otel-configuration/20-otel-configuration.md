@@ -33,6 +33,9 @@ mode: deployment
 presets:
   kubernetesAttributes:
     enabled: true
+image:
+  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
+  tag: 0.152.0
 config:
   receivers:
     otlp:

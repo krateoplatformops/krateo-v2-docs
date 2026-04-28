@@ -6,8 +6,8 @@ For general setup instructions, see the [OpenTelemetry Configuration](../../../3
 
 ## Telemetry Assets
 
-- `dashboards/deviser-overview.dashboard.json`: Grafana dashboard with panels for partition management, purge throughput, and storage monitoring.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/deviser-overview.dashboard.json`](https://github.com/krateoplatformops/deviser/blob/main/telemetry/dashboards/deviser-overview.dashboard.json): Grafana dashboard with panels for partition management, purge throughput, and storage monitoring.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/deviser/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

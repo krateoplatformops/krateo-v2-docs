@@ -6,8 +6,8 @@ For general setup instructions, see the [OpenTelemetry Configuration](../../../3
 
 ## Telemetry Assets
 
-- `dashboards/events-presenter-overview.dashboard.json`: Grafana dashboard with panels for DB connectivity, request rate, latency, and real-time SSE event delivery statistics.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/events-presenter-overview.dashboard.json`](https://github.com/krateoplatformops/events-presenter/blob/main/telemetry/dashboards/events-presenter-overview.dashboard.json): Grafana dashboard with panels for DB connectivity, request rate, latency, and real-time SSE event delivery statistics.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/events-presenter/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

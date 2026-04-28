@@ -8,8 +8,8 @@ For information on how to set up the OpenTelemetry Collector, configure Promethe
 
 The following assets are available for `core-provider`:
 
-- `dashboards/core-provider-overview.dashboard.json`: Grafana dashboard with example panels.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/core-provider-overview.dashboard.json`](https://github.com/krateoplatformops/core-provider/blob/main/telemetry/dashboards/core-provider-overview.dashboard.json): Grafana dashboard with example panels.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/core-provider/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

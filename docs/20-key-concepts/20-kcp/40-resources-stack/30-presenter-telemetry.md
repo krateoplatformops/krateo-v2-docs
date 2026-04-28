@@ -6,8 +6,8 @@ For general setup instructions, see the [OpenTelemetry Configuration](../../../3
 
 ## Telemetry Assets
 
-- `dashboards/resources-presenter-overview.dashboard.json`: Grafana dashboard with panels for request rate, latency, resource throughput, and RBAC filtering target counts.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/resources-presenter-overview.dashboard.json`](https://github.com/krateoplatformops/resources-presenter/blob/main/telemetry/dashboards/resources-presenter-overview.dashboard.json): Grafana dashboard with panels for request rate, latency, resource throughput, and RBAC filtering target counts.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/resources-presenter/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

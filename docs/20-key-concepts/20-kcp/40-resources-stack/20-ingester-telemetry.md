@@ -6,8 +6,8 @@ For general setup instructions, see the [OpenTelemetry Configuration](../../../3
 
 ## Telemetry Assets
 
-- `dashboards/resources-ingester-overview.dashboard.json`: Grafana dashboard with panels for resource throughput, drop rates, queue depth, and batch flush performance.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/resources-ingester-overview.dashboard.json`](https://github.com/krateoplatformops/resources-ingester/blob/main/telemetry/dashboards/resources-ingester-overview.dashboard.json): Grafana dashboard with panels for resource throughput, drop rates, queue depth, and batch flush performance.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/resources-ingester/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

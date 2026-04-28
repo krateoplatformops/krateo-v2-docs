@@ -8,8 +8,8 @@ For information on how to set up the OpenTelemetry Collector, configure Promethe
 
 The following assets are available for `composition-dynamic-controller`:
 
-- `dashboards/composition-dynamic-controller.dashboard.json`: Grafana dashboard with metric panels.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/composition-dynamic-controller.dashboard.json`](https://github.com/krateoplatformops/composition-dynamic-controller/blob/main/telemetry/dashboards/composition-dynamic-controller.dashboard.json): Grafana dashboard with metric panels.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/composition-dynamic-controller/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

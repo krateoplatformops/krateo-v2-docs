@@ -6,8 +6,8 @@ For general setup instructions, see the [OpenTelemetry Configuration](../../../3
 
 ## Telemetry Assets
 
-- `dashboards/events-ingester-overview.dashboard.json`: Grafana dashboard with panels for event throughput, composition lookup latency, and database insertion performance.
-- `collector/otel-collector-config.yaml`: Minimal OpenTelemetry Collector configuration.
+- [`dashboards/events-ingester-overview.dashboard.json`](https://github.com/krateoplatformops/events-ingester/blob/main/telemetry/dashboards/events-ingester-overview.dashboard.json): Grafana dashboard with panels for event throughput, composition lookup latency, and database insertion performance.
+- [`collector/otel-collector-config.yaml`](https://github.com/krateoplatformops/events-ingester/blob/main/telemetry/collector/otel-collector-config.yaml): Minimal OpenTelemetry Collector configuration.
 
 ## Metrics Reference
 

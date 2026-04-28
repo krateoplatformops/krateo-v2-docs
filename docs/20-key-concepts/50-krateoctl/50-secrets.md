@@ -1,8 +1,9 @@
 # Secrets Spec
 
-> [!WARNING]
-> `krateoctl` does not bootstrap production secrets.
-> Manage them in Vault or create them manually before you run install or migration commands.
+:::warning
+`krateoctl` does not bootstrap production secrets.
+Manage them in Vault or create them manually before you run install or migration commands.
+:::
 
 `krateoctl` expects installation secrets to be managed outside the normal install flow.
 

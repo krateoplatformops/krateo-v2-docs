@@ -9,7 +9,7 @@ This service requires [CrateDB](https://github.com/crate/) to be installed in th
 2. [Architecture](#architecture)
 3. [API](#api)
 4. [Examples](#examples)
-5. [Installation](#Installation)
+5. [Installation](#installation)
 
 ## Overview
 This webservice acts as a proxy for all requests to the database, including the possibility of performing computations on the stored data. 

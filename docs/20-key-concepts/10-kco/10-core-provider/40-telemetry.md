@@ -2,7 +2,7 @@
 
 This document describes the OpenTelemetry metrics emitted by `core-provider` and `provider-runtime`.
 
-For information on how to set up the OpenTelemetry Collector, configure Prometheus, or import dashboards, please refer to the [OpenTelemetry Configuration](../../30-how-to-guides/60-otel-configuration/20-otel-configuration.md) guide.
+For information on how to set up the OpenTelemetry Collector, configure Prometheus, or import dashboards, please refer to the [OpenTelemetry Configuration](../../../30-how-to-guides/60-otel-configuration/20-otel-configuration.md) guide.
 
 ## Telemetry Assets
 

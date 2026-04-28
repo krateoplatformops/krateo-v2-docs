@@ -5,11 +5,10 @@
 - `plan` previews what `krateoctl` would do, without talking to the cluster.
 - `apply` executes the workflow against the cluster.
 
-> [!IMPORTANT]
-> Secrets must be managed separately.
-> `krateoctl` does not bootstrap production secrets. Use Vault or create the required Kubernetes Secrets manually before running install or upgrade commands.
->
-> See the [Secrets Spec](50-secrets.md) for the required names, keys, and namespace rules.
+:::warning
+Secrets must be managed separately. `krateoctl` does not bootstrap production secrets. Use Vault or create the required Kubernetes Secrets manually before running install or upgrade commands.
+See the [Secrets Spec](50-secrets.md) for the required names, keys, and namespace rules.
+:::
 
 ## Table Of Contents
 
@@ -41,6 +40,7 @@ The default repository is:
 This repository is used as a versioned source of installation assets. `krateoctl` builds raw GitHub URLs from it and looks for files such as:
 
 - `krateo.yaml`
+- `krateo.<type>.yaml` (e.g., `krateo.nodeport.yaml`)
 - `krateo-overrides.yaml`
 - `krateo-overrides.<profile>.yaml`
 - `pre-upgrade.yaml`
@@ -132,26 +132,26 @@ krateoctl install plan [FLAGS]
 
 ### How It Works
 
-1. Loads the main config from `krateo.yaml` or from the releases repository when `--version` is set.
-2. Applies `krateo-overrides.yaml` and profile-specific overrides if present.
+1. **Resolve Main Config**: Loads the configuration file. If `--type` is specified (e.g., `nodeport`), it looks for `krateo.nodeport.yaml`. If not found, or if no type is specified, it falls back to `krateo.yaml`.
+2. **Apply Overrides**: Applies `krateo-overrides.yaml` and any profile-specific overrides (`krateo-overrides.<profile>.yaml`) if `--profile` is present.
    - When `--profile` is used (e.g., `--profile dev,test`), krateoctl looks for `krateo-overrides.<profile>.yaml` files.
    - **In remote mode** (`--version` set): searches the releases repository first, then falls back to local files if not found.
    - **In local mode** (no `--version`): searches only local files.
-3. Selects type-specific files first, then falls back to the generic ones.
-4. Computes the workflow steps.
-5. Optionally compares the plan against the last saved installation snapshot.
+3. **Resolve Hooks**: Selects type-specific pre/post upgrade hooks (e.g., `pre-upgrade.nodeport.yaml`) with a fallback to generic ones (e.g., `pre-upgrade.yaml`).
+4. **Compute Workflow**: Processes all gathered definitions and computes the execution plan.
+5. **Diff (Optional)**: If `--diff-installed` is used, compares the computed plan against the last saved installation snapshot.
 
 ### Understanding --diff-installed
 
-The `--diff-installed` flag controls what `plan` compares against:
+The `--diff-installed` flag controls the output mode of the `plan` command:
 
-- **With `--diff-installed`**: Compares the newly computed plan against the **stored installation snapshot** (last state applied to the cluster)
-  - Use this to see what changed since the last `apply`
-  - Useful for understanding the upgrade impact on the cluster
+- **Without `--diff-installed` (Default)**: Generates and displays the **execution plan** (the sequence of steps) that `krateoctl` would perform based on the resolved configuration (including overrides and profiles).
+  - Use this to preview the installation workflow.
+  - Useful for verifying that your configuration, profiles, and flags (like `--type`) are correctly interpreted.
 
-- **Without `--diff-installed`**: Compares the newly computed plan against the **krateo.yaml file** (local or remote)
-  - Use this to see what the configuration file would produce
-  - Useful for previewing configuration changes before applying
+- **With `--diff-installed`**: Performs a **diff** between the newly computed plan and the **stored installation snapshot** (the state of the last successful `apply`).
+  - Use this to see exactly what will change in the cluster if you run `apply`.
+  - Useful for understanding the impact of an upgrade or a configuration change relative to the current cluster state.
 
 ### Examples
 

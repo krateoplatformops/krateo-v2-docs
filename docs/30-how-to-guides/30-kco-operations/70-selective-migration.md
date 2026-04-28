@@ -1,6 +1,6 @@
 # How to: Selective Migration
 
-> **Concepts:** [Pattern 3 — Selective Migration](../11-concepts.md#pattern-3-selective-migration) · [Tracking Versions](../11-concepts.md#tracking-versions)
+> **Concepts:** [Pattern 3 — Selective Migration](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md#pattern-3-selective-migration) · [Tracking Versions](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md)
 
 Migrate individual Compositions to a new chart version by patching two version labels. Other Compositions remain on the old version until their owners choose to migrate them.
 

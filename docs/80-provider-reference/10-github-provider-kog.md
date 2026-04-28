@@ -291,11 +291,10 @@ They also define the operations that can be performed on those resources. Once t
 
 - **Service**: Exposes the plugin described above, allowing the resource controllers to communicate with the GitHub REST API through the plugin, only if needed.
 
-# Troubleshooting
+## Troubleshooting
 
-## Summary
+### Troubleshooting Summary
 
-- [Summary](#summary)
 - [Checking RestDefinitions](#checking-restdefinitions)
 - [Checking CRDs](#checking-crds)
 - [Checking controllers](#checking-controllers)

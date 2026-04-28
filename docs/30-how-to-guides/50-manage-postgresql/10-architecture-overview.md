@@ -16,15 +16,15 @@ events-ingester    →              → events-presenter
 ## Resources Stack
 
 The **resources-ingester** continuously watches the Kubernetes API server for any configured resource kinds, both fixed resources ([CRD Kind defined statically](https://github.com/krateoplatformops/resources-ingester/blob/main/internal/router/assets/static)) and dynamically discovered CRDs belonging to managed API groups (i.e.,  [*.krateo.io](https://github.com/krateoplatformops/resources-ingester/blob/main/internal/manager/assets/managed_groups)) and persists them as structured records in PostgreSQL.
-On the read side, [**resources-presenter**](../../key-concepts/kcp/resources-presenter) serves as the query layer for **snowplow**, replacing direct Kubernetes API calls with fast, RBAC-enforced reads against the PostgreSQL-backed cache. 
+On the read side, [**resources-presenter**](../../20-key-concepts/20-kcp/40-resources-stack/10-overview.md) serves as the query layer for **snowplow**, replacing direct Kubernetes API calls with fast, RBAC-enforced reads against the PostgreSQL-backed cache. 
 
 ## Events Stack
 
-The **events-ingester** follows the same pattern for Kubernetes events, enriching each one with composition metadata before writing to PostgreSQL, from where [events-presenter](../../key-concepts/kcp/events-presenter) serves both REST queries (`/events`) and broadcasts real-time notifications to connected clients via Server-Sent Events (`/notifications`).
+The **events-ingester** follows the same pattern for Kubernetes events, enriching each one with composition metadata before writing to PostgreSQL, from where [events-presenter](../../20-key-concepts/20-kcp/50-events-stack/10-overview.md) serves both REST queries (`/events`) and broadcasts real-time notifications to connected clients via Server-Sent Events (`/notifications`).
 
 ## Deviser
 
-**Deviser** manages the lifecycle of PostgreSQL tables and partitions. It runs as an independent service alongside **events-ingester**, [events-presenter](../../key-concepts/kcp/events-presenter), **resources-ingester** and [resources-presenter](../../key-concepts/kcp/resources-presenter).
+**Deviser** manages the lifecycle of PostgreSQL tables and partitions. It runs as an independent service alongside **events-ingester**, [events-presenter](../../20-key-concepts/20-kcp/50-events-stack/10-overview.md), **resources-ingester** and [resources-presenter](../../20-key-concepts/20-kcp/40-resources-stack/10-overview.md).
 
 Deviser creates:
 - `k8s_events` table for Kubernetes events, partitioned by day

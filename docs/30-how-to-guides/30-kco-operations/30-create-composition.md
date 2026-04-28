@@ -1,6 +1,6 @@
 # How to: Create a Composition
 
-> **Concepts:** [Composition](../11-concepts.md#glossary) · [CDC](../11-concepts.md#glossary)
+> **Concepts:** [Composition](../../20-key-concepts/10-kco/11-architecture.md#glossary) · [CDC](../../20-key-concepts/10-kco/11-architecture.md#glossary)
 
 A Composition is a live instance of a service defined by a CompositionDefinition. Creating one triggers the installation of the associated Helm chart.
 

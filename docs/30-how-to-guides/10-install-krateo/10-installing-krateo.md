@@ -299,6 +299,6 @@ kubectl get installation krateoctl -n krateo-system -o yaml
 
 ## Next Steps
 
-- Deploy a [CompositionDefinition](../../20-key-concepts/10-kco/20-how-to-guides/20-deploy-composition-definition.md)
-- Create a [Composition](../../20-key-concepts/10-kco/20-how-to-guides/30-create-composition.md)
+- Deploy a [CompositionDefinition](../30-kco-operations/20-deploy-composition-definition.md)
+- Create a [Composition](../30-kco-operations/30-create-composition.md)
 - Explore [krateoctl commands](../../20-key-concepts/50-krateoctl/10-krateoctl-overview.md)

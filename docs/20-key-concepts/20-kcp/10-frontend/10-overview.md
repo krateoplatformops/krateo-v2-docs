@@ -7,7 +7,7 @@ sidebar_label: Frontend
 
 In the Krateo Composable Portal, everything is built around the concept of **widgets** and their composition. A widget is a Kubernetes **Custom Resource Definition (CRD)** that is mapped either to a UI element rendered in the frontend (for example, a `Button`) or to a configuration object used by other widgets (for example, a `Route`).
 
-A complete list of available widgets and their properties is available in the [Widgets API Reference](../../how-to-guides/write-frontend/widgets-api-reference).
+A complete list of available widgets and their properties is available in the [Widgets API Reference](../../../30-how-to-guides/40-write-frontend/20-widgets-api-reference.md).
 
 ---
 
@@ -25,7 +25,7 @@ You can find an example of a widget schema in the [Button widget JSON schema](ht
 
 Every widget defines a `spec.widgetData` field, which contains the data that controls how the widget looks and behaves in the Composable Portal.
 
-For example, in a `Button` widget, properties such as `label`, `icon` (using the [Font Awesome](https://fontawesome.com/search?ip=classic&s=solid&o=r) naming convention), and `type` determine the visual appearance of the button. All supported configuration options for each widget are documented in the [Widgets API Reference](../../how-to-guides/write-frontend/widgets-api-reference).
+For example, in a `Button` widget, properties such as `label`, `icon` (using the [Font Awesome](https://fontawesome.com/search?ip=classic&s=solid&o=r) naming convention), and `type` determine the visual appearance of the button. All supported configuration options for each widget are documented in the [Widgets API Reference](../../../30-how-to-guides/40-write-frontend/20-widgets-api-reference.md).
 
 Below is a minimal example of a `Button` widget:
 
@@ -178,7 +178,7 @@ Widget → apiRef → RESTAction → api
 
 `widgetDataTemplate` can access the API result by name and inject it into `widgetData`.
 
-The REST endpoint `/api/v1/namespaces` is served by the Kubernetes API server. If an absolute URL were used instead, the same mechanism could be applied to external APIs. For more details, see the [RESTActions documentation](../../core-crd-reference/snowplow-crd#overview).
+The REST endpoint `/api/v1/namespaces` is served by the Kubernetes API server. If an absolute URL were used instead, the same mechanism could be applied to external APIs. For more details, see the [RESTActions documentation](../../../60-core-crd-reference/40-snowplow-crd.md).
 
 ---
 
@@ -193,7 +193,7 @@ The currently supported actions are:
 - **`openDrawer`**: displays another widget inside a drawer (side panel)
 - **`openModal`**: displays another widget inside a modal
 
-Actions are defined inside `widgetData`. A complete list of widgets supporting actions and their available properties can be found in the [Widgets API Reference](../../how-to-guides/write-frontend/widgets-api-reference).
+Actions are defined inside `widgetData`. A complete list of widgets supporting actions and their available properties can be found in the [Widgets API Reference](../../../30-how-to-guides/40-write-frontend/20-widgets-api-reference.md).
 
 ---
 

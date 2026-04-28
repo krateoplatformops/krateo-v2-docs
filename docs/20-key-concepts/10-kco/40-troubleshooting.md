@@ -223,4 +223,4 @@ kubectl run -it --rm --restart=Never network-test \
 | Authentication failure downloading chart | Recreate the credentials secret; verify the token has correct scopes |
 | Version conflict / mixed state | Check version labels on Compositions; delete and recreate the CompositionDefinition if necessary |
 | Resource constraints / pending pods | Check `kubectl get pods --field-selector=status.phase=Pending`; increase node capacity |
-| Composition stuck deleting | Remove the Composition's (not the CRD's) finalizer — see [Delete Safely](20-how-to-guides/80-delete-safely.md) |
+| Composition stuck deleting | Remove the Composition's (not the CRD's) finalizer — see [Delete Safely](../../30-how-to-guides/30-kco-operations/80-delete-safely.md) |

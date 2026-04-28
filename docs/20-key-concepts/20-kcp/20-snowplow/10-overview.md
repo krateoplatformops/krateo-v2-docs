@@ -11,6 +11,24 @@ It serves multiple purposes, primarily acting as a bridge between Krateo's custo
 
 It handles on-demand resolution of the `RESTAction` custom resource and all Krateo Frontend `Widgets` custom resources.
 
+## Technical Reference
+
+### Environment Variables
+
+| Name | Description | Default |
+| :--- | :--- | :--- |
+| `PORT` | HTTP server port | `8081` |
+| `DEBUG` | Enable debug logging | `false` |
+| `DB_HOST` | Database host | `localhost` |
+| `DB_PORT` | Database port | `5432` |
+| `DB_NAME` | Database name | - |
+| `DB_USER` | Database username | - |
+| `DB_PASS` | Database password | - |
+| `DB_PARAMS` | Extra connection parameters (e.g., `sslmode=disable`) | - |
+| `DB_READY_TIMEOUT` | Max wait for PostgreSQL readiness | `2m` |
+
+---
+
 ## Learn More
 
 ### Developer Guide
@@ -20,9 +38,9 @@ It handles on-demand resolution of the `RESTAction` custom resource and all Krat
 
 ### User Guide
 
-- [`Endpoint` reference](./snowplow-endpoints)
-- [`RESTAction` reference](./snowplow-RESTAction)
-- [Understanding the `Widget` Custom Resource](./snowplow-widgets)
+- [`Endpoint` reference](./30-endpoints.md)
+- [`RESTAction` reference](./20-rest-actions.md)
+- [Understanding the `Widget` Custom Resource](./40-widgets.md)
 - [Installing `snowplow` on Kind](https://github.com/krateoplatformops/snowplow/blob/main/howto/install.md)
 
 ### Examples

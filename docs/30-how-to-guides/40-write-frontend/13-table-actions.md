@@ -15,7 +15,7 @@ This feature allows you to define one or more table actions within the widget co
 
 ## What are table actions
 
-Table actions allow you to attach one or more buttons to every row of a `Table` widget. Buttons are defined using the new `tableActions` property of the widget, which is set under `widgetData`. Each table action is associated to a global action defined using the `actions` property, with the same structure used in other widgets. For more information about actions, please visit [this page](../../key-concepts/kcp/frontend).
+Table actions allow you to attach one or more buttons to every row of a `Table` widget. Buttons are defined using the new `tableActions` property of the widget, which is set under `widgetData`. Each table action is associated to a global action defined using the `actions` property, with the same structure used in other widgets. For more information about actions, please visit [this page](../../20-key-concepts/20-kcp/10-frontend/10-overview.md).
 
 To recap, each table action:
 

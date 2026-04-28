@@ -56,6 +56,15 @@ krateoctl install apply -h
 
 The help output includes flags, examples, and usage information for each command. This is the most up-to-date reference for command options.
 
+## Technical Reference
+
+### Environment Variables
+
+| Name | Description | Default |
+| :--- | :--- | :--- |
+| `KUBECONFIG` | Path to the Kubernetes configuration file | `~/.kube/config` |
+| `KRATEOCONFIG` | Path to the krateoctl configuration file | `~/.krateoctl.yaml` |
+
 ## Command Reference
 
 - [Install and Upgrade](20-install-upgrade.md)

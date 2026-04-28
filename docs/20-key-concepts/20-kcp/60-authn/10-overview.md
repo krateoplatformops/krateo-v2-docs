@@ -260,6 +260,21 @@ In the case of OAuth2, these fields are needed to compile the certificate and th
 
 The authentication for the endpoints of the RESTAction is automatically set to bearer token, using the token obtained from the OAuth2/OIDC authentication. If the endpoint already specifies an authentication method, then it is not overwritten and it will be used for the API calls instead of the bearer token.
 
+## Technical Reference
+
+### Environment Variables
+
+| Name | Description | Default |
+| :--- | :--- | :--- |
+| `PORT` | HTTP server port | `8080` |
+| `DEBUG` | Enable debug logging | `false` |
+| `DB_HOST` | Database host | `localhost` |
+| `DB_PORT` | Database port | `5432` |
+| `DB_NAME` | Database name | - |
+| `DB_USER` | Database username | - |
+| `DB_PASS` | Database password | - |
+| `DB_READY_TIMEOUT` | Max wait for PostgreSQL readiness | `2m` |
+
 ## Graphics Configuration
 The OAuth2 and OIDC authentication methods also support a `graphics` object that allows to configure how the button for the redirect to the authentication provider portal is visualized in the frontend login screen.
 ```yaml

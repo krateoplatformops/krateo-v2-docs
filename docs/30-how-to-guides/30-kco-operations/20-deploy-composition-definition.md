@@ -1,6 +1,6 @@
 # How to: Deploy a CompositionDefinition
 
-> **Concepts:** [CompositionDefinition](../11-concepts.md#glossary) · [Chart Requirements](../11-concepts.md#chart-requirements) · [Lifecycle Workflow](../11-concepts.md#lifecycle-workflow)
+> **Concepts:** [CompositionDefinition](../../20-key-concepts/10-kco/11-architecture.md#glossary) · [Chart Requirements](../../20-key-concepts/10-kco/11-architecture.md#chart-requirements) · [Lifecycle Workflow](../../20-key-concepts/10-kco/11-architecture.md#lifecycle-workflow)
 
 A CompositionDefinition registers a Helm chart as a versioned Kubernetes API. This guide walks through deploying the **GitHub Scaffolding Lifecycle** chart from the Krateo Marketplace, which is used throughout these how-to guides.
 
@@ -9,7 +9,7 @@ A CompositionDefinition registers a Helm chart as a versioned Kubernetes API. Th
 ## Prerequisites
 
 - Krateo platform installed — see [Install](10-install.md)
-- The chart has a `values.schema.json` at its root — see [Chart Requirements](../11-concepts.md#chart-requirements)
+- The chart has a `values.schema.json` at its root — see [Chart Requirements](../../20-key-concepts/10-kco/11-architecture.md#chart-requirements)
 
 ---
 
@@ -193,4 +193,4 @@ spec:
 ## Next steps
 
 - [Create a Composition](30-create-composition.md) instance from this CompositionDefinition
-- [Explore the CompositionDefinition CRD](../../../60-core-crd-reference/10-core-provider-crd.md) for detailed specification
+- [Explore the CompositionDefinition CRD](../../60-core-crd-reference/10-core-provider-crd.md) for detailed specification

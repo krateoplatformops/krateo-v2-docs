@@ -1,0 +1,18 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam arrowColor #666666
+skinparam node {
+    BackgroundColor white
+    BorderColor #333333
+}
+
+"Deviser Loop" as DL
+database "PostgreSQL" as DB
+
+DL -right-> DB : 1. Connect & Schema Check
+DL -right-> DB : 2. Create Future Partitions
+DL -right-> DB : 3. Drop Expired Partitions
+DL -right-> DB : 4. Enforce Storage Quotas
+DL -right-> DB : 5. Purge Soft-Deleted
+@enduml

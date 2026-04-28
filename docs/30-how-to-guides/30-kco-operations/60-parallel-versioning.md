@@ -1,30 +1,31 @@
 # How to: Parallel Versioning
 
-> **Concepts:** [Pattern 2 — Parallel Versioning](../11-concepts.md#pattern-2-parallel-versioning) · [Multi-Version Constraints](../11-concepts.md#multi-version-constraints)
+Deploy a new version of your service side-by-side with the old one, creating two distinct Kubernetes APIs. This allows you to maintain legacy instances while offering the new version for fresh deployments.
 
-Deploy a new chart version by creating a second CompositionDefinition with a distinct name. All existing Compositions remain on the old version untouched. New Compositions are created against the new version. Both coexist until the old CompositionDefinition is explicitly deleted.
-
-**Use this when:** The new chart version has breaking schema changes, or when different teams own Composition instances and need to migrate independently.
+> **Concepts:** [Pattern 2 — Parallel Versioning](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md#pattern-2-parallel-versioning) · [Multi-Version Constraints](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md#multi-version-constraints)
 
 ---
 
-## Prerequisites
+## 1. Identify the current setup
 
-- An existing CompositionDefinition — see [Deploy a CompositionDefinition](20-deploy-composition-definition.md)
-- The new chart version (may have breaking schema changes)
+Assume you have a CompositionDefinition named `lifecycleapp-cd-v1` using chart version `0.0.1`.
+
+```bash
+kubectl get compositiondefinition lifecycleapp-cd-v1 -n cheatsheet-system
+```
 
 ---
 
-## 1. Create a new CompositionDefinition for the new version
+## 2. Deploy the new version
 
-Give it a **distinct name** from the existing one:
+Instead of patching the old one, create a **new** CompositionDefinition with a unique name (e.g., `lifecycleapp-cd-v2`).
 
 ```bash
 cat <<EOF | kubectl apply -f -
 apiVersion: core.krateo.io/v1alpha1
 kind: CompositionDefinition
 metadata:
-  name: lifecycleapp-cd-v2        # distinct name — NOT the same as lifecycleapp-cd-v1
+  name: lifecycleapp-cd-v2
   namespace: cheatsheet-system
 spec:
   chart:
@@ -34,156 +35,39 @@ spec:
 EOF
 ```
 
+**What happens:**
+1. The Core Provider sees a new blueprint.
+2. It registers a **new CRD version**.
+3. It spawns a **new CDC instance** dedicated to version `0.0.2`.
+4. Existing `v0.0.1` instances are **not affected**.
+
 ---
 
-## 2. Wait for it to become ready
+## 3. Verify side-by-side operation
+
+Check that both blueprints are ready:
 
 ```bash
-kubectl wait compositiondefinition lifecycleapp-cd-v2 \
-  --for condition=Ready=True \
-  --namespace cheatsheet-system \
-  --timeout=600s
+kubectl get compositiondefinition -n cheatsheet-system
 ```
 
-**What happens:** The Core Provider adds `v0-0-2` as a new version on the shared CRD and deploys a second CDC (`githubscaffoldinglifecycles-v0-0-2-controller`). The old CDC for `v0-0-1` continues running unchanged.
-
----
-
-## 3. Create new Compositions against the new version
-
-Use `apiVersion: composition.krateo.io/v0-0-2`:
+Check that two CDCs are running:
 
 ```bash
-cat <<EOF | kubectl apply -f -
-apiVersion: composition.krateo.io/v0-0-2
-kind: GithubScaffoldingLifecycle
-metadata:
-  name: lifecycle-composition-new
-  namespace: cheatsheet-system
-spec:
-  argocd:
-    namespace: krateo-system
-    application:
-      project: default
-      source:
-        path: chart/
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: githubscaffolding-app
-      syncEnabled: false
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-  app:
-    service:
-      type: NodePort
-      port: 31180
-  git:
-    unsupportedCapabilities: true
-    insecure: true
-    fromRepo:
-      scmUrl: https://github.com
-      org: krateoplatformops-blueprints
-      name: github-scaffolding-lifecycle
-      branch: main
-      path: skeleton/
-      credentials:
-        authMethod: generic
-        secretRef:
-          namespace: krateo-system
-          name: github-repo-creds
-          key: token
-    toRepo:
-      scmUrl: https://github.com
-      org: your-github-org        # replace with your GitHub org
-      name: lifecycleapp-test-1   # customize the repository name
-      branch: main
-      path: /
-      credentials:
-        authMethod: generic
-        secretRef:
-          namespace: krateo-system
-          name: github-repo-creds
-          key: token
-      private: false
-      initialize: true
-      deletionPolicy: Delete
-      verbose: false
-      configurationRef:
-        name: repo-config
-        namespace: demo-system
-EOF
+kubectl get pods -n krateo-system | grep lifecycleapp
 ```
 
 ---
 
-## 4. (Optional) Migrate an existing Composition with breaking schema changes
+## 4. Lifecycle management
 
-### Step 1: Export the current manifest
+New Compositions can now be created using the new version. Old Compositions remain on the old version indefinitely.
 
-Using `krateoctl`:
-
-```bash
-krateoctl get compositions lifecycle-composition-1 -n cheatsheet-system -o yaml > composition.yaml
-```
-
-Or for a specific kind:
-
-```bash
-krateoctl get githubscaffoldinglifecycles lifecycle-composition-1 -n cheatsheet-system -o yaml > composition.yaml
-```
-
-Or using `kubectl` with the explicit version:
-
-```bash
-kubectl get githubscaffoldinglifecycles.v0-0-1.composition.krateo.io lifecycle-composition-1 \
-  -n cheatsheet-system -o yaml > composition.yaml
-```
-
-`krateoctl` automatically resolves the correct API version from the `krateo.io/composition-version` label.
-
-### Step 2: Edit the manifest
-
-In `composition.yaml`, make three changes:
-
-1. Update `apiVersion` to the new version:
-   ```yaml
-   apiVersion: composition.krateo.io/v0-0-2   # was v0-0-1
-   ```
-
-2. Update the version label:
-   ```yaml
-   labels:
-     krateo.io/composition-version: v0-0-2     # was v0-0-1
-   ```
-
-3. Adapt `spec` for any breaking schema changes introduced in `0.0.2`.
-
-If you do not want to hardcode the version, you can also use `krateoctl get compositions` or `krateoctl get githubscaffoldinglifecycles` to inspect the stored label and resolve the correct version. `krateoctl` looks for `krateo.io/composition-version:` and then requests the matching version from the apiserver automatically.
-
-### Step 3: Apply
-
-```bash
-kubectl apply -f composition.yaml
-```
-
-The new CDC (`githubscaffoldinglifecycles-v0-0-2-controller`) detects the updated label and takes ownership. The old CDC stops reconciling this Composition.
+> **Note on CRD versions:** While both CompositionDefinitions are active, two CRD versions (`v0-0-1` and `v0-0-2`) are registered. `kubectl` will default to the first stored version when no version is specified. Retire the old CompositionDefinition as soon as possible. See [Multi-Version Constraints](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md#multi-version-constraints).
 
 ---
 
-## 5. Retire the old CompositionDefinition (when ready)
+## Next steps
 
-Once all Compositions have been migrated or replaced, delete the old CompositionDefinition:
-
-```bash
-# Confirm nothing is left on the old version
-kubectl get githubscaffoldinglifecycles -A -l krateo.io/composition-version=v0-0-1
-
-# Delete
-kubectl delete compositiondefinition lifecycleapp-cd-v1 -n cheatsheet-system
-```
-
-**Expected:** The `githubscaffoldinglifecycles-v0-0-1-controller` CDC and all its RBAC resources are automatically removed. 
-
-> **Note on CRD versions:** While both CompositionDefinitions are active, two CRD versions (`v0-0-1` and `v0-0-2`) are registered. `kubectl` will default to the first stored version when no version is specified. Retire the old CompositionDefinition as soon as possible. See [Multi-Version Constraints](../11-concepts.md#multi-version-constraints).
+- [Selective Migration](70-selective-migration.md) (to move instances between these versions)
+- [Delete Safely](80-delete-safely.md)

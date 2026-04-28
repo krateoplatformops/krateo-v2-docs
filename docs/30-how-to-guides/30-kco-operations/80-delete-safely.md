@@ -1,75 +1,57 @@
 # How to: Delete Safely
 
-> **Concepts:** [Lifecycle Workflow](../11-concepts.md#lifecycle-workflow) · [Automatic Cleanup](../11-concepts.md#security-by-design)
+Removing Krateo resources should be done in a specific order to ensure Helm releases are uninstalled and Kubernetes resources are cleaned up without leaving orphaned objects.
 
-Deleting a CompositionDefinition triggers a cascaded cleanup: the CRD version, all associated Compositions, all Helm releases, and all RBAC resources are removed in order. Do not bypass this process by force-deleting the CRD.
+> **Concepts:** [Lifecycle Workflow](../../20-key-concepts/10-kco/11-architecture.md#lifecycle-workflow) · [Security by Design](../../20-key-concepts/10-kco/10-core-provider/30-security-design.md)
 
 ---
 
-## Delete a CompositionDefinition
+## 1. Delete a Composition
+
+Deleting a `Composition` resource triggers the `helm uninstall` of the associated release.
 
 ```bash
-kubectl delete compositiondefinition lifecycleapp-cd-v1 \
-  -n cheatsheet-system
+kubectl delete composition <name> --namespace <namespace>
 ```
 
 **What happens:**
-1. A `deletionTimestamp` is set on the CRD and on all Compositions associated with it.
-2. The CDC reconciles the deletion of each Helm release (this may take several minutes).
-3. Once all releases are removed, the Compositions are deleted.
-4. The Core Provider removes the CDC deployment, RBAC resources, and CRD version.
-
-> This command may take a few minutes to complete. You can watch progress with:
-> ```bash
-> kubectl get compositiondefinition lifecycleapp-cd-v1 -n cheatsheet-system -w
-> ```
+1. The CDC detects the deletion.
+2. It executes `helm uninstall`.
+3. It cleans up any extra resources it created (e.g., finalizers).
+4. Once the uninstall succeeds, the Composition resource is removed.
 
 ---
 
-## Delete an individual Composition
+## 2. Delete a CompositionDefinition
+
+Only delete a `CompositionDefinition` after all its managed Compositions have been removed.
 
 ```bash
-kubectl delete githubscaffoldinglifecycle lifecycle-composition-1 \
-  -n cheatsheet-system
+kubectl delete compositiondefinition <name> --namespace <namespace>
 ```
 
-The CDC manages the deletion of the associated Helm release before removing the resource.
+**What happens:**
+1. The Core Provider detects the deletion.
+2. It removes the generated CRD.
+3. It deletes the associated CDC deployment.
+4. It cleans up the scoped RBAC policies.
 
 ---
 
-## If deletion is stuck
+## Troubleshooting Deletions
 
-**Do not remove the finalizer on the CRD.** Removing a CRD finalizer while etcd still holds objects of that type can corrupt etcd state.
+If a resource is stuck in `Terminating`:
 
-Instead:
-
-1. Check the CDC logs for the cause of the stuck deletion:
+1. Check the CDC logs for Helm errors:
    ```bash
-   kubectl logs -n cheatsheet-system \
-     -l app.kubernetes.io/name=githubscaffoldinglifecycles-v0-0-1-controller
+   kubectl logs -n krateo-system -l app=composition-dynamic-controller
    ```
-
-2. If a specific Composition is stuck, you can safely remove **its** finalizer (not the CRD's) to unblock deletion:
-   ```bash
-   kubectl patch githubscaffoldinglifecycle <name> \
-     -n cheatsheet-system \
-     --type=merge \
-     -p '{"metadata":{"finalizers":null}}'
-   ```
-   The Core Provider will then safely proceed with CRD cleanup.
-
-3. See [Troubleshooting](../30-troubleshooting.md) for additional error patterns.
+2. Ensure the CDC has enough permissions to delete all resources in the chart.
+3. See [Troubleshooting](../../20-key-concepts/10-kco/40-troubleshooting.md) for additional error patterns.
 
 ---
 
-## Orphan a Helm release (prevent deletion on Composition delete)
+## Next steps
 
-If you want to delete a Composition without deleting its Helm release:
-
-```bash
-kubectl annotate githubscaffoldinglifecycle lifecycle-composition-1 \
-  -n cheatsheet-system \
-  krateo.io/management-policy=orphan
-```
-
-Then delete the Composition normally. The Helm release remains in the cluster.
+- [Install Krateo Core Provider](10-install.md)
+- [Deploy a CompositionDefinition](20-deploy-composition-definition.md)

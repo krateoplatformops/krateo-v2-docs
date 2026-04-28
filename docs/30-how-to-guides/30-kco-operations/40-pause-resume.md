@@ -1,54 +1,56 @@
-# How to: Pause and Resume a Composition
+# How to: Pause / Resume a Composition
 
-> **Concepts:** [Composition](../11-concepts.md#glossary) · [CDC](../11-concepts.md#glossary)
+Reconciliation can be paused for a specific Composition resource. This is useful for maintenance windows, debugging, or when you want to temporarily prevent Krateo from applying changes to a service.
 
-Pausing a Composition stops the CDC from reconciling it. Use this during maintenance, debugging, or when performing manual changes you don't want overwritten.
-
----
-
-## Standard Pause
-
-### Pause
-
-```bash
-kubectl annotate githubscaffoldinglifecycles lifecycle-composition-1 \
-  -n cheatsheet-system \
-  "krateo.io/paused=true"
-```
-
-**Expected:** The CDC stops reconciling this Composition. Existing resources are left as-is. Verify:
-
-```bash
-kubectl get githubscaffoldinglifecycles lifecycle-composition-1 \
-  -n cheatsheet-system \
-  -o jsonpath='{.metadata.annotations}'
-```
-
-You can also watch for the absence of new reconciliation events:
-
-```bash
-kubectl get events -n cheatsheet-system \
-  --sort-by='.metadata.creationTimestamp' | grep "lifecycle-composition-1"
-```
-
-### Resume
-
-```bash
-kubectl annotate githubscaffoldinglifecycles lifecycle-composition-1 \
-  -n cheatsheet-system \
-  "krateo.io/paused-"
-```
-
-**Expected:** The annotation is removed and the CDC immediately resumes reconciliation, converging the resource to its desired state.
+> **Concepts:** [Composition](../../20-key-concepts/10-kco/11-architecture.md#glossary) · [CDC](../../20-key-concepts/10-kco/11-architecture.md#glossary)
 
 ---
 
-## Graceful Pause
+## 1. Immediate Pause (Controller-only)
 
-Available from `composition-dynamic-controller` ≥ 0.19.3 (released with `core-provider-chart` ≥ 0.33.4).
+To stop the Krateo controller from watching a composition immediately:
 
-A graceful pause first pauses **all resources managed by the Composition** before pausing the Composition itself. This prevents child resources from being reconciled independently during the pause window.
+```bash
+kubectl annotate composition <name> krateo.io/paused="true" --overwrite
+```
 
-To use this feature, your Helm chart must be updated to support it. See the [Composition Dynamic Controller documentation](../20-composition-dynamic-controller.md#about-the-gracefullypaused-value) for the required chart changes.
+**Effect:** The CDC will stop reconciling this specific instance. Any changes made to the Composition resource or the cluster state will be ignored.
 
-> This feature is not backward compatible with charts that haven't been updated.
+---
+
+## 2. Graceful Pause (Full Stack)
+
+If your Helm chart is configured to support graceful pausing, you can pause the entire application stack (including resources managed by other providers):
+
+```bash
+kubectl annotate composition <name> krateo.io/gracefully-paused="true" --overwrite
+```
+
+**Effect:** The CDC performs one final `helm upgrade` to inject `global.gracefullyPaused: true` into the chart values, then stops reconciliation.
+
+---
+
+## 3. Resume Reconciliation
+
+To resume normal operations, remove the annotation:
+
+```bash
+# To resume from an immediate pause
+kubectl annotate composition <name> krateo.io/paused-
+
+# To resume from a graceful pause
+kubectl annotate composition <name> krateo.io/gracefully-paused-
+```
+
+---
+
+## Technical Details
+
+To use this feature, your Helm chart must be updated to support it. See the [Values Injection & Pausing](../../20-key-concepts/10-kco/20-cdc/30-values-injection.md#graceful-pausing) documentation for the required chart changes.
+
+---
+
+## Next steps
+
+- [Delete Safely](80-delete-safely.md)
+- [Troubleshooting](../../20-key-concepts/10-kco/40-troubleshooting.md)

@@ -1,6 +1,6 @@
 # How to: Full Migration
 
-> **Concepts:** [Pattern 1 — Full Migration](../11-concepts.md#pattern-1-full-migration)
+> **Concepts:** [Pattern 1 — Full Migration](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md#pattern-1-full-migration)
 
 Patch the chart version on an existing CompositionDefinition to automatically migrate **all** associated Compositions to the new version. The old CDC is removed once no Compositions reference it.
 

@@ -1,6 +1,6 @@
 # Composition Dynamic Controller (CDC)
 
-The **Composition Dynamic Controller (CDC)** is the execution engine of Krateo. It is a specialized operator, instantiated by the [Core Provider](10-core-provider.md), that manages the full lifecycle of Helm-based services.
+The **Composition Dynamic Controller (CDC)** is the execution engine of Krateo. It is a specialized operator, instantiated by the [Core Provider](../10-core-provider/10-overview.md), that manages the full lifecycle of Helm-based services.
 
 ## The Chain of Command
 
@@ -10,16 +10,7 @@ To understand Krateo, it's essential to visualize the relationship between its c
 2.  **CDC** (The Worker): Watches for `Composition` resources (instances of the generated CRD).
 3.  **Chart Inspector** (The Safety Officer): Queried by the CDC to perform dry-runs of Helm charts, enabling precise RBAC generation and safety checks.
 
-```mermaid
-graph TD
-    CD[CompositionDefinition] -->|1. Watches| CP[Core Provider]
-    CP -->|2. Spawns| CDC[CDC Instance]
-    CP -->|3. Registers| CRD[Versioned CRD]
-    C[Composition] -->|4. Reconciles| CDC
-    CDC -->|5. Queries| CI[Chart Inspector]
-    CI -->|6. Reports Manifests| CDC
-    CDC -->|7. Installs| H[Helm Release]
-```
+![CDC Chain of Command](/img/diagrams/cdc-chain-of-command.png)
 
 ---
 
@@ -38,10 +29,10 @@ Krateo separates the *definition* of a service from its *actual usage*.
 
 | Document | Purpose |
 | :--- | :--- |
-| [Workflow & Safety](21-cdc-workflow.md) | Deep dive into Chart Inspector integration and RBAC auto-provisioning. |
-| [Values Injection & Pausing](22-cdc-values-injection.md) | How Krateo injects metadata into charts and manages graceful pausing. |
-| [Release Naming](23-cdc-release-names.md) | Understanding how Helm release names are generated. |
-| [Telemetry](51-telemetry-cdc.md) | Metrics reference for CDC and unstructured-runtime. |
+| [Workflow & Safety](20-workflow.md) | Deep dive into Chart Inspector integration and RBAC auto-provisioning. |
+| [Values Injection & Pausing](30-values-injection.md) | How Krateo injects metadata into charts and manages graceful pausing. |
+| [Release Naming](40-release-naming.md) | Understanding how Helm release names are generated. |
+| [Telemetry](50-telemetry.md) | Metrics reference for CDC and unstructured-runtime. |
 
 ---
 

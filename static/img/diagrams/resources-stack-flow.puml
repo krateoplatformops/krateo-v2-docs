@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam arrowColor #666666
+skinparam node {
+    BackgroundColor white
+    BorderColor #333333
+}
+
+"Kubernetes Cluster" as K8S
+"Resources Ingester" as RI
+database "PostgreSQL" as DB
+"Resources Presenter" as RP
+"Portal UI" as UI
+
+K8S -right-> RI : Events/Watch
+RI -right-> DB : Batch Insert
+DB -right-> RP : Query
+RP -right-> UI : Filtered API
+UI .left.> RP : Request
+@enduml

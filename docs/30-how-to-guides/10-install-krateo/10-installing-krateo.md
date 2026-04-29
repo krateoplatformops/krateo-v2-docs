@@ -53,7 +53,10 @@ NodePort is the simplest method for local development with kind. Services are ac
 
 #### Step 1: Create a KIND cluster
 
-Use the provided script from the repository:
+Use the provided script from the repository. This script automates the creation of a KIND cluster with a specific network configuration required for a Krateo 3.0.0 `nodeport` deployment:
+
+- **Ingress traffic**: Ports `80` and `443` are mapped to the cluster.
+- **Platform services**: Ports `30080` (main platform), `30081` (Portal UI), `30082` (Snowplow), `30083` (AuthN), and `30086` (Events Presenter) are exposed locally.
 
 ```bash
 curl -L https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/refs/heads/main/scripts/kind.sh | bash

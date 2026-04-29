@@ -60,5 +60,6 @@ The Presenter exposes the data stored in PostgreSQL through a unified REST API. 
 
 | Component | Purpose |
 | :--- | :--- |
+| [API Reference](11-api.md) | REST API endpoints for the Presenter. |
 | [Ingester Telemetry](20-ingester-telemetry.md) | Metrics for data collection and DB insertion. |
 | [Presenter Telemetry](30-presenter-telemetry.md) | Metrics for API performance and RBAC filtering. |

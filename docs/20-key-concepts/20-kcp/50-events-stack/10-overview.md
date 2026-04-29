@@ -65,5 +65,6 @@ The Presenter provides real-time updates. Instead of the frontend polling for ne
 
 | Component | Purpose |
 | :--- | :--- |
+| [API Reference](11-api.md) | REST API endpoints for the Presenter. |
 | [Ingester Telemetry](20-ingester-telemetry.md) | Metrics for event collection and batch processing. |
 | [Presenter Telemetry](30-presenter-telemetry.md) | Metrics for SSE streaming and real-time broadcasting. |

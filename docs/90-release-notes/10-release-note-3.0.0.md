@@ -87,20 +87,14 @@ A repository containing setup scripts, stress tests, and monitoring configuratio
 
 ## Documentation
 
-### Installation & Upgrade
-- [Install / Upgrade Guide](https://github.com/krateoplatformops/krateoctl/blob/main/docs/install-upgrade.md)
-- [Installation & Migration Guide](https://github.com/krateoplatformops/krateoctl/blob/main/docs/installation-migration.md)
+With the 3.0.0 release, we have significantly consolidated our documentation. Individual component documentation and guides previously scattered across GitHub repository READMEs have been migrated to our centralized documentation portal. 
 
-### New Stack Documentation
-- [resources-presenter README](https://github.com/krateoplatformops/resources-presenter/blob/main/README.md)
-- [resources-ingester README](https://github.com/krateoplatformops/resources-ingester/blob/main/README.md)
-- [events-ingester README](https://github.com/krateoplatformops/events-ingester/blob/main/README.md)
-- [events-presenter README](https://github.com/krateoplatformops/events-presenter/blob/main/README.md)
-- [deviser README](https://github.com/krateoplatformops/deviser/blob/main/README.md)
+You can find all updated documentation structured by functional areas (Core Concepts, How-To Guides, Reference, etc.) directly on [docs.krateo.io](https://docs.krateo.io).
 
-### Migration Guides
-- [Migrate from v2.7.0 to v3.0.0 (GitHub)](https://github.com/krateoplatformops/krateoctl/blob/main/docs/migrate-2.7.0-to-3.0.0.md)
-- [Migrate from v2.7.0 to v3.0.0 (docs.krateo.io)](https://docs.krateo.io/how-to-guides/migrate-krateo/migrating-from-v2-7-0-to-v3-0-0)
+### Migration Guide
+Upgrading from v2.7.0 to v3.0.0 requires following specific procedures due to the significant architectural changes. **Please carefully follow the official migration guide:**
+
+- [Migrate from v2.7.0 to v3.0.0](https://docs.krateo.io/how-to-guides/migrate-krateo/migrating-from-v2-7-0-to-v3-0-0)
 
 ---
 

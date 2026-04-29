@@ -76,3 +76,12 @@ The help output includes flags, examples, and usage information for each command
 - [Installation Migration](30-installation-migration.md)
 - [Get Compositions](40-get-compositions.md)
 - [Secrets Spec](50-secrets.md)
+
+## GitOps Examples
+
+:::tip GitOps Examples
+To accelerate the adoption and integration of Krateo into your GitOps workflows, we provide a collection of ready-to-use examples. These demonstrate how to define and manage compositions, resources, and portal configurations through Git repositories.
+
+You can explore these practical examples in our dedicated repository:
+[**krateoplatformops/releases/gitops-examples**](https://github.com/krateoplatformops/releases/tree/main/gitops-examples)
+:::

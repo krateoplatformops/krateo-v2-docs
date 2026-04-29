@@ -7,6 +7,10 @@ sidebar_label: CNPG configuration
 
 The CNPG cluster creation step in the installation process can be customized based on the needs of your environment.
 
+:::warning
+It is strongly recommended to analyze the specific needs of your environment and workload to determine the optimal configuration for the CNPG cluster.
+:::
+
 The default installation step has the following configuration for the CNPG cluster:
 
 ```yaml
@@ -79,10 +83,6 @@ In particular, the most relevant configuration options to consider when customiz
 - `cluster.instances`: the number of instances in the CNPG cluster. The default value is 3, which means 1 primary (read-write) and 2 standbys (read-only). You can adjust this value based on your availability and performance requirements.
 - `cluster.storage.size`: the size of the storage for each instance. The default value is 10Gi. You can adjust this value based on your expected data volume and growth.
 - `cluster.resources`: the resource requests and limits for each instance. The default values are 500m CPU and 512Mi memory for requests, and 1000m CPU and 1Gi memory for limits. You can adjust these values based on your performance requirements and cluster capacity. This is particularly environment-specific and it is recommended to analyze the specific needs of your environment and workload to determine the optimal resource configuration for the CNPG cluster.
-
-:::note
-It is strongly recommended to analyze the specific needs of your environment and workload to determine the optimal configuration for the CNPG cluster.
-:::
 
 ## Example Custom Config File
 

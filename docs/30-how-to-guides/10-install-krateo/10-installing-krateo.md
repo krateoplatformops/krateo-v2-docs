@@ -27,6 +27,12 @@ This guide walks through installing Krateo 3.0.0 on Kubernetes, with specific in
 See [Secrets Spec](../../20-key-concepts/50-krateoctl/50-secrets.md) for detailed requirements and examples.
 :::
 
+:::warning
+Krateo 3.0.0 uses CloudNativePG.
+It is strongly recommended to analyze the specific needs of your environment and workload to determine the optimal configuration for the CNPG cluster.
+Please refer to the [CNPG configuration guide](../50-manage-postgresql/30-cnpg-configuration.md) for details on customizing the CNPG cluster during installation.
+:::
+
 ---
 
 ## Installation Methods

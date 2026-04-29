@@ -59,6 +59,12 @@ These steps apply **only when migrating from an existing Krateo 2.7.0 installati
 For **fresh Krateo 3.0.0 installations** on a new cluster, see [Install and Upgrade](../install-krateo/installing-krateo) and use `krateoctl install apply` directly with your `krateo.yaml` file.
 :::
 
+:::warning
+Krateo 3.0.0 uses CloudNativePG.
+It is strongly recommended to analyze the specific needs of your environment and workload to determine the optimal configuration for the CNPG cluster.
+Please refer to the [CNPG configuration guide](../50-manage-postgresql/30-cnpg-configuration.md) for details on customizing the CNPG cluster during installation.
+:::
+
 ### 1. Prepare Your Environment
 
 Ensure your current installation is running smoothly:

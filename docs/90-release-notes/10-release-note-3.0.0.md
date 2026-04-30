@@ -61,8 +61,15 @@ A new read-only endpoint has been introduced for querying resources managed by K
 - Resolved login and access token handling issues.
 
 ### Updated Blueprints
-- **portal** and **portal-composition-page-generic** — updated to support the new Resource and Event APIs
-- **Admin Page** — updated to support the new table button management
+- **portal** and **portal-composition-page-generic** — updated to support the new Resource and Event APIs.
+    - Note: If you have forked these blueprints, please ensure you merge the latest changes to maintain compatibility.
+- **Admin Page** — enhanced: single `Button` widgets replaced with `ButtonGroup` where necessary, and `Table` widgets updated with `tableActions` to simplify `RESTAction` operations.
+
+### New Kserve Integration
+- **Kserve Controller**: Released a new [operator](https://github.com/krateoplatformops/kserve-controller) for declarative inference on Kserve.
+    - Control one-time or recurring inference through new custom resources that fully support high-availability modes.
+    - Note: This operator is not installed by default as it requires an active Kserve installation.
+- **Example Blueprint**: A [dedicated blueprint example](https://github.com/krateoplatformops/blueprints/tree/main/kserve) is now available for Kserve integration.
 
 ### Full Observability Suite (OpenTelemetry)
 [OpenTelemetry](https://opentelemetry.io/) has been introduced across the Krateo platform, providing deep insights and operational dashboards.

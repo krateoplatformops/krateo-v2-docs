@@ -1,0 +1,49 @@
+# How It Works
+
+The platform is built around a pipeline that moves data from external API sources into a database, and then acts on that data through optimization and forecasting. Each stage of the pipeline is managed by a dedicated Kubernetes operator or service, coordinated through custom resources.
+
+## Data Collection: Exporters and Scrapers
+
+The fundamental unit of data collection is the `ExporterScraperConfig` custom resource. When one is created, the `finops-operator-exporter` reads its `exporterConfig` and `scraperConfig` sections and provisions three Kubernetes resources: a Deployment running a generic Prometheus exporter, a ConfigMap containing the exporter configuration mounted as a volume inside the deployment, and a Service exposing the deployment's metrics endpoint. It then creates a CR for the `finops-operator-scraper`, which spins up a scraper configured to periodically connect to that Service and upload the collected data to the database through the `finops-database-handler`.
+
+The exporter itself is a generic webservice that calls an external API on a configurable polling interval and translates the response into Prometheus-format metrics. The API endpoint is referenced via a Kubernetes Secret containing the base URL, while the path and HTTP verb are specified directly in the CR. Additional variables can be injected into the URL at runtime, including references to environment variables available inside the exporter container, for example, Kubernetes service addresses. This makes it possible to point the exporter at internal cluster services such as a Prometheus instance, in addition to external cloud provider APIs.
+
+The `metricType` field controls how the exporter interprets the API response:
+
+- When set to `cost`, the endpoint is expected to return a FOCUS-format CSV or JSON file. The exporter parses it and exposes the cost fields as Prometheus metrics.
+- When set to `resource`, the endpoint is expected to return usage metrics according to a predefined JSON/OpenAPI schema. The `additionalVariables` field must include a `ResourceId` to link usage records back to their corresponding cost records in the database.
+- When set to `generic`, schema validation is removed entirely, allowing arbitrary data to be collected. In this mode, `valueColumnIndex` identifies which field contains the metric value. The column index for CSV, or the index among alphabetically sorted keys for JSON. `metricName` gives the metric a name that the scraper can use to select it specifically when scraping from an endpoint that exposes many metrics, such as a Prometheus API.
+
+The `generic` metric type is also the mechanism used to pull data from an existing Prometheus deployment inside the cluster, making it possible to collect pod and node metrics such as CPU usage without relying on external data from a cloud provider.
+
+## Data Collection: The FOCUS Operator
+
+For cases where cost data is already known at definition time and does not need to be fetched from an external API, the `finops-operator-focus` provides a more direct path. A `FocusConfig` CR contains the full set of FOCUS fields populated inline. The operator reads this CR and internally creates an `ExporterScraperConfig` that points the exporter at the Kubernetes API server itself, reading the `FocusConfig` CR as the data source. From that point on, the standard exporter and scraper pipeline takes over, meaning the FOCUS operator is effectively a convenience wrapper that feeds hand-authored cost records into the same collection infrastructure.
+
+## Data Storage: The Database Handler
+
+All collected data lands in CrateDB, a distributed SQL database. Direct access to CrateDB is mediated entirely by the `finops-database-handler`, a webservice that acts as a proxy between the rest of the platform and the database. Authentication credentials are stored in a Kubernetes Secret, and RBAC on that secret controls who can interact with the database through the handler.
+
+The handler exposes two categories of endpoints. The `/upload` endpoint receives data in chunks and writes it directly into the specified table, with the `type` parameter distinguishing between cost and resource tables. The `/compute` family of endpoints manages Python notebooks: notebooks can be uploaded with or without overwrite, listed, deleted, and executed. When a notebook is executed, the handler injects database connection details as arguments, so notebooks can open a CrateDB connection and run arbitrary SQL queries without embedding credentials in their code. The output format of a notebook execution is completely free-form, allowing notebooks to serve as custom API endpoints whose response shape is defined entirely by the notebook author.
+
+Notebooks are registered into the handler through the `finops-database-handler-uploader`, which watches `Notebook` CRs. Each CR specifies either `inline` code or an `api` reference to a remote Python file, and the name of the CR becomes the name of the compute endpoint in the handler. This means adding a new analytical capability to the platform is a matter of writing a Python script and applying a CR, with no changes to the handler service itself.
+
+Tags in cost data must follow a specific JSON object format within the `Tags` column. This structure allows the handler to parse and store them in a way that supports key-based querying directly in SQL, for example filtering records by organizational unit or environment.
+
+## Optimization: OPA Policies and the Webhook
+
+Optimization is applied to compositions through a mutating webhook backed by Open Policy Agent. Every time a composition is created or updated, the webhook intercepts the request and evaluates a set of Rego policies against it. Policies have access to data stored in the database through notebook endpoints on the `finops-database-handler`, which means optimization decisions can be informed by actual collected cost and usage data.
+
+Policies are divided into two categories by the event that triggers them. Day-1 policies fire on a `CREATE` event and govern initial placement decisions, for example, selecting the region and deployment time that minimizes carbon intensity for a new Virtual Machine. Day-2 policies fire on `UPDATE` events, which are triggered either by real resource changes or by a periodic CronJob embedded in the composition definition that relabels the resource on a schedule to force a re-evaluation. A day-2 example is the moving window algorithm, which scans historical usage timeseries to identify virtual machines consuming more resources than their workload actually requires, and surfaces a rightsizing recommendation in the `spec.optimization` field of the composition, where it becomes visible in the frontend.
+
+## Optimization: Forecasting with KServe
+
+Policies that require predictions about future behavior, such as the carbon-aware scheduler, depend on a forecasting layer built on KServe and managed by the `kserve-controller`. This controller introduces two custom resources. An `InferenceConfig` defines the static properties of a model deployment: the KServe endpoint URL, the runner image to use, and the storage backend configuration for both input and output. An `InferenceRun` is an execution trigger: it references an `InferenceConfig`, provides runtime parameters such as table names and query filters, and optionally includes a cron schedule.
+
+When an `InferenceRun` is created, the controller assembles a Contract, a JSON document containing all the information the runner needs, and mounts it into a Kubernetes Job via a ConfigMap. If a schedule is specified, a CronJob is created instead. The runner image is a lightweight process whose only responsibilities are to fetch input data from the configured storage backend, call the KServe model endpoint with that data, and write the results back to the output backend. All data transformation logic lives outside the runner, in notebooks registered with the `finops-database-handler`. The input notebook prepares the query and shapes the data into the format the model expects; the output notebook receives the raw inference result and writes it into the appropriate database table in a form that OPA policies and the scraper pipeline can consume.
+
+The storage backend configuration in both `InferenceConfig` and `InferenceRun` is deliberately schema-free, meaning any storage provider can be supported by providing a runner image that knows how to interpret that section of the contract. The Krateo-native runner uses the `finops-database-handler` notebook endpoints for both input and output, keeping all data access within the platform's standard authentication and access control boundaries.
+
+## The Feedback Loop
+
+The architecture is designed to close on itself. Compositions provision `ExporterScraperConfig` resources alongside the cloud resources they manage, so the platform begins collecting actual cost and usage metrics for every resource it deploys. That data flows into CrateDB. The `kserve-controller` runs forecasting models on a schedule against that data and writes predictions back into the database. OPA policies read both historical and forecasted data when evaluating day-2 optimizations. The results of those optimizations are applied back to the composition, potentially changing the resource configuration, which in turn changes the metrics being collected. Over time, this loop should converge toward the resource allocation that best satisfies the target optimization objective, whether that is cost, carbon intensity, or any other metric the platform has been configured to track.

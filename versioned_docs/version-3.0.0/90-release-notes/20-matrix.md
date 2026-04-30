@@ -1,0 +1,24 @@
+# Compatibility Matrix
+|Name|Version|
+|----|----|
+|authn|0.22.2|
+|snowplow|0.20.6|
+|cloudnative-pg|0.27.1|
+|cluster|0.5.0|
+|deviser|0.5.1|
+|resources-ingester|1.1.0|
+|resources-presenter|0.10.3|
+|events-ingester|0.5.1|
+|events-presenter|0.7.4|
+|frontend|1.0.23|
+|portal|1.3.4|
+|core-provider|1.0.0|
+|oasgen-provider|0.11.1|
+|cratedb|0.1.4|
+|finops-operator-exporter|0.5.2|
+|finops-operator-focus|0.4.3|
+|finops-database-handler|0.5.4|
+|finops-database-handler-uploader|0.2.1|
+|finops-notebooks|0.1.1|
+|finops-operator-scraper|0.5.1|
+|opa-kube-mgmt|0.2.3|

@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam arrowColor #666666
+skinparam node {
+    BackgroundColor white
+    BorderColor #333333
+}
+
+"Kubernetes Cluster" as K8S
+"Events Ingester" as EI
+database "PostgreSQL" as DB
+"Events Presenter" as EP
+"Portal UI" as UI
+
+K8S -right-> EI : Watch Events
+EI -right-> DB : Batch Insert
+DB -right-> EP : Notify
+EP -right-> UI : SSE Stream
+UI .left.> EP : Subscribe
+@enduml

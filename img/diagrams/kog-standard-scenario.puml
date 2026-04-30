@@ -1,0 +1,25 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam arrowColor #666666
+
+package "Generator" {
+    [oasgen-provider] as provider
+    artifact "RestDefinition Manifest" as restdefinition
+    artifact "CRD Manifest" as crd
+}
+
+package "Dynamic Controller" {
+    [rest-dynamic-controller] as rdc
+    artifact "Custom Resource" as cr
+}
+
+cloud "External Resource" as er
+
+restdefinition .down.> provider : Definition for
+provider -right-> crd : Generate
+provider -down-> rdc : Deploy
+cr .up.> rdc : Definition for
+rdc -right-> er : Manage
+cr .left.> crd : Instance of
+@enduml

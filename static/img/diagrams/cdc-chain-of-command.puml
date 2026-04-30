@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam arrowColor #666666
+
+rectangle "CompositionDefinition" as CD
+rectangle "Core Provider" as CP
+rectangle "CDC Instance" as CDC
+rectangle "Versioned CRD" as CRD
+rectangle "Composition" as C
+rectangle "Chart Inspector" as CI
+rectangle "Helm Release" as H
+
+CD -down-> CP : 1. Watches
+CP -right-> CDC : 2. Spawns
+CP -down-> CRD : 3. Registers
+C -right-> CDC : 4. Reconciles
+CDC -down-> CI : 5. Queries
+CI -up-> CDC : 6. Reports Manifests
+CDC -right-> H : 7. Installs
+@enduml

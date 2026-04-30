@@ -1,0 +1,11 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam arrowColor #666666
+
+rectangle "Desired State (K8s)" as A
+rectangle "Current State (External)" as B
+
+A -right-> B : Act (create, update, delete)
+B -left-> A : Observe (findby, get)
+@enduml

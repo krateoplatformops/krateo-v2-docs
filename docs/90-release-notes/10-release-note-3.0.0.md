@@ -1,12 +1,5 @@
 # Release 3.0.0
 
-## Version 3.0-rc1 (Release Candidate)
-:::warning
-This is a Release Candidate. It is intended for evaluation and testing purposes.
-Production deployments should wait for the 3.0 final release.
-:::
----
-
 ## Why 3.0?
 
 This release introduces significant architectural changes and **breaking changes** that affect installation, upgrade, and integration procedures. For this reason, we decided to bump the major version and adopt **Semantic Versioning** consistently going forward.
@@ -26,6 +19,21 @@ This release introduces significant architectural changes and **breaking changes
 
 ## What's New
 
+### Core Provider v1.0.0
+- **Modernized Helm Integration:** Replaced custom, legacy Helm management logic with an updated, robust Helm client integration aligned with industry standards.
+- **Certificate Lifecycle Controller:** Implemented a new dedicated controller to manage certificate generation and CA bundle propagation, ensuring that `CompositionDefinition` resources are consistently ready and secured.
+- **Advanced Retry Logic:** Implemented robust retry mechanisms for chart fetching and composition updates (KRA-1325, KRA-1327), significantly increasing resilience in network-unstable environments.
+- **Reconciler Optimization:** Significant refactoring of the `CompositionDefinition` reconciliation loop and associated webhooks to improve performance and consistency.
+- **CRD Visibility:** Added a `SYNCED` status column to the `CompositionDefinition` CRD for better monitoring of the reconciliation state.
+- **Bug Fixes and Improvements:** Standardized the webhook service namespace to `krateo-system`, removed obsolete finalizer labels, and bumped `provider-runtime` to `v1.2.1`.
+
+### Composition Dynamic Controller v1.0.0
+- **Refactoring & Optimization:** Significant removal of legacy `helmclient` and `helmchart` logic to streamline operations and reduce technical debt.
+- **Improved Helm Handling:** Added support for safe release names to avoid issues with randomized suffixes.
+- **Rollback Support:** Enhanced reliability by adding rollback support for pending rollback states in the `Observe` function.
+- **Incremental RBAC:** Implemented incremental application of RBAC rules for improved security and efficiency.
+- **Testing and Configuration:** Added stress testing scripts for RBAC rule application and expanded unit test coverage across the controller logic. 
+
 ### New Event Stack
 Krateo's internal Etcd has been replaced with **PostgreSQL**, provisioned via [CloudNativePG (CNPG)](https://cloudnative-pg.io/). New dedicated services handle event ingestion and serve event data to the portal.
 
@@ -41,18 +49,34 @@ A new read-only endpoint has been introduced for querying resources managed by K
 - [`resources-presenter`](https://github.com/krateoplatformops/resources-presenter) — exposes a query API over the read-only database
 
 ### Frontend Updates
-- Portal theme customization support
-- Simplified management of action buttons within tables
+**Features:**
+- Introduced cursor-based pagination for improved data handling.
+- Added theme and logo customization support.
+- Enhanced Markdown widget (tables, links, scroll, code blocks).
+- Extended Table with `tableActions` and customizable labels.
+- Improved UI flexibility (Form, navigation, dynamic drawer/modal titles).
+
+**Bug Fixes:**
+- Fixed critical issues in Notifications (crashes and rendering).
+- Resolved login and access token handling issues.
 
 ### Updated Blueprints
-- **portal** and **portal-composition-page-generic** — updated to support the new Resource and Event APIs
-- **Admin Page** — updated to support the new table button management
+- **portal** and **portal-composition-page-generic** — updated to support the new Resource and Event APIs.
+    - Note: If you have forked these blueprints, please ensure you merge the latest changes to maintain compatibility.
+- **Admin Page** — enhanced: single `Button` widgets replaced with `ButtonGroup` where necessary, and `Table` widgets updated with `tableActions` to simplify `RESTAction` operations.
 
-### OpenTelemetry Integration
-[OpenTelemetry](https://opentelemetry.io/) has been introduced for the event stack. Existing components will be updated in upcoming releases.
+### New Kserve Integration
+- **Kserve Controller**: Released a new [operator](https://github.com/krateoplatformops/kserve-controller) for declarative inference on Kserve.
+    - Control one-time or recurring inference through new custom resources that fully support high-availability modes.
+    - Note: This operator is not installed by default as it requires an active Kserve installation.
+- **Example Blueprint**: A [dedicated blueprint example](https://github.com/krateoplatformops/blueprints/tree/main/kserve) is now available for Kserve integration.
 
-**New component:**
-- [`deviser`](https://github.com/krateoplatformops/deviser) — OpenTelemetry integration layer for the event stack
+### Full Observability Suite (OpenTelemetry)
+[OpenTelemetry](https://opentelemetry.io/) has been introduced across the Krateo platform, providing deep insights and operational dashboards.
+- **Event Stack:** Integration layer added via the new component [`deviser`](https://github.com/krateoplatformops/deviser). Telemetry has also been added to `events-ingester` and `events-presenter`.
+- **Resource APIs:** Telemetry has been added to `resources-ingester` and `resources-presenter`.
+- **Core Provider:** Standardized pipeline built for OTLP export, operational dashboards for controller performance, admission control, and external calls.
+- **Composition Dynamic Controller:** Full integration including metrics collection, wrappers, and dedicated Grafana dashboards.
 
 ### Krateoctl — New CLI Tool
 `krateoctl` is a new command-line tool for managing Krateo installations and performing utility operations. It replaces the controller-based installer, simplifying upgrade and maintenance workflows.
@@ -70,39 +94,27 @@ A repository containing setup scripts, stress tests, and monitoring configuratio
 
 ## Documentation
 
-### Installation & Upgrade
-- [Install / Upgrade Guide](https://github.com/krateoplatformops/krateoctl/blob/main/docs/install-upgrade.md)
-- [Installation & Migration Guide](https://github.com/krateoplatformops/krateoctl/blob/main/docs/installation-migration.md)
+With the 3.0.0 release, we have significantly consolidated our documentation. Individual component documentation and guides previously scattered across GitHub repository READMEs have been migrated to our centralized documentation portal. 
 
-### New Stack Documentation
-- [resources-presenter README](https://github.com/krateoplatformops/resources-presenter/blob/main/README.md)
-- [resources-ingester README](https://github.com/krateoplatformops/resources-ingester/blob/main/README.md)
-- [events-ingester README](https://github.com/krateoplatformops/events-ingester/blob/main/README.md)
-- [events-presenter README](https://github.com/krateoplatformops/events-presenter/blob/main/README.md)
-- [deviser README](https://github.com/krateoplatformops/deviser/blob/main/README.md)
+You can find all updated documentation structured by functional areas (Core Concepts, How-To Guides, Reference, etc.) directly on [docs.krateo.io](https://docs.krateo.io).
 
-### Migration Guides
-- [Migrate from v2.7.0 to v3.0.0 (GitHub)](https://github.com/krateoplatformops/krateoctl/blob/main/docs/migrate-2.7.0-to-3.0.0.md)
-- [Migrate from v2.7.0 to v3.0.0-rc (docs.krateo.io)](https://docs.krateo.io/how-to-guides/migrate-krateo/migrating-from-v2-7-0-to-v3-0-0rc)
+### Migration Guide
+Upgrading from v2.7.0 to v3.0.0 requires following specific procedures due to the significant architectural changes. **Please carefully follow the official migration guide:**
 
----
-
-## What to Expect in 3.0 Final
-
-- Bug fixes based on rc1 feedback
-- OpenTelemetry instrumentation extended to `resource-presenter`, `core-provider`, and CDC components
-- Updated documentation on [docs.krateo.io](https://docs.krateo.io)
-- **Autopilot** updated to support Krateo 3.0 features while remaining capable of answering questions about v2.7
+- [Migrate from v2.7.0 to v3.0.0](https://docs.krateo.io/how-to-guides/migrate-krateo/migrating-from-v2-7-0-to-v3-0-0)
 
 ---
 
 ## Breaking Changes
 
-:::
+:::warning
 Upgrading from v2.7.x requires following the migration guide.
 Direct in-place upgrades without migration steps are **not supported**.
 :::
 
-- Krateo's internal Etcd is no longer used for event storage — replaced by PostgreSQL (CNPG)
-- The controller-based installer has been replaced by `krateoctl`
-- Blueprint components (`portal`, `portal-composition-page-generic`, `admin-page`) require updated versions compatible with the new APIs
+- **Events Storage:** Krateo's internal Etcd is no longer used for event storage — replaced by PostgreSQL (CNPG)
+- **Installation:** The controller-based installer has been replaced by `krateoctl`
+- **Blueprints:** Blueprint components (`portal`, `portal-composition-page-generic`, `admin-page`) require updated versions compatible with the new APIs
+- **Frontend Events:** Updated events format and handling (EventList, Notifications)
+- **Core Provider Manifests:** All raw YAML static manifests (RBAC, Deployments, Services) have been removed. Management of these resources is now exclusively delegated to the Helm chart, eliminating technical debt and configuration drift.
+- **Core Provider Custom Libraries:** Deprecated and removed the custom `internal/tools/helm/` directory, moving to standard client implementations.

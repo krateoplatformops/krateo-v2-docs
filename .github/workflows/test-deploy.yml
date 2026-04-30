@@ -4,8 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    # Review gh actions docs if you want to further define triggers, paths, etc
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 
 jobs:
   test-deploy:
@@ -15,6 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -22,5 +21,34 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-      - name: Test build website
+
+      # Simulate what the tag pipeline does: version the docs and patch
+      # docusaurus.config.js so the build is as close to a real release as
+      # possible, without committing or publishing anything.
+      #
+      # Docusaurus requires version names to match semver format and be at most
+      # 32 characters, so we use 0.0.<PR number> as the fake version — it is
+      # always short, always valid, and unique per PR.
+      - name: Simulate versioning (dry-run)
+        run: |
+          FAKE_VERSION="0.0.${{ github.event.number }}"
+          echo "Simulated version: $FAKE_VERSION"
+
+          # Cut a Docusaurus version snapshot exactly as the tag pipeline would.
+          npm run docusaurus docs:version "$FAKE_VERSION"
+
+          # Patch docusaurus.config.js to set lastVersion to the simulated one,
+          # mirroring what the tag pipeline does for real releases.
+          node scripts/set-last-version.js "$FAKE_VERSION"
+
+      - name: Build website (full, with versioning)
         run: npm run build
+
+      # Surface any broken links or build errors clearly in the PR.
+      - name: Check build output exists
+        run: |
+          if [ ! -d "build" ]; then
+            echo "Build directory not found — build failed."
+            exit 1
+          fi
+          echo "Build succeeded. Output size: $(du -sh build | cut -f1)"

@@ -5,13 +5,19 @@ sidebar_label: EventList Migration
 
 # EventList Migration Guide: eventsse / eventrouter to events-presenter
 
+:::note
+This guide is intended for users who have an existing Krateo installation with `EventList` widgets powered by the old `eventsse` / `eventrouter` (**prior to Krateo 3.0**) and need to migrate them to the new `events-presenter` service **introduced in Krateo 3.0**.
+:::
+
 ## Overview
 
 This guide covers the migration of `EventList` widgets and their associated `RESTAction` resources from the old `eventsse` / `eventrouter` / `eventsse-etcd` stack to the new `events-presenter` service.
 
 ### Breaking change notice
 
-> **This migration is mandatory.** The `eventsse`, `eventrouter`, and `eventsse-etcd` components are being **phased out immediately** and will no longer be available after this release. Any `EventList` widget or `RESTAction` still pointing at `eventsse-internal-endpoint` will stop working. There is no backwards compatibility window.
+:::warning
+**This migration is mandatory.** The `eventsse`, `eventrouter`, and `eventsse-etcd` components are being **phased out immediately** and will no longer be available after this release. Any `EventList` widget or `RESTAction` still pointing at `eventsse-internal-endpoint` will stop working. There is no backwards compatibility window.
+:::
 
 ### Migration Motivations
 
@@ -93,7 +99,7 @@ spec:
 |---|---|---|
 | **Endpoint** | `eventsse-internal-endpoint` | `events-presenter-endpoint` |
 | **Path format** | `/events/<compositionId>?limit=50` | `/events?composition_id=<compositionId>&limit=200` |
-| **Default limit** | 50 | 200 |
+| **Limit set** | 50 | 200 |
 | **Response shape** | Raw array of Kubernetes event objects | Wrapped response object with `.resources[]` |
 | **`filter`** | Extracts raw event array as `list` from `getEvents` | Extracts normalized event array as `list` from `getEvents.resources` |
 
@@ -344,7 +350,9 @@ kubectl apply -f compositiondefinition.yaml
 
 Repeat for every `CompositionDefinition` that uses a chart containing an `EventList` widget.
 
-> **Tip:** If multiple `Composition` instances exist for the same `CompositionDefinition`, the CDC will reconcile all of them automatically once the `CompositionDefinition` is updated.
+:::tip
+If multiple `Composition` instances exist for the same `CompositionDefinition`, the CDC will reconcile all of them automatically once the `CompositionDefinition` is updated.
+:::
 
 ---
 

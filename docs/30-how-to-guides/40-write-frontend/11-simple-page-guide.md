@@ -48,7 +48,7 @@ kubectl apply -f https://raw.githubusercontent.com/krateoplatformops/frontend/60
 
 By inspecting the [`Page` widget definition](https://raw.githubusercontent.com/krateoplatformops/frontend/6021fda511c9ee19db6cc694fbc9cc3d15c7da3c/docs/guides/simple-page/guide-simple-page.yaml), you can see that the `Button` widget is referenced by name inside `spec.resourcesRefs` and assigned an identifier (`simple-button-id`).
 
-Declaring resources in `spec.resourcesRefs` is how Krateo knows which widgets to load. References can be defined statically, as in this example, or generated dynamically using `resourcesRefsTemplate` (see the related section in the [documentation](../../20-key-concepts/20-kcp/10-frontend.md) for more details).
+Declaring resources in `spec.resourcesRefs` is how Krateo knows which widgets to load. References can be defined statically, as in this example, or generated dynamically using `resourcesRefsTemplate` (see the related section in the [documentation](../../20-key-concepts/20-kcp/10-frontend/10-overview.md) for more details).
 
 This referencing mechanism applies to all widgets and is the foundation of widget composition in Krateo.
 

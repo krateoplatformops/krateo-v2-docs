@@ -17,7 +17,7 @@ In this guide, you will extend that setup by adding **actions** to the `Button` 
 
 ## Adding an `openDrawer` Action to the `Button`
 
-We will update the existing `Button` widget so that it triggers an action when clicked. A `Button` widget can trigger different types of actions. For a complete overview of available actions, refer to the [Actions documentation](../../20-key-concepts/20-kcp/10-frontend.md).
+We will update the existing `Button` widget so that it triggers an action when clicked. A `Button` widget can trigger different types of actions. For a complete overview of available actions, refer to the [Actions documentation](../../20-key-concepts/20-kcp/10-frontend/10-overview.md).
 
 In this guide, we will use the `openDrawer` action, which opens a side panel (drawer) and renders another widget inside it. 
 

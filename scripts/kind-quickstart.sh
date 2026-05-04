@@ -36,8 +36,13 @@ fi
 log_success "krateoctl found"
 
 # Create KIND cluster using kind.sh
+log_info "Downloading kind.sh..."
+KIND_SCRIPT="$(mktemp)/kind.sh"
+curl -sL https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/main/scripts/kind.sh -o "$KIND_SCRIPT"
+chmod +x "$KIND_SCRIPT"
+
 log_info "Creating KIND cluster using kind.sh..."
-bash "$SCRIPT_DIR/kind.sh" "$CLUSTER_NAME" "$CLUSTER_IMAGE"
+bash "$KIND_SCRIPT" "$CLUSTER_NAME" "$CLUSTER_IMAGE"
 
 if [ $? -ne 0 ]; then
     error_exit "Failed to create KIND cluster"

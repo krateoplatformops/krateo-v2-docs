@@ -37,7 +37,9 @@ log_success "krateoctl found"
 
 # Create KIND cluster using kind.sh
 log_info "Downloading kind.sh..."
-KIND_SCRIPT="$(mktemp)/kind.sh"
+KIND_TMP_DIR="${TMPDIR:-/tmp}/krateo"
+mkdir -p "$KIND_TMP_DIR"
+KIND_SCRIPT="$KIND_TMP_DIR/kind.sh"
 curl -sL https://raw.githubusercontent.com/krateoplatformops/krateo-v2-docs/main/scripts/kind.sh -o "$KIND_SCRIPT"
 chmod +x "$KIND_SCRIPT"
 

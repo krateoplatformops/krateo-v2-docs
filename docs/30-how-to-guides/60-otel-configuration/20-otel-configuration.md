@@ -57,8 +57,8 @@ presets:
   kubernetesAttributes:
     enabled: true
 image:
-  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
-  tag: 0.152.0
+  repository: "otel/opentelemetry-collector-contrib"
+  tag: "0.151.0"
 config:
   receivers:
     otlp:

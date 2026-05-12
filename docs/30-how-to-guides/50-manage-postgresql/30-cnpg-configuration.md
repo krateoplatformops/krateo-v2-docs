@@ -84,9 +84,9 @@ In particular, the most relevant configuration options to consider when customiz
 - `cluster.storage.size`: the size of the storage for each instance. The default value is 10Gi. You can adjust this value based on your expected data volume and growth.
 - `cluster.resources`: the resource requests and limits for each instance. The default values are 500m CPU and 512Mi memory for requests, and 1000m CPU and 1Gi memory for limits. You can adjust these values based on your performance requirements and cluster capacity. This is particularly environment-specific and it is recommended to analyze the specific needs of your environment and workload to determine the optimal resource configuration for the CNPG cluster.
 
-## Example Custom Config File
+## Example Custom Profile
 
-Here is an example of a custom config file for `krateoctl` that overrides the default CNPG configuration:
+Here is an example of a custom profile for `krateoctl` that overrides the default CNPG configuration:
 
 ```yaml
 components:
@@ -108,8 +108,8 @@ components:
                   memory: "2Gi"
 ```
 
-You can use this config file when installing Krateo with the following command:
+You can use this profile by saving the file as `krateo-overrides.custom-cnpg-profile.yaml` and then applying it during installation or upgrade of Krateo with the following command:
 
 ```sh
-krateoctl install apply --config <path-to-your-config-file>
+krateoctl install apply --profile custom-cnpg-profile
 ```

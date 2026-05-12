@@ -15,29 +15,6 @@ Before configuring OpenTelemetry in Krateo, make sure you have the following pre
 3. A **compatible observability backend** (e.g., Prometheus) set up to receive metrics from the OpenTelemetry Collector.
 4. **Grafana** connected to your observability backend as a data source.
 
-## Quick Install: Prometheus & Grafana (Example)
-
-:::tip Note
-The following steps are provided as an **example** for setting up a monitoring stack. For production environments, follow your organization's standard practices for deploying and managing observability tools.
-:::
-
-If you don't have a monitoring stack yet, one way to get started is by installing the `kube-prometheus-stack`. It includes Prometheus, Grafana, and the Prometheus Operator.
-
-1. Add the Prometheus community Helm repository:
-   ```bash
-   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-   helm repo update
-   ```
-
-2. Install the stack in the `monitoring` namespace:
-   ```bash
-   helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
-     -n monitoring --create-namespace \
-     --set grafana.adminPassword=admin
-   ```
-
-3. Once the pods are ready, you can proceed with the Collector deployment.
-
 ## Deploying OpenTelemetry Collector (Helm)
 
 You can deploy a shared Collector in-cluster using the official Helm chart. This example configuration sets up an OTLP HTTP receiver and a Prometheus exporter.
@@ -96,6 +73,53 @@ helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
 ```
 
 4. The chart creates the ServiceMonitor automatically, so Prometheus can scrape the Collector metrics endpoint at `:9464`.
+
+## Quick Install: Prometheus & Grafana (Example)
+
+:::tip Note
+The following steps are provided as an **example** for setting up a monitoring stack. For production environments, follow your organization's standard practices for deploying and managing observability tools.
+:::
+
+If you don't have a monitoring stack yet, one way to get started is by installing the `kube-prometheus-stack`. It includes Prometheus, Grafana, and the Prometheus Operator.
+
+1. Add the Prometheus community Helm repository:
+   ```bash
+   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+   helm repo update
+   ```
+
+2. Create a `kube-prom-values.yaml` file with the following content to configure a non-production setup of kube-prometheus-stack:
+    ```yaml
+    grafana:
+      enabled: true
+      adminPassword: admin
+
+    prometheus:
+      prometheusSpec:
+        scrapeInterval: 15s
+        additionalScrapeConfigs:
+          - job_name: "otel-collector"
+            static_configs:
+              - targets: ["otel-collector-opentelemetry-collector.monitoring.svc.cluster.local:9464"]
+
+    alertmanager:
+      enabled: false
+
+    nodeExporter:
+      enabled: false
+
+    kubeStateMetrics:
+      enabled: false
+    ```
+
+4. Install the stack in the `monitoring` namespace:
+   ```bash
+   helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
+     -n monitoring --create-namespace \
+     -f kube-prom-values.yaml
+   ```
+
+5. Once the pods are ready, you can proceed with the Collector deployment.
 
 ## Enabling Metrics in Components
 

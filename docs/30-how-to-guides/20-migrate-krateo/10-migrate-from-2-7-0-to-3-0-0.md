@@ -50,7 +50,7 @@ Krateo 3.0.0 introduces a major architectural shift from a cluster-resident cont
 
 - kubectl configured and connected to your cluster
 - **Krateo 2.7.0 is currently running in your cluster** with the installer controller
-- Latest `krateoctl` binary (3.0.0+) installed locally
+- Latest `krateoctl` binary (1.2.1+) installed locally
 - Adequate cluster permissions to manage resources in your Krateo namespace (default: `krateo-system`)
 
 :::note

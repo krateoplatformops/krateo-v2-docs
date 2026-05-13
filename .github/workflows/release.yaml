@@ -45,6 +45,20 @@ jobs:
           echo -e "# Compatibility Matrix\n|Name|Version|\n|----|----|\n$(cat versions.md)" > 20-matrix.md
           cp 20-matrix.md ../docs/90-release-notes/20-matrix.md
 
+      # If we are re-tagging an existing release, remove the old frozen snapshot
+      # so Docusaurus can recreate it from the current docs/ tree.
+      - name: Remove existing Docusaurus version snapshot if present
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          rm -rf "versioned_docs/version-$VERSION" "versioned_sidebars/version-$VERSION-sidebars.json"
+          node -e 'const fs = require("fs"); const version = process.argv[1]; const versionsPath = "versions.json"; const versions = JSON.parse(fs.readFileSync(versionsPath, "utf8")); const next = versions.filter((entry) => entry !== version); if (next.length !== versions.length) { fs.writeFileSync(versionsPath, JSON.stringify(next, null, 2) + "\n"); }' "$VERSION"
+
+      # Docusaurus validates lastVersion while versioning. If we removed an
+      # existing release snapshot, point it back to `current` so docs:version
+      # can recreate the target version cleanly.
+      - name: Set lastVersion to current before versioning
+        run: node scripts/set-last-version.js current
+
       # Cut a Docusaurus version snapshot from the current docs/ folder.
       # This writes versioned_docs/version-X.Y.Z/ and updates versions.json.
       - name: Create Docusaurus version snapshot
@@ -63,7 +77,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add versioned_docs/ versioned_sidebars/ versions.json docusaurus.config.js
           git commit -m "chore: version docs for release ${{ steps.version.outputs.VERSION }} [skip ci]"
-          git push origin HEAD:main
+          if [ "${ACT:-}" = "true" ]; then
+            echo "Skipping push to main under act."
+          else
+            git push origin HEAD:main
+          fi
 
       # Build the site after versioning so the published output includes the
       # new frozen version and has it set as the default.
@@ -72,6 +90,7 @@ jobs:
 
       # Publish to GitHub Pages (same as the push pipeline).
       - name: Deploy to GitHub Pages
+        if: ${{ env.ACT != 'true' }}
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -79,8 +98,42 @@ jobs:
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
 
+      # Re-tagging a version can leave an old GitHub Release behind. Delete it
+      # first so the release below recreates it cleanly.
+      - name: Remove existing GitHub Release if present
+        if: ${{ env.ACT != 'true' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = context.ref.replace('refs/tags/', '');
+
+            try {
+              const { data: release } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag,
+              });
+
+              await github.rest.repos.deleteRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release.id,
+              });
+
+              core.info(`Deleted existing release for ${tag}.`);
+            } catch (error) {
+              if (error.status === 404) {
+                core.info(`No existing release for ${tag}.`);
+                return;
+              }
+
+              throw error;
+            }
+
       # Create a GitHub Release and attach kind.sh as before.
       - name: Create GitHub Release
+        if: ${{ env.ACT != 'true' }}
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -92,6 +145,7 @@ jobs:
           prerelease: false
 
       - name: Upload kind.sh to Release
+        if: ${{ env.ACT != 'true' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,6 +156,7 @@ jobs:
           asset_content_type: application/octet-stream
 
       - name: Upload kind-quickstart.sh to Release
+        if: ${{ env.ACT != 'true' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

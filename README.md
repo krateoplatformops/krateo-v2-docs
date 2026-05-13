@@ -143,6 +143,7 @@ Documentation versioning is **automated and tied to Git tags** on this repositor
 4. The Docusaurus site is built and deployed to [docs.krateo.io](https://docs.krateo.io).
 
 **You do not need to run any versioning commands manually.** Pushing a tag is sufficient.
+If you are re-tagging an already published version, delete the old tag and push the tag again; the release workflow will clear the stale Docusaurus snapshot and any existing GitHub Release before recreating them.
 
 Tag format: `vMAJOR.MINOR.PATCH` -> must match the Krateo platform release in [`krateoplatformops/releases`](https://github.com/krateoplatformops/releases).
 

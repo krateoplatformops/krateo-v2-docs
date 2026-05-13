@@ -12,7 +12,7 @@ If you already operate an existing PostgreSQL instance and prefer to use it inst
 To use your own PostgreSQL instance, you need to:
 1. Create a database and user for Krateo in your existing PostgreSQL instance.
 2. Create a Kubernetes Secret with the connection details for your existing database.
-3. Create a custom config file for `krateoctl` to point to your existing PostgreSQL instance.
+3. Create a custom profile for `krateoctl` to point to your existing PostgreSQL instance.
 4. Install Krateo without the default CNPG component and pointing to your existing PostgreSQL instance.
 
 ### 1. Create a database and user for Krateo in your existing PostgreSQL instance
@@ -33,13 +33,13 @@ The database will be used by Krateo to store Krateo resources and Kubernetes eve
 You need to create a Kubernetes Secret with the connection details for your existing database as described at: [Secrets Spec](../../key-concepts/krateoctl/secrets).
 This secret is used by the Krateo components that need database access: `deviser`, `resources-ingester`, `resources-presenter`, `events-ingester` and `events-presenter`.
 
-### 3. Create a custom config file for `krateoctl` to point to your existing PostgreSQL instance
+### 3. Create a custom profile for `krateoctl` to point to your existing PostgreSQL instance
 
-You need to create a custom config file for `krateoctl` to point to your existing PostgreSQL instance. 
+You need to create a custom profile for `krateoctl` to point to your existing PostgreSQL instance. 
 This yaml file should contain the connection details for your database, such as the host, port, database name. 
 Additionally it should reference, for each component, the Kubernetes Secret created in step 2 that contains the database credentials.
 
-An example config file might look like this:
+An example profile might look like this:
 
 ```yaml
 components:
@@ -108,14 +108,14 @@ The `resources-presenter` component is the only one that can be configured with 
 
 ### 4. Install Krateo without the default CNPG component and pointing to your existing PostgreSQL instance
 
-You can finally install Krateo without the default CNPG component and pointing to your existing PostgreSQL instance by running the following command:
+You can finally install Krateo without the default CNPG component and pointing to your existing PostgreSQL instance by saving the custom profile created in step 3 (for example, as `krateo-overrides.custom-cnpg-profile.yaml`) and then applying it during installation or upgrade of Krateo with the following command:
 
 ```sh
-krateoctl install apply --profile no-cnpg --config <path-to-your-config-file>
+krateoctl install apply --profile no-cnpg,custom-cnpg-profile
 ```
 
 :::warning
-The `--profile no-cnpg` persists across upgrades. Omitting it later will install CNPG and may conflict with your setup. Always include it in future upgrades.
+The `--profile no-cnpg,custom-cnpg-profile` persists across upgrades. Omitting it later will install CNPG and may conflict with your setup. Always include it in future upgrades.
 
 See [Profile Configuration](../../20-key-concepts/50-krateoctl/20-install-upgrade.md#profile-resolution) for details.
 :::

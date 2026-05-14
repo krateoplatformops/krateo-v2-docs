@@ -29,7 +29,7 @@ The second module is responsible for the showback of data inside Krateo's fronte
 
 ### Optimization
 
-The third module is responsible for optimizations. The optimizations rely on Open Policy Agent (OPA), installed automatically through the [finops-webhook-template-chart](https://github.com/krateoplatformops/finops-webhook-template-chart). Policies mutate compositions through the [finops-webhook-template](https://github.com/krateoplatformops/finops-webhook-template), adding optimization results to the field `spec.optimization`, which is then displayed in the frontend.
+The third module is responsible for optimizations. The optimizations rely on Open Policy Agent (OPA), installed automatically through the [finops-webhook-template-chart](https://github.com/krateoplatformops/finops-webhook-template-chart). Policies mutate compositions through the finops-webhook-template, adding optimization results to the field `spec.optimization`, which is then displayed in the frontend.
 
 The modules involved are:
 
@@ -46,7 +46,7 @@ The complete flow of the architecture starts with the creation of a generic comp
 
 An example day-1 policy is the selection of the best time and location to minimize carbon intensity for a Virtual Machine. This algorithm relies on a scheduler and a forecaster. The forecaster runs periodically and predicts a window of data for each region of interest using TTMs, a highly efficient model capable of running hundreds of inferences per second on a single GPU. The forecasted data is stored in the database. The scheduler reads it and decides when and where to deploy the VM to minimize carbon intensity. The resource is then created at the right time in the selected region by a dedicated service provider operator.
 
-An example day-2 policy is the moving window algorithm, implemented in [finops-moving-window-policy](https://github.com/krateoplatformops/finops-moving-window-policy), which searches usage patterns of deployed virtual machines to identify wasted resources.
+An example day-2 policy is the moving window algorithm, implemented in [finops-moving-window-policy](https://github.com/krateoplatformops/finops-moving-window-microservice), which searches usage patterns of deployed virtual machines to identify wasted resources.
 
 Forecasting models are integrated into compositions through the `kserve-controller`. It manages `InferenceConfig` and `InferenceRun` custom resources, spawning Kubernetes Jobs (or CronJobs for scheduled runs) that fetch input data from the database via the `finops-database-handler`, call a KServe model endpoint, and write the results back for consumption by OPA policies. Data transformations between storage and inference are handled by Python notebooks registered in the `finops-database-handler` through the `finops-database-handler-uploader`.
 

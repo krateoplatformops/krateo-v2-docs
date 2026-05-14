@@ -69,7 +69,7 @@ A new read-only endpoint has been introduced for querying resources managed by K
 - **Kserve Controller**: Released a new [operator](https://github.com/krateoplatformops/kserve-controller) for declarative inference on Kserve.
     - Control one-time or recurring inference through new custom resources that fully support high-availability modes.
     - Note: This operator is not installed by default as it requires an active Kserve installation.
-- **Example Blueprint**: A [dedicated blueprint example](https://github.com/krateoplatformops/blueprints/tree/main/kserve) is now available for Kserve integration.
+- **Example Blueprint**: A [dedicated blueprint example](https://github.com/krateoplatformops-blueprints/portal-node-metrics) is now available for Kserve integration.
 
 ### Full Observability Suite (OpenTelemetry)
 [OpenTelemetry](https://opentelemetry.io/) has been introduced across the Krateo platform, providing deep insights and operational dashboards.
@@ -101,7 +101,7 @@ You can find all updated documentation structured by functional areas (Core Conc
 ### Migration Guide
 Upgrading from v2.7.0 to v3.0.0 requires following specific procedures due to the significant architectural changes. **Please carefully follow the official migration guide:**
 
-- [Migrate from v2.7.0 to v3.0.0](https://docs.krateo.io/how-to-guides/migrate-krateo/migrating-from-v2-7-0-to-v3-0-0)
+- [Migrate from v2.7.0 to v3.0.0](../30-how-to-guides/20-migrate-krateo/10-migrate-from-2-7-0-to-3-0-0.md)
 
 ---
 

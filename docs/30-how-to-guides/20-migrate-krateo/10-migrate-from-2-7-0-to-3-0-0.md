@@ -293,7 +293,7 @@ krateoctl install apply \
 
 **Configure your domain:**
 
-For production deployments, configure your DNS to point to your Ingress controller's IP address. See the [Install and Upgrade](../install-krateo/installing-krateo) guide for detailed domain configuration steps.
+For production deployments, configure your DNS to point to your Ingress controller's IP address. See the [Install](../10-install-krateo/10-installing-krateo.md) guide for detailed domain configuration steps.
 
   </TabItem>
 

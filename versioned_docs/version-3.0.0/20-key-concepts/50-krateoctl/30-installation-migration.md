@@ -47,7 +47,7 @@ krateoctl install migrate-full [FLAGS]
 ### Flags
 
 - `--type` installation type to use for the generated defaults: `nodeport`, `loadbalancer`, or `ingress`
-- `--namespace` namespace containing the legacy `KrateoPlatformOps` resource, default `krateo-system`
+- `--namespace` namespace containing the legacy `KrateoPlatformOps` resource **and** target namespace for the new installation, default `krateo-system`
 - `--name` legacy resource name, default `krateo`
 - `--output` optional path to save the generated `krateo.yaml`
 - `--installer-namespace` namespace where the old installer is deployed, default the same as `--namespace`
@@ -99,7 +99,7 @@ krateoctl install migrate [FLAGS]
 ### Flags
 
 - `--type` installation type to use for the generated defaults: `nodeport`, `loadbalancer`, or `ingress`
-- `--namespace` namespace containing the legacy `KrateoPlatformOps` resource, default `krateo-system`
+- `--namespace` namespace containing the legacy `KrateoPlatformOps` resource **and** target namespace for the new installation, default `krateo-system`
 - `--name` legacy resource name, default `krateo`
 - `--output` path for the generated file, default `krateo.yaml`
 - `--force` overwrite the output file if it already exists

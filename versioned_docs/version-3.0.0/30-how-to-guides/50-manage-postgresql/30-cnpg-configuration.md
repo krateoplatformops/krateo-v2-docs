@@ -92,7 +92,7 @@ Here is an example of a custom profile for `krateoctl` that overrides the defaul
 components:
   cnpg:
     stepConfig:
-      install-pgcluster:
+      install-pg-cluster:
         with:
           values:
             cluster:

@@ -13,6 +13,7 @@ See the [Secrets Spec](50-secrets.md) for the required names, keys, and namespac
 ## Table Of Contents
 
 - [Release Source](#release-source)
+- [Profiles](#profiles)
 - [Installation Snapshot](#installation-snapshot)
 - [Secrets](#secrets)
 - [Plan Command](#plan-command)
@@ -63,6 +64,324 @@ This allows profiles to be overridden locally even when using a remote release, 
 :::warning
 **Profiles persist across upgrades** — Changing replaces values, omitting reverts to defaults. Always include your profiles in both `plan` and `apply`. Use `plan --diff-installed` before `apply` to verify changes.
 :::
+
+## Profiles
+
+Profiles allow you to customize a Krateo installation or upgrade without editing the base `krateo.yaml`. Each profile is a YAML file named `krateo-overrides.<name>.yaml` that krateoctl applies as a **deep-merge overlay** over the base configuration.
+
+### Profile naming and discovery
+
+krateoctl discovers profile files by convention:
+
+- Create a file named `krateo-overrides.<profile-name>.yaml` (e.g., `krateo-overrides.my-custom.yaml`)
+- Pass `--profile <profile-name>` to `plan` or `apply` (e.g., `--profile my-custom`)
+- krateoctl looks for `krateo-overrides.my-custom.yaml` — first in the remote releases repository (if `--version` is set), then on the local filesystem
+
+Multiple profiles can be combined with a comma:
+```sh
+krateoctl install apply --version 3.0.0 --profile openshift,lb-hostname,my-custom
+```
+The merge order is: base config → `krateo-overrides.yaml` (if present) → each profile in left-to-right order. Later profiles override earlier ones on conflicting keys.
+
+### Built-in profiles
+
+The official [krateoplatformops/releases](https://github.com/krateoplatformops/releases) repository ships these ready-to-use profiles:
+
+| Profile | File | Purpose |
+|---------|------|---------|
+| `openshift` | `krateo-overrides.openshift.yaml` | OpenShift-compatible security defaults for FinOps (CrateDB) and CNPG — disables `runAsUser`/`runAsGroup`, sets `seccompProfile` and drops all capabilities |
+| `lb-hostname` | `krateo-overrides.lb-hostname.yaml` | AWS LoadBalancer hostname extraction (uses `.hostname` instead of `.ip` for LoadBalancer ingress selectors) |
+| `monitoring` | `krateo-overrides.monitoring.yaml` | Enables OpenTelemetry tracing on core-provider, deviser, resources-stack and events-stack |
+| `no-cnpg` | `krateo-overrides.no-cnpg.yaml` | Disables the CNPG component entirely (use with Bring-Your-Own-PostgreSQL) |
+| `no-finops` | `krateo-overrides.no-finops.yaml` | Disables the FinOps component entirely |
+| `debug` | `krateo-overrides.debug.yaml` | Enables debug environment variables on all components |
+
+Inspect any built-in profile directly:
+```
+https://github.com/krateoplatformops/releases/blob/main/krateo-overrides.<profile>.yaml
+```
+
+### Profile structure and logic
+
+A profile file mirrors a subset of the `krateo.yaml` structure. There are two levels of customization, from higher-level to finer-grained:
+
+#### What `values` can you override?
+
+The `values` block in a profile maps directly to the **Helm chart values** that krateoctl passes to each chart during installation. These values are defined in the `krateo.yaml` (or `krateo.<type>.yaml`) file under each step's `with.values` section.
+
+For example, in `krateo.nodeport.yaml` the `install-authn` step defines:
+
+```yaml
+steps:
+  - id: install-authn
+    type: chart
+    with:
+      repo: authn
+      releaseName: authn
+      url: https://charts.krateo.io
+      version: 0.22.2
+      values:
+        image:
+          repository: ghcr.io/krateoplatformops/authn
+        service:
+          type: NodePort
+          nodePort: 30082
+        env:
+          AUTHN_KUBECONFIG_SERVER_URL: null
+```
+
+A profile can override **any field under `values`** — `service.type`, `image.repository`, `env` variables, and so on. You can also override non-values fields like `version`, `url`, or `timeout` using the step-level configuration (see below).
+
+To discover what you can override, inspect the `krateo.*.yaml` file for your target type and look at the `with.values` of each step you want to customize.
+
+#### 1. Component-level configuration (recommended)
+
+The base `krateo.yaml` groups steps into logical **components** via `componentsDefinition`:
+
+```yaml
+componentsDefinition:
+  cnpg:
+    steps:
+      - install-cnpg
+      - install-pg-cluster
+  frontend:
+    steps:
+      - install-frontend
+```
+
+A profile addresses a component by name and targets a specific step within it via `stepConfig`:
+
+```yaml
+components:
+  <component-name>:         # must match a key in componentsDefinition
+    enabled: false          # (optional) disable the entire component
+    stepConfig:
+      <step-id>:            # must match a step id in that component's steps list
+        with:
+          values:           # deep-merged into the step's existing .with.values
+            <path>: <new-value>
+```
+
+The `enabled: false` flag is a convenience shortcut: it skips **all** steps belonging to that component. You can see this in the `no-cnpg` and `no-finops` built-in profiles.
+
+The `with.values` content is **deep-merged** — you only need to specify the leaf keys you want to change; the rest of the base configuration is preserved.
+
+#### 2. Step-level configuration (advanced)
+
+If you need even finer control — for example, to change a non-values field like the chart version, URL, or timeout — you can override at the step level directly:
+
+```yaml
+steps:
+  - id: <step-id>
+    skip: true              # skip this specific step
+    with:
+      version: <new-version>
+      values:
+        <path>: <new-value>
+```
+
+Step-level overrides take precedence over component-level ones.
+
+### Merge semantics
+
+krateoctl applies overlays in this exact order, each one deep-merged into the previous result:
+
+1. Base config (`krateo.yaml` or `krateo.<type>.yaml`)
+2. Generic overrides file (`krateo-overrides.yaml`) — if present
+3. Each profile from `--profile`, left to right
+
+Since the merge is **recursive**, providing only the leaf path `cluster.instances: 5` is enough to change that single field without touching `cluster.storage`, `cluster.resources`, or any other sibling key.
+
+### Practical examples
+
+#### Example 1: Override CNPG cluster size and storage
+
+Suppose you want 5 PostgreSQL instances (default 3) with 50Gi storage (default 10Gi).
+
+Create `krateo-overrides.large-pg.yaml`:
+
+```yaml
+components:
+  cnpg:
+    stepConfig:
+      install-pg-cluster:
+        with:
+          values:
+            cluster:
+              instances: 5
+              storage:
+                size: 50Gi
+```
+
+Apply it:
+```sh
+krateoctl install apply --version 3.0.0 --profile large-pg
+```
+
+All other CNPG settings (resources, roles, databases) remain unchanged.
+
+#### Example 2: Change the frontend service port and add a custom environment variable
+
+Create `krateo-overrides.custom-frontend.yaml`:
+
+```yaml
+components:
+  frontend:
+    stepConfig:
+      install-frontend:
+        with:
+          values:
+            service:
+              nodePort: 31000
+            config:
+              MY_CUSTOM_VAR: "hello"
+```
+
+Apply:
+```sh
+krateoctl install apply --version 3.0.0 --type nodeport --profile custom-frontend
+```
+
+#### Example 3: Disable a component and override another
+
+Combine built-in and custom profiles. Create `krateo-overrides.prod-tweaks.yaml`:
+
+```yaml
+components:
+  resources-stack:
+    stepConfig:
+      install-resources-ingester:
+        with:
+          values:
+            config:
+              DEBUG: "true"
+```
+
+Then run with multiple profiles:
+```sh
+krateoctl install apply --version 3.0.0 --profile no-finops,prod-tweaks
+```
+
+FinOps is disabled (from the built-in `no-finops` profile), and resources-ingester debug is enabled (from your `prod-tweaks` profile).
+
+#### Example 4: Configure Ingress host and TLS
+
+In Krateo 2.7, Ingress host and TLS were configured via Helm values. In Krateo 3, the same customization is done through profiles.
+
+Create `krateo-overrides.ingress-tls.yaml`:
+
+```yaml
+components:
+  backend:
+    stepConfig:
+      install-authn:
+        with:
+          values:
+            ingress:
+              enabled: true
+              className: nginx
+              annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-prod
+              hosts:
+                - host: authn.krateo.example.com
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+              tls:
+                - secretName: authn-tls-secret
+                  hosts:
+                    - authn.krateo.example.com
+      install-snowplow:
+        with:
+          values:
+            ingress:
+              enabled: true
+              className: nginx
+              annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-prod
+              hosts:
+                - host: snowplow.krateo.example.com
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+              tls:
+                - secretName: snowplow-tls-secret
+                  hosts:
+                    - snowplow.krateo.example.com
+  events-stack:
+    stepConfig:
+      install-events-presenter:
+        with:
+          values:
+            ingress:
+              enabled: true
+              className: nginx
+              annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-prod
+              hosts:
+                - host: events.krateo.example.com
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+              tls:
+                - secretName: events-tls-secret
+                  hosts:
+                    - events.krateo.example.com
+  frontend:
+    stepConfig:
+      install-frontend:
+        with:
+          values:
+            ingress:
+              enabled: true
+              className: nginx
+              annotations:
+                cert-manager.io/cluster-issuer: letsencrypt-prod
+              hosts:
+                - host: krateo.example.com
+                  paths:
+                    - path: /
+                      pathType: ImplementationSpecific
+              tls:
+                - secretName: frontend-tls-secret
+                  hosts:
+                    - krateo.example.com
+```
+
+Preview the diff between the default ingress configuration and your profile:
+```sh
+krateoctl install plan --version 3.0.0 --type ingress --profile ingress-tls
+```
+
+The `plan` command outputs only the differences between the base configuration and the profile, so you can verify exactly what will change before applying.
+
+Apply:
+```sh
+krateoctl install apply --version 3.0.0 --type ingress --profile ingress-tls
+```
+
+#### Example 5: Step-level skip
+
+Create `krateo-overrides.skip-portal.yaml`:
+
+```yaml
+steps:
+  - id: install-portal
+    skip: true
+```
+
+This bypasses the portal chart installation without modifying any component definition.
+
+### Persistence warning
+
+Profiles are **not snapshotted** as part of the installation — krateoctl only remembers the computed execution steps. If you omit `--profile` on a subsequent `apply`, those overridden values are **lost** and the step reverts to the defaults from `krateo.yaml`.
+
+Always use `plan --diff-installed` with the same flags you intend to `apply` with, and keep your profile list documented in your environment's runbooks.
+
+For the full CLI reference, run:
+```sh
+krateoctl install apply -h
+```
 
 ## Installation Snapshot
 
@@ -122,7 +441,7 @@ krateoctl install plan [FLAGS]
 - `--repository` custom GitHub repository URL for release assets, default `https://github.com/krateoplatformops/releases`
 - `--config` local configuration file, default `krateo.yaml`
 - `--profile` optional profile name, such as `dev` or `prod`
-- `--namespace` namespace where the installation snapshot is stored
+- `--namespace` target namespace for the installation (default `krateo-system`). Use this to install Krateo in a namespace different from the default, or to run parallel installations in separate namespaces
 - `--type` file variant to use, such as `nodeport`, `loadbalancer`, or `ingress`
 - `--diff-installed` compare the computed plan against the stored installation snapshot
 - `--diff-format` choose how diffs are rendered; use `table` for a per-step summary view
@@ -146,7 +465,8 @@ krateoctl install plan [FLAGS]
 The `--diff-installed` flag controls the output mode of the `plan` command:
 
 - **Without `--diff-installed` (Default)**: Generates and displays the **execution plan** (the sequence of steps) that `krateoctl` would perform based on the resolved configuration (including overrides and profiles).
-  - Use this to preview the installation workflow.
+  - When you use `--profile`, the output shows the **differences between the base configuration and the profile** — only the steps and values that the profile changes.
+  - Use this to preview the installation workflow and verify that your profile overrides are correctly interpreted.
   - Useful for verifying that your configuration, profiles, and flags (like `--type`) are correctly interpreted.
 
 - **With `--diff-installed`**: Performs a **diff** between the newly computed plan and the **stored installation snapshot** (the state of the last successful `apply`).
@@ -195,6 +515,11 @@ krateoctl install plan --version 3.0.0 --profile dev
 krateoctl install plan --version 3.0.0 --profile dev,aws-lb-hostname
 ```
 
+```sh
+# Preview installation in a custom namespace
+krateoctl install plan --version 3.0.0 --namespace krateo-prod
+```
+
 ## Apply Command
 
 `krateoctl install apply` is the command that executes the computed workflow against the cluster.
@@ -223,7 +548,7 @@ krateoctl install apply [FLAGS]
 - `--version` release tag to fetch from the releases repository
 - `--repository` custom GitHub repository URL for release assets, default `https://github.com/krateoplatformops/releases`
 - `--config` local configuration file, default `krateo.yaml`
-- `--namespace` target namespace
+- `--namespace` target namespace for the installation (default `krateo-system`). Use this to install Krateo in a namespace different from the default, or to run parallel installations in separate namespaces
 - `--type` file variant to use, such as `nodeport`, `loadbalancer`, or `ingress`
 - `--profile` optional profile name
 - `--skip-validation` skip configuration validation
@@ -263,6 +588,11 @@ krateoctl install apply --config ./krateo.yaml --type ingress
 ```sh
 # Apply with a profile (preview first with: krateoctl install plan --version 3.0.0 --profile dark-theme)
 krateoctl install apply --version 3.0.0 --profile dark-theme
+```
+
+```sh
+# Apply in a custom namespace (for parallel installations or migration scenarios)
+krateoctl install apply --version 3.0.0 --namespace krateo-prod
 ```
 
 ## Upgrade Flow

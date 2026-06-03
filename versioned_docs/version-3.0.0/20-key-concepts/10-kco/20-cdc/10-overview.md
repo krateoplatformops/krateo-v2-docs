@@ -33,6 +33,7 @@ Krateo separates the *definition* of a service from its *actual usage*.
 | [Values Injection & Pausing](30-values-injection.md) | How Krateo injects metadata into charts and manages graceful pausing. |
 | [Release Naming](40-release-naming.md) | Understanding how Helm release names are generated. |
 | [Telemetry](50-telemetry.md) | Metrics reference for CDC and unstructured-runtime. |
+| [Composition Status](60-composition-status.md) | What `Ready: True` means, status fields, and condition semantics. |
 
 ---
 

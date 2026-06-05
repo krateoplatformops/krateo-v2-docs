@@ -21,17 +21,26 @@ You need to create a **database** and a **user** for Krateo in your existing Pos
 This can be done using the following SQL commands:
 
 ```sql
-CREATE DATABASE krateo-db;
-CREATE USER krateo-db-user WITH ENCRYPTED PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE krateo-db TO krateo-db-user;
+CREATE USER "krateo-db-user" WITH ENCRYPTED PASSWORD 'your_password';
+CREATE DATABASE "krateo-db" OWNER "krateo-db-user";
 ```
 
 The database will be used by Krateo to store Krateo resources and Kubernetes events, and the user will be used by the Krateo components to connect to the database.
+
+:::info Database requirements
+- **PostgreSQL 13 or later**. No PostgreSQL extensions and no superuser privileges are needed.
+- Identifiers containing hyphens (such as `krateo-db`) must be **double-quoted** in SQL.
+- The user must be the **owner** of the database: on PostgreSQL 15 and later, `GRANT ALL PRIVILEGES ON DATABASE` alone is not enough to create tables in the `public` schema.
+:::
 
 ### 2. Create a Kubernetes Secret with the connection details for your existing database
 
 You need to create a Kubernetes Secret with the connection details for your existing database as described at: [Secrets Spec](../../key-concepts/krateoctl/secrets).
 This secret is used by the Krateo components that need database access: `deviser`, `resources-ingester`, `resources-presenter`, `events-ingester` and `events-presenter`.
+
+:::note
+In this scenario only the `krateo-db` secret (with the `DB_USER` and `DB_PASS` keys) is required. The `krateo-db-user` secret described in the Secrets Spec is consumed only by the default CNPG installation and is not needed when you bring your own PostgreSQL.
+:::
 
 ### 3. Create a custom profile for `krateoctl` to point to your existing PostgreSQL instance
 
@@ -50,10 +59,10 @@ components:
           values:
             config:
               DB_HOST: <your-db-host> 
-              DB_PORT: <your-db-port>
+              DB_PORT: "<your-db-port>" # Must be a quoted string, e.g. "5432"
               DB_NAME: krateo-db # Change if you used a different database name
-        secret:
-          name: krateo-db # Change if you used a different secret name
+            secret:
+              name: krateo-db # Change if you used a different secret name
   
   resources-stack:
     stepConfig:
@@ -62,7 +71,7 @@ components:
           values:
             config:
               DB_HOST: <your-db-host> 
-              DB_PORT: <your-db-port>
+              DB_PORT: "<your-db-port>" # Must be a quoted string, e.g. "5432"
               DB_NAME: krateo-db # Change if you used a different database name
             secret:
               name: krateo-db # Change if you used a different secret name
@@ -71,7 +80,7 @@ components:
           values:
             config:
               DB_HOST: <your-db-host>  # This is the only place where you can also specify the read-only connection string if your database has different endpoints for read-write and read-only connections.
-              DB_PORT: <your-db-port> # This is the only place where you can also specify the read-only connection string if your database has different endpoints for read-write and read-only connections.
+              DB_PORT: "<your-db-port>" # Must be a quoted string, e.g. "5432". This is the only place where you can also specify the read-only connection string if your database has different endpoints for read-write and read-only connections.
               DB_NAME: krateo-db # Change if you used a different database name
             dbSecret:
               name: krateo-db # Change if you used a different secret name
@@ -83,7 +92,7 @@ components:
           values:
             config:
               DB_HOST: <your-db-host> 
-              DB_PORT: <your-db-port>
+              DB_PORT: "<your-db-port>" # Must be a quoted string, e.g. "5432"
               DB_NAME: krateo-db # Change if you used a different database name
             secret:
               name: krateo-db # Change if you used a different secret name
@@ -92,7 +101,7 @@ components:
           values:
             config:
               DB_HOST: <your-db-host> 
-              DB_PORT: <your-db-port>
+              DB_PORT: "<your-db-port>" # Must be a quoted string, e.g. "5432"
               DB_NAME: krateo-db # Change if you used a different database name
             dbSecret:
               name: krateo-db # Change if you used a different secret name

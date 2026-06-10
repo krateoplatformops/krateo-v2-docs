@@ -87,6 +87,7 @@ spec:
     - 'Accept: application/json'
     continueOnError: true
     errorKey: getEventsError
+    exportJwt: true
   filter: >
     {
       list: (.getEvents.resources // [])

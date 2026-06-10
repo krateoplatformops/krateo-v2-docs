@@ -29,7 +29,6 @@ The database will be used by Krateo to store Krateo resources and Kubernetes eve
 
 :::info Database requirements
 - **PostgreSQL 13 or later**. No PostgreSQL extensions and no superuser privileges are needed.
-- Identifiers containing hyphens (such as `krateo-db`) must be **double-quoted** in SQL.
 - The user must be the **owner** of the database: on PostgreSQL 15 and later, `GRANT ALL PRIVILEGES ON DATABASE` alone is not enough to create tables in the `public` schema.
 :::
 

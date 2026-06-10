@@ -147,20 +147,12 @@ If you are re-tagging an already published version, delete the old tag and push 
 
 Tag format: `vMAJOR.MINOR.PATCH` -> must match the Krateo platform release in [`krateoplatformops/releases`](https://github.com/krateoplatformops/releases).
 
-> [!TIP]
-> If you need to delete a version published by accident, then:
-> - Delete the tag from the repository
-> - Delete the versioned docs directory. Example: versioned_docs/version-1.8.0.
-> - Delete the versioned sidebars file. Example: versioned_sidebars/version-1.8.0-sidebars.json.
-> - Update the `docusaurus.config.js` file and point the [last version](./docusaurus.config.js#L32) to current (or other release).
-> - Remove the version from versions.json. For example:
-  ```diff
-  [
-    "2.0.0",
-    "1.9.0",
-  - "1.8.0"
-  ]
-  ```
+### How to update pages for an existing Krateo version
+
+- Delete the specific release (e.g., `3.0.0`) in the repo from the Github UI
+- Delete the specific tag (e.g., `3.0.0`) in the repo from the Github UI
+- Push the new changes to main
+- Push the same tag (e.g., `3.0.0`) to be updated
 
 ---
 

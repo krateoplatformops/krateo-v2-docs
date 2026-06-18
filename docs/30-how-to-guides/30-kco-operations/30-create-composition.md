@@ -113,10 +113,15 @@ helm list -n cheatsheet-system
 
 ---
 
+> **Behavior:** what happens when the target resource already exists, when you change a Composition's spec, when a managed resource drifts, and on delete is described in [Reconciliation & Lifecycle](../../20-key-concepts/10-kco/20-cdc/15-reconciliation-lifecycle.md).
+
+---
+
 ## Next steps
 
 - [Full Migration](50-full-migration.md) — upgrade all Compositions to a new chart version
 - [Parallel Versioning](60-parallel-versioning.md) — run a second chart version side-by-side
 - [Selective Migration](70-selective-migration.md) — migrate individual Compositions to a new version
 - [Pause / Resume](40-pause-resume.md) — temporarily halt reconciliation
+- [Lifecycle Policies](45-lifecycle-policies.md) — restrict which operations Krateo may perform (read-only, orphan on delete)
 - [Delete Safely](80-delete-safely.md) — remove Compositions and CompositionDefinitions cleanly

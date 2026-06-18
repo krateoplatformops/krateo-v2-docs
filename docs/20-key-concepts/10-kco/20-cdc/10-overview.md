@@ -29,6 +29,7 @@ Krateo separates the *definition* of a service from its *actual usage*.
 
 | Document | Purpose |
 | :--- | :--- |
+| [Reconciliation & Lifecycle](15-reconciliation-lifecycle.md) | What happens on create, update, drift, and delete — and when the Helm release already exists. |
 | [Workflow & Safety](20-workflow.md) | Deep dive into Chart Inspector integration and RBAC auto-provisioning. |
 | [Values Injection & Pausing](30-values-injection.md) | How Krateo injects metadata into charts and manages graceful pausing. |
 | [Release Naming](40-release-naming.md) | Understanding how Helm release names are generated. |

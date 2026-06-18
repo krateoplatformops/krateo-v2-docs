@@ -20,6 +20,10 @@ kubectl delete composition <name> --namespace <namespace>
 3. It cleans up any extra resources it created (e.g., finalizers).
 4. Once the uninstall succeeds, the Composition resource is removed.
 
+:::tip Keep the release running on delete
+To remove the Composition object **without** uninstalling its Helm release, set the `krateo.io/deletion-policy: orphan` annotation before deleting. See [Lifecycle Policies](45-lifecycle-policies.md).
+:::
+
 ---
 
 ## 2. Delete a CompositionDefinition
@@ -55,3 +59,4 @@ If a resource is stuck in `Terminating`:
 
 - [Install Krateo Core Provider](10-install.md)
 - [Deploy a CompositionDefinition](20-deploy-composition-definition.md)
+- [Lifecycle Policies](45-lifecycle-policies.md) — orphan a release instead of uninstalling it

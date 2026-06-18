@@ -63,6 +63,10 @@ You should see `lifecycleapp-cd-v1` with `Ready=True`.
 
 ---
 
+> **Behavior:** what happens when the CRD already exists, when you change `spec.chart`, when the generated CRD or CDC drifts, and on delete is described in [Reconciliation & Lifecycle](../../20-key-concepts/10-kco/10-core-provider/15-reconciliation-lifecycle.md).
+
+---
+
 ## Advanced: Alternative Chart Sources
 
 ### OCI Registry

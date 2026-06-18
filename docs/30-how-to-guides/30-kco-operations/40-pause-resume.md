@@ -44,6 +44,17 @@ kubectl annotate composition <name> krateo.io/gracefully-paused-
 
 ---
 
+## Pause vs. lifecycle policies
+
+Pause is a **temporary** stop that you remove later. If instead you want a **standing** restriction — for example, make a Composition read-only, or keep its Helm release running when the Composition is deleted — use the management / deletion-policy annotations described in [Lifecycle Policies](45-lifecycle-policies.md).
+
+| | Removed later? | Use for |
+| :--- | :--- | :--- |
+| Pause (`krateo.io/paused`, `krateo.io/gracefully-paused`) | Yes | Maintenance windows, debugging, temporary freezes |
+| Management / deletion policy | No (standing) | Read-only registration, orphan-on-delete, blocking specific operations |
+
+---
+
 ## Technical Details
 
 To use this feature, your Helm chart must be updated to support it. See the [Values Injection & Pausing](../../20-key-concepts/10-kco/20-cdc/30-values-injection.md#graceful-pausing) documentation for the required chart changes.
@@ -52,5 +63,6 @@ To use this feature, your Helm chart must be updated to support it. See the [Val
 
 ## Next steps
 
+- [Lifecycle Policies](45-lifecycle-policies.md) — standing restrictions (read-only, orphan on delete)
 - [Delete Safely](80-delete-safely.md)
 - [Troubleshooting](../../20-key-concepts/10-kco/40-troubleshooting.md)

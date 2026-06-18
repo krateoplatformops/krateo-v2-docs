@@ -90,10 +90,6 @@ spec:
 EOF
 ```
 
-:::note `deletionPolicy` here is a chart value, not a Krateo policy
-The `deletionPolicy: Delete` field above lives inside `spec.git.toRepo` — it is a **value of this chart** (it controls the target Git repository) and is unrelated to the Krateo `krateo.io/deletion-policy` *annotation*, which controls whether the Composition's Helm release is uninstalled on delete. See [Lifecycle Policies](45-lifecycle-policies.md).
-:::
-
 ---
 
 ## 3. Wait for the Composition to become ready

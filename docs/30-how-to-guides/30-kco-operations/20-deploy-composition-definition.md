@@ -63,11 +63,7 @@ You should see `lifecycleapp-cd-v1` with `Ready=True`.
 
 ---
 
-## Updating, drift, and deleting
-
-- **You change `spec.chart`** (for example, bump `version`): the Core Provider re-applies — it updates the generated CRD and redeploys the CDC. For version changes specifically, see the [Version Management Model](../../20-key-concepts/10-kco/10-core-provider/20-version-management.md) and its migration how-tos.
-- **The generated CRD or the CDC it deployed is changed or deleted out of band (drift)**: the Core Provider detects the mismatch and restores what it owns — the CRD plus the CDC `Deployment`, RBAC, `ConfigMap`, and `Service` — on the next reconcile. It self-heals its managed objects.
-- **You delete the CompositionDefinition**: its CRD, CDC, and scoped RBAC are removed (only once its Compositions are gone). See [Delete Safely](80-delete-safely.md).
+> **Behavior:** what happens when the CRD already exists, when you change `spec.chart`, when the generated CRD or CDC drifts, and on delete is described in [Reconciliation & Lifecycle](../../20-key-concepts/10-kco/10-core-provider/15-reconciliation-lifecycle.md).
 
 ---
 

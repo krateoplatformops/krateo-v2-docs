@@ -113,19 +113,7 @@ helm list -n cheatsheet-system
 
 ---
 
-## What if the resource already exists?
-
-- **The generated CRD already exists** (another CompositionDefinition created it, or it predates this one): the Core Provider **adopts** it and adds the new version to the existing CRD — it does not error or overwrite it. Several CompositionDefinitions for the same kind coexist as multiple versions of one CRD.
-- **A Helm release with the same computed name already exists**: the CDC **upgrades** that release instead of failing — creating a Composition after a previously-failed install is safe and idempotent.
-- **An arbitrary Kubernetes object the chart would create already exists** (created outside this release): this is **not** adopted. Standard Helm ownership rules apply and the install fails with an *"exists and cannot be imported into the current release"* error. Importing pre-existing live objects into a Composition is not supported.
-
----
-
-## Updating, drift, and deleting
-
-- **You change the Composition's `spec`**: there is no separate apply step — the CDC detects the change and runs a `helm upgrade` with the new spec as chart values.
-- **Someone edits a managed resource by hand (drift)**: the CDC reconciles the Composition continuously and re-applies the rendered release, so out-of-band changes to the chart's resources are reverted on the next reconcile. To stop this on purpose, pause the Composition or set a read-only management policy — see [Pause / Resume](40-pause-resume.md) and [Lifecycle Policies](45-lifecycle-policies.md).
-- **You delete the Composition**: the CDC uninstalls the Helm release — or leaves it running if `krateo.io/deletion-policy: orphan` is set. See [Delete Safely](80-delete-safely.md).
+> **Behavior:** what happens when the target resource already exists, when you change a Composition's spec, when a managed resource drifts, and on delete is described in [Reconciliation & Lifecycle](../../20-key-concepts/10-kco/20-cdc/15-reconciliation-lifecycle.md).
 
 ---
 

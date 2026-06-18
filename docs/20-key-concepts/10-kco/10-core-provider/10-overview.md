@@ -37,6 +37,7 @@ The Core Provider acts as the "Manager" in the Krateo ecosystem. Its primary rol
 | Document | Purpose |
 |:---------|:--------|
 | [Architecture & Glossary](../11-architecture.md) | High-level system overview and key terminology. |
+| [Reconciliation & Lifecycle](15-reconciliation-lifecycle.md) | What happens on create, update, drift, and delete — and when the resource already exists. |
 | [Version Management](20-version-management.md) | How to handle chart upgrades (Full, Parallel, Selective). |
 | [Security Design](30-security-design.md) | Deep dive into RBAC isolation and schema validation. |
 | [CDC Overview](../20-cdc/10-overview.md) | Understanding the worker controller that runs your charts. |

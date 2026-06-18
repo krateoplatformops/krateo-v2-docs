@@ -121,6 +121,14 @@ helm list -n cheatsheet-system
 
 ---
 
+## Updating, drift, and deleting
+
+- **You change the Composition's `spec`**: there is no separate apply step — the CDC detects the change and runs a `helm upgrade` with the new spec as chart values.
+- **Someone edits a managed resource by hand (drift)**: the CDC reconciles the Composition continuously and re-applies the rendered release, so out-of-band changes to the chart's resources are reverted on the next reconcile. To stop this on purpose, pause the Composition or set a read-only management policy — see [Pause / Resume](40-pause-resume.md) and [Lifecycle Policies](45-lifecycle-policies.md).
+- **You delete the Composition**: the CDC uninstalls the Helm release — or leaves it running if `krateo.io/deletion-policy: orphan` is set. See [Delete Safely](80-delete-safely.md).
+
+---
+
 ## Next steps
 
 - [Full Migration](50-full-migration.md) — upgrade all Compositions to a new chart version

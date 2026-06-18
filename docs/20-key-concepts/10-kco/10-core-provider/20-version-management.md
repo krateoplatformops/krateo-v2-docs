@@ -22,8 +22,8 @@ Run two versions of the same service side-by-side without affecting existing ins
 
 ### Pattern 3: Selective Migration
 Migrate individual `Composition` instances to a new version on your own schedule.
-- **How**: Use the `krateo.io/desired-version` annotation on a specific `Composition`.
-- **Effect**: The CDC will prioritize the version requested in the annotation over the one defined in the `CompositionDefinition`.
+- **How**: Patch the version labels on a specific `Composition` — `krateo.io/composition-version` (e.g. `v0-0-2`) and `krateo.io/composition-definition-name` (the target `CompositionDefinition`).
+- **Effect**: The CDC for the requested version takes ownership of that `Composition`; the old CDC stops reconciling it. Other instances stay on their current version until you migrate them too.
 - **Best for**: Critical production services that require manual validation during upgrade.
 - **Guide**: [How to perform a Selective Migration](../../../30-how-to-guides/30-kco-operations/70-selective-migration.md)
 

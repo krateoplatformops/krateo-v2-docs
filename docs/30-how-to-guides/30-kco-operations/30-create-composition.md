@@ -90,6 +90,10 @@ spec:
 EOF
 ```
 
+:::note `deletionPolicy` here is a chart value, not a Krateo policy
+The `deletionPolicy: Delete` field above lives inside `spec.git.toRepo` — it is a **value of this chart** (it controls the target Git repository) and is unrelated to the Krateo `krateo.io/deletion-policy` *annotation*, which controls whether the Composition's Helm release is uninstalled on delete. See [Lifecycle Policies](45-lifecycle-policies.md).
+:::
+
 ---
 
 ## 3. Wait for the Composition to become ready
@@ -113,10 +117,19 @@ helm list -n cheatsheet-system
 
 ---
 
+## What if the resource already exists?
+
+- **The generated CRD already exists** (another CompositionDefinition created it, or it predates this one): the Core Provider **adopts** it and adds the new version to the existing CRD — it does not error or overwrite it. Several CompositionDefinitions for the same kind coexist as multiple versions of one CRD.
+- **A Helm release with the same computed name already exists**: the CDC **upgrades** that release instead of failing — creating a Composition after a previously-failed install is safe and idempotent.
+- **An arbitrary Kubernetes object the chart would create already exists** (created outside this release): this is **not** adopted. Standard Helm ownership rules apply and the install fails with an *"exists and cannot be imported into the current release"* error. Importing pre-existing live objects into a Composition is not supported.
+
+---
+
 ## Next steps
 
 - [Full Migration](50-full-migration.md) — upgrade all Compositions to a new chart version
 - [Parallel Versioning](60-parallel-versioning.md) — run a second chart version side-by-side
 - [Selective Migration](70-selective-migration.md) — migrate individual Compositions to a new version
 - [Pause / Resume](40-pause-resume.md) — temporarily halt reconciliation
+- [Lifecycle Policies](45-lifecycle-policies.md) — restrict which operations Krateo may perform (read-only, orphan on delete)
 - [Delete Safely](80-delete-safely.md) — remove Compositions and CompositionDefinitions cleanly
